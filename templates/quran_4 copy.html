@@ -1409,7 +1409,6 @@
             color: #27ae60;
             border-right: 4px solid #27ae60;
         }
-
         /* إضافة هذه الأنماط إلى قسم الـ CSS */
 
 /* معالج الواجبات */
@@ -1688,12 +1687,6 @@
                         <span class="menu-text">الواجبات</span>
                     </a>
                 </li>
-                <li class="menu-item">
-                    <a class="menu-link" data-page="reports">
-                        <i class="fas fa-chart-line menu-icon"></i>
-                        <span class="menu-text">التقارير</span>
-                    </a>
-                </li>
                 <!-- تحديث قائمة التنقل في الشريط الجانبي -->
 <li class="menu-item">
     <a class="menu-link" data-page="student-record">
@@ -1701,6 +1694,12 @@
         <span class="menu-text">سجل الطالب</span>
     </a>
 </li>
+                <li class="menu-item">
+                    <a class="menu-link" data-page="reports">
+                        <i class="fas fa-chart-line menu-icon"></i>
+                        <span class="menu-text">التقارير</span>
+                    </a>
+                </li>
             </ul>
         </aside>
         
@@ -1917,230 +1916,7 @@
                         <!-- سيتم إضافة البطاقات ديناميكياً -->
                     </div>
                 </div>
-
                 
-                
-                  <div class="modal" id="teacherModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title" id="teacherModalTitle">إضافة معلم جديد</h3>
-                <button class="modal-close" id="closeTeacherModal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <form id="teacherForm">
-                    <div class="form-row">
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="form-label">الاسم الأول</label>
-                                <input type="text" class="form-control" id="teacherFirstName" required>
-                            </div>
-                        </div>
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="form-label">اسم الأب</label>
-                                <input type="text" class="form-control" id="teacherFatherName" required>
-                            </div>
-                        </div>
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="form-label">اسم العائلة</label>
-                                <input type="text" class="form-control" id="teacherFamilyName" required>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="form-label">رقم الهاتف</label>
-                                <input type="tel" class="form-control" id="teacherPhone" required>
-                            </div>
-                        </div>
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="form-label">البريد الإلكتروني</label>
-                                <input type="email" class="form-control" id="teacherEmail">
-                            </div>
-                        </div>
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="form-label">التخصص</label>
-                                <select class="form-control" id="teacherSpecialization" required>
-                                    <option value="">اختر التخصص</option>
-                                    <option value="tajweed">التجويد</option>
-                                    <option value="hifz">الحفظ</option>
-                                    <option value="revision">المراجعة</option>
-                                    <option value="recitation">التلاوة</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="form-label">تاريخ التعيين</label>
-                                <input type="date" class="form-control" id="hireDate" required>
-                            </div>
-                        </div>
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="form-label">عدد الحلقات المسؤول عنها</label>
-                                <input type="number" class="form-control" id="halaqaCount" min="0" value="1">
-                            </div>
-                        </div>
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="form-label">الحالة</label>
-                                <select class="form-control" id="teacherStatus" required>
-                                    <option value="active">نشط</option>
-                                    <option value="inactive">غير نشط</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">المؤهلات</label>
-                        <textarea class="form-control form-textarea" id="qualifications" rows="3"></textarea>
-                    </div>
-                    
-                    <div class="form-actions">
-                        <button type="button" class="btn btn-secondary" id="cancelTeacherBtn">إلغاء</button>
-                        <button type="submit" class="btn" id="saveTeacherBtn">حفظ المعلم</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-      <div class="modal" id="halaqaModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title" id="halaqaModalTitle">إضافة حلقة جديدة</h3>
-                <button class="modal-close" id="closeHalaqaModal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <form id="halaqaForm">
-                    <div class="form-row">
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="form-label">اسم الحلقة</label>
-                                <input type="text" class="form-control" id="halaqaName" required>
-                            </div>
-                        </div>
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="form-label">المعلم المسؤول</label>
-                                <select class="form-control" id="teacherId" required>
-                                    <option value="">اختر المعلم</option>
-                                    <option value="1">أحمد محمد</option>
-                                    <option value="2">سعيد خالد</option>
-                                    <option value="3">محمد علي</option>
-                                    <option value="4">خالد سليمان</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="form-label">المستوى</label>
-                                <select class="form-control" id="halaqaLevel" required>
-                                    <option value="">اختر المستوى</option>
-                                    <option value="beginner">مبتدئ</option>
-                                    <option value="intermediate">متوسط</option>
-                                    <option value="advanced">متقدم</option>
-                                    <option value="review">مراجعة</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="form-label">الحد الأقصى للطلاب</label>
-                                <input type="number" class="form-control" id="maxStudents" min="1" max="30" value="15">
-                            </div>
-                        </div>
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="form-label">مكان الحلقة</label>
-                                <input type="text" class="form-control" id="location" required>
-                            </div>
-                        </div>
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="form-label">الحالة</label>
-                                <select class="form-control" id="halaqaStatus" required>
-                                    <option value="active">نشطة</option>
-                                    <option value="inactive">غير نشطة</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">أيام الحلقة</label>
-                        <div style="display: flex; flex-wrap: wrap; gap: 15px; margin-top: 10px;">
-                            <label style="display: flex; align-items: center; gap: 5px;">
-                                <input type="checkbox" name="days" value="saturday"> السبت
-                            </label>
-                            <label style="display: flex; align-items: center; gap: 5px;">
-                                <input type="checkbox" name="days" value="sunday"> الأحد
-                            </label>
-                            <label style="display: flex; align-items: center; gap: 5px;">
-                                <input type="checkbox" name="days" value="monday"> الإثنين
-                            </label>
-                            <label style="display: flex; align-items: center; gap: 5px;">
-                                <input type="checkbox" name="days" value="tuesday"> الثلاثاء
-                            </label>
-                            <label style="display: flex; align-items: center; gap: 5px;">
-                                <input type="checkbox" name="days" value="wednesday"> الأربعاء
-                            </label>
-                            <label style="display: flex; align-items: center; gap: 5px;">
-                                <input type="checkbox" name="days" value="thursday"> الخميس
-                            </label>
-                            <label style="display: flex; align-items: center; gap: 5px;">
-                                <input type="checkbox" name="days" value="friday"> الجمعة
-                            </label>
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="form-label">وقت البدء</label>
-                                <input type="time" class="form-control" id="startTime" required>
-                            </div>
-                        </div>
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="form-label">وقت الانتهاء</label>
-                                <input type="time" class="form-control" id="endTime" required>
-                            </div>
-                        </div>
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="form-label">مدة الجلسة (دقيقة)</label>
-                                <input type="number" class="form-control" id="sessionDuration" min="30" max="180" value="60">
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">وصف الحلقة</label>
-                        <textarea class="form-control form-textarea" id="halaqaDescription" rows="3"></textarea>
-                    </div>
-                    
-                    <div class="form-actions">
-                        <button type="button" class="btn btn-secondary" id="cancelHalaqaBtn">إلغاء</button>
-                        <button type="submit" class="btn" id="saveHalaqaBtn">حفظ الحلقة</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
                 <!-- صفحة المعلمين -->
                 <div id="teachers" class="page-section">
                     <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
@@ -2577,162 +2353,244 @@
                 </div>
                 
                 <!-- صفحة الواجبات -->
-                <!-- <div id="assignments" class="page-section">
-                    <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-                        <h2 style="font-size: 28px; font-weight: 700; color: var(--dark-color);">
-                            <i class="fas fa-tasks" style="color: var(--primary-color); margin-left: 10px;"></i>
-                            إدارة الواجبات
-                        </h2>
-                        <button class="btn btn-add" onclick="addAssignment()">
-                            <i class="fas fa-plus"></i> إضافة واجب
-                        </button>
-                    </div>
-                    
-                    <div class="filters">
-                        <div class="filter-row">
-                            <div class="filter-group">
-                                <label class="filter-label">البحث</label>
-                                <input type="text" class="filter-input" id="assignmentSearch" placeholder="ابحث عن واجب...">
-                            </div>
-                            <div class="filter-group">
-                                <label class="filter-label">الحلقة</label>
-                                <select class="filter-select" id="assignmentHalaqa">
-                                    <option value="">جميع الحلقات</option>
-                                </select>
-                            </div>
-                            <div class="filter-group">
-                                <label class="filter-label">حالة التقييم</label>
-                                <select class="filter-select" id="assignmentGrade">
-                                    <option value="">جميع الحالات</option>
-                                    <option value="pending">لم يتم التقييم</option>
-                                    <option value="excellent">ممتاز</option>
-                                    <option value="good">جيد</option>
-                                    <option value="average">متوسط</option>
-                                    <option value="poor">ضعيف</option>
-                                </select>
-                            </div>
-                            <div class="filter-group">
-                                <label class="filter-label">&nbsp;</label>
-                                <button class="btn" style="width: 100%;" onclick="filterAssignments()">
-                                    <i class="fas fa-search"></i> بحث
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="assignments-grid" id="assignmentsGrid">
-                    </div>
-                    
-                    <div class="stats-cards">
-                        <div class="stat-card">
-                            <div class="stat-icon" style="background-color: #3498db;">
-                                <i class="fas fa-tasks"></i>
-                            </div>
-                            <div class="stat-info">
-                                <div class="stat-value">48</div>
-                                <div class="stat-label">عدد الواجبات</div>
-                            </div>
-                        </div>
-                        
-                        <div class="stat-card">
-                            <div class="stat-icon" style="background-color: #2ecc71;">
-                                <i class="fas fa-check-circle"></i>
-                            </div>
-                            <div class="stat-info">
-                                <div class="stat-value">35</div>
-                                <div class="stat-label">واجبات مكتملة</div>
-                            </div>
-                        </div>
-                        
-                        <div class="stat-card">
-                            <div class="stat-icon" style="background-color: #f39c12;">
-                                <i class="fas fa-clock"></i>
-                            </div>
-                            <div class="stat-info">
-                                <div class="stat-value">8</div>
-                                <div class="stat-label">واجبات متأخرة</div>
-                            </div>
-                        </div>
-                        
-                        <div class="stat-card">
-                            <div class="stat-icon" style="background-color: #e74c3c;">
-                                <i class="fas fa-times-circle"></i>
-                            </div>
-                            <div class="stat-info">
-                                <div class="stat-value">5</div>
-                                <div class="stat-label">واجبات غير مسلمة</div>
-                            </div>
-                        </div>
-                    </div>
-                </div> -->
-
-
-                <!-- إضافة هذا الكود داخل صفحة الحضور بعد الفلاتر -->
-<div id="daily-attendance-section" class="page-section">
+              <!-- استبدال صفحة الواجبات الحالية بالكود التالي -->
+<div id="assignments" class="page-section">
     <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
         <h2 style="font-size: 28px; font-weight: 700; color: var(--dark-color);">
-            <i class="fas fa-calendar-day" style="color: var(--primary-color); margin-left: 10px;"></i>
-            أخذ الغياب اليومي
+            <i class="fas fa-tasks" style="color: var(--primary-color); margin-left: 10px;"></i>
+            نظام الواجبات والتقييم
         </h2>
-        <button class="btn btn-add" onclick="loadDailyAttendance()">
-            <i class="fas fa-sync-alt"></i> تحديث
-        </button>
+        <div class="action-buttons">
+            <button class="btn btn-add" onclick="openAssignmentWizard()">
+                <i class="fas fa-plus"></i> واجب جديد
+            </button>
+            <button class="btn btn-secondary" onclick="viewStudentProgress()">
+                <i class="fas fa-chart-line"></i> تقارير التقدم
+            </button>
+        </div>
     </div>
     
-    <!-- فلترة اليوم -->
-    <div class="filters">
-        <div class="filter-row">
-            <div class="filter-group">
-                <label class="filter-label">اختر التاريخ</label>
-                <input type="date" class="filter-input" id="dailyAttendanceDate" value="">
+    <!-- واجهة معالج الواجبات -->
+    <div id="assignmentWizard" style="display: none; margin-bottom: 30px;">
+        <div class="card" style="border: 2px solid var(--primary-color);">
+            <div class="card-header" style="background-color: var(--light-color);">
+                <h3 style="color: var(--primary-color);">
+                    <i class="fas fa-magic"></i> معالج إضافة الواجبات
+                </h3>
+                <button class="btn btn-small btn-danger" onclick="closeAssignmentWizard()">
+                    <i class="fas fa-times"></i> إلغاء
+                </button>
             </div>
-            <div class="filter-group">
-                <label class="filter-label">اختر الحلقة</label>
-                <select class="filter-select" id="dailyAttendanceHalaqa" onchange="loadHalaqaStudentsForAttendance()">
+            <div class="card-body" style="padding: 20px;">
+                <!-- الخطوة 1: اختيار الحلقة -->
+                <div id="wizardStep1" class="wizard-step active">
+                    <h4 style="margin-bottom: 15px; color: var(--dark-color);">الخطوة 1: اختيار الحلقة</h4>
+                    <div class="form-group">
+                        <label class="form-label">اختر الحلقة</label>
+                        <select class="form-control" id="wizardHalaqa" onchange="loadWizardStudents()">
+                            <option value="">اختر الحلقة</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-secondary" onclick="closeAssignmentWizard()">إلغاء</button>
+                        <button class="btn" onclick="nextWizardStep()">التالي</button>
+                    </div>
+                </div>
+                
+                <!-- الخطوة 2: اختيار الطلاب -->
+                <div id="wizardStep2" class="wizard-step" style="display: none;">
+                    <h4 style="margin-bottom: 15px; color: var(--dark-color);">الخطوة 2: اختيار الطلاب</h4>
+                    <div class="form-group">
+                        <label class="form-label">اختر الطلاب</label>
+                        <div id="wizardStudentsList" style="max-height: 300px; overflow-y: auto; border: 1px solid var(--border-color); padding: 15px; border-radius: var(--radius);">
+                            <!-- سيتم تعبئته ديناميكياً -->
+                        </div>
+                        <div style="margin-top: 10px;">
+                            <button type="button" class="btn btn-small btn-secondary" onclick="selectAllStudents()">
+                                <i class="fas fa-check-square"></i> اختيار الكل
+                            </button>
+                            <button type="button" class="btn btn-small btn-secondary" onclick="deselectAllStudents()">
+                                <i class="fas fa-times-circle"></i> إلغاء الكل
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-secondary" onclick="prevWizardStep()">السابق</button>
+                        <button class="btn" onclick="nextWizardStep()">التالي</button>
+                    </div>
+                </div>
+                
+                <!-- الخطوة 3: تفاصيل الواجب -->
+                <div id="wizardStep3" class="wizard-step" style="display: none;">
+                    <h4 style="margin-bottom: 15px; color: var(--dark-color);">الخطوة 3: تفاصيل الواجب</h4>
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">عنوان الواجب</label>
+                                <input type="text" class="form-control" id="wizardAssignmentTitle" placeholder="مثال: حفظ سورة البقرة من آية ١ إلى ١٠">
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">نوع الواجب</label>
+                                <select class="form-control" id="wizardAssignmentType">
+                                    <option value="memorization">حفظ</option>
+                                    <option value="review">مراجعة</option>
+                                    <option value="tajweed">تجويد</option>
+                                    <option value="recitation">تلاوة</option>
+                                    <option value="test">اختبار</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">تاريخ الإعطاء</label>
+                                <input type="date" class="form-control" id="wizardGivenDate" value="">
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">تاريخ التسليم</label>
+                                <input type="date" class="form-control" id="wizardDueDate" value="">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">تفاصيل الواجب</label>
+                        <textarea class="form-control form-textarea" id="wizardAssignmentDetails" rows="4" placeholder="اكتب تفاصيل الواجب المطلوب..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">ملاحظات إضافية</label>
+                        <textarea class="form-control form-textarea" id="wizardAssignmentNotes" rows="2" placeholder="ملاحظات للمعلم..."></textarea>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button class="btn btn-secondary" onclick="prevWizardStep()">السابق</button>
+                        <button class="btn btn-success" onclick="submitAssignmentWizard()">
+                            <i class="fas fa-save"></i> حفظ الواجب
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- نظام التقييم المحسن -->
+    <div id="gradingSection" style="margin-bottom: 30px;">
+        <h3 style="margin-bottom: 20px; color: var(--dark-color);">
+            <i class="fas fa-star" style="color: var(--primary-color);"></i> نظام التقييم
+        </h3>
+        
+        <div class="cards-grid">
+            <!-- بطاقة تقييم سريع -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-avatar" style="background-color: #3498db;">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                </div>
+                <h3 class="card-title">التقييم السريع</h3>
+                <p class="card-subtitle">تقييم واجبات متعددة بسرعة</p>
+                
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label class="form-label">اختر الحلقة</label>
+                    <select class="form-control" id="quickGradeHalaqa" onchange="loadQuickGradeAssignments()">
+                        <option value="">اختر الحلقة</option>
+                    </select>
+                </div>
+                
+                <div id="quickGradeAssignments" style="max-height: 200px; overflow-y: auto;">
+                    <!-- ستظهر الواجبات هنا -->
+                </div>
+                
+                <div class="card-actions">
+                    <button class="btn btn-success" onclick="openQuickGrading()">
+                        <i class="fas fa-star"></i> بدء التقييم
+                    </button>
+                </div>
+            </div>
+            
+            <!-- بطاقة معايير التقييم -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-avatar" style="background-color: #9b59b6;">
+                        <i class="fas fa-clipboard-check"></i>
+                    </div>
+                </div>
+                <h3 class="card-title">معايير التقييم</h3>
+                <p class="card-subtitle">معايير تقييم الواجبات</p>
+                
+                <div class="card-info">
+                    <div class="card-info-item">
+                        <span class="card-info-label">ممتاز (95-100):</span>
+                        <span class="card-info-value" style="color: #27ae60;">إتقان تام</span>
+                    </div>
+                    <div class="card-info-item">
+                        <span class="card-info-label">جيد جداً (85-94):</span>
+                        <span class="card-info-value" style="color: #3498db;">أداء ممتاز</span>
+                    </div>
+                    <div class="card-info-item">
+                        <span class="card-info-label">جيد (75-84):</span>
+                        <span class="card-info-value" style="color: #f39c12;">مقبول</span>
+                    </div>
+                    <div class="card-info-item">
+                        <span class="card-info-label">ضعيف (أقل من 75):</span>
+                        <span class="card-info-value" style="color: #e74c3c;">يحتاج تحسين</span>
+                    </div>
+                </div>
+                
+                <div class="card-actions">
+                    <button class="btn" onclick="viewGradingCriteria()">
+                        <i class="fas fa-eye"></i> عرض التفاصيل
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- جدول الواجبات -->
+    <div class="table-container">
+        <div class="table-header">
+            <h3 class="table-title">قائمة الواجبات</h3>
+            <div class="action-buttons">
+                <select class="filter-select" id="assignmentFilterStatus" style="width: 150px;" onchange="filterAssignments()">
+                    <option value="">جميع الحالات</option>
+                    <option value="pending">معلقة</option>
+                    <option value="submitted">مقدمة</option>
+                    <option value="graded">مقيمة</option>
+                    <option value="late">متأخرة</option>
+                </select>
+                <select class="filter-select" id="assignmentFilterHalaqa" style="width: 150px;" onchange="filterAssignments()">
                     <option value="">جميع الحلقات</option>
                 </select>
             </div>
-            <div class="filter-group">
-                <label class="filter-label">نوع التسجيل</label>
-                <select class="filter-select" id="attendanceType">
-                    <option value="all">جميع الحلقات</option>
-                    <option value="single">حلقة واحدة</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <label class="filter-label">&nbsp;</label>
-                <button class="btn" style="width: 100%;" onclick="showAttendanceForDate()">
-                    <i class="fas fa-search"></i> عرض
-                </button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- جدول أخذ الغياب -->
-    <div class="table-container">
-        <div class="table-header">
-            <h3 class="table-title">تسجيل الحضور اليومي</h3>
-            <div class="action-buttons">
-                <button class="btn btn-success btn-small" onclick="markAllPresent()">
-                    <i class="fas fa-check-circle"></i> جميعهم حاضرون
-                </button>
-                <button class="btn btn-danger btn-small" onclick="markAllAbsent()">
-                    <i class="fas fa-times-circle"></i> جميعهم غائبون
-                </button>
-                <button class="btn btn-primary btn-small" onclick="saveDailyAttendance()">
-                    <i class="fas fa-save"></i> حفظ الكل
-                </button>
-            </div>
         </div>
         
-        <div id="dailyAttendanceTableContainer">
-            <div class="alert alert-info">
-                <i class="fas fa-info-circle"></i>
-                <div>يرجى اختيار التاريخ والحلقة لعرض الطلاب وتسجيل الحضور</div>
-            </div>
-        </div>
+        <table id="enhancedAssignmentsTable">
+            <thead>
+                <tr>
+                    <th>الواجب</th>
+                    <th>الطالب</th>
+                    <th>الحلقة</th>
+                    <th>تاريخ التسليم</th>
+                    <th>حالة التقديم</th>
+                    <th>التقييم</th>
+                    <th>الدرجة</th>
+                    <th>الإجراءات</th>
+                </tr>
+            </thead>
+            <tbody id="assignmentsTableBody">
+                <!-- سيتم تعبئته ديناميكياً -->
+            </tbody>
+        </table>
     </div>
 </div>
+
 
 <!-- إضافة صفحة جديدة بعد صفحة الواجبات -->
 <div id="student-record" class="page-section">
@@ -2911,214 +2769,73 @@
         </div>
     </div>
 </div>
-<!-- استبدال صفحة الواجبات الحالية بالكود التالي -->
-<div id="assignments" class="page-section">
+
+
+                <!-- إضافة هذا الكود داخل صفحة الحضور بعد الفلاتر -->
+<div id="daily-attendance-section" class="page-section">
     <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
         <h2 style="font-size: 28px; font-weight: 700; color: var(--dark-color);">
-            <i class="fas fa-tasks" style="color: var(--primary-color); margin-left: 10px;"></i>
-            نظام الواجبات والتقييم
+            <i class="fas fa-calendar-day" style="color: var(--primary-color); margin-left: 10px;"></i>
+            أخذ الغياب اليومي
         </h2>
-        <div class="action-buttons">
-            <button class="btn btn-add" onclick="openAssignmentWizard()">
-                <i class="fas fa-plus"></i> واجب جديد
-            </button>
-            <button class="btn btn-secondary" onclick="viewStudentProgress()">
-                <i class="fas fa-chart-line"></i> تقارير التقدم
-            </button>
-        </div>
+        <button class="btn btn-add" onclick="loadDailyAttendance()">
+            <i class="fas fa-sync-alt"></i> تحديث
+        </button>
     </div>
     
-    <!-- واجهة معالج الواجبات -->
-    <div id="assignmentWizard" style="display: none; margin-bottom: 30px;">
-        <div class="card" style="border: 2px solid var(--primary-color);">
-            <div class="card-header" style="background-color: var(--light-color);">
-                <h3 style="color: var(--primary-color);">
-                    <i class="fas fa-magic"></i> معالج إضافة الواجبات
-                </h3>
-                <button class="btn btn-small btn-danger" onclick="closeAssignmentWizard()">
-                    <i class="fas fa-times"></i> إلغاء
+    <!-- فلترة اليوم -->
+    <div class="filters">
+        <div class="filter-row">
+            <div class="filter-group">
+                <label class="filter-label">اختر التاريخ</label>
+                <input type="date" class="filter-input" id="dailyAttendanceDate" value="">
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">اختر الحلقة</label>
+                <select class="filter-select" id="dailyAttendanceHalaqa" onchange="loadHalaqaStudentsForAttendance()">
+                    <option value="">جميع الحلقات</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">نوع التسجيل</label>
+                <select class="filter-select" id="attendanceType">
+                    <option value="all">جميع الحلقات</option>
+                    <option value="single">حلقة واحدة</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">&nbsp;</label>
+                <button class="btn" style="width: 100%;" onclick="showAttendanceForDate()">
+                    <i class="fas fa-search"></i> عرض
                 </button>
             </div>
-            <div class="card-body" style="padding: 20px;">
-                <!-- الخطوة 1: اختيار الحلقة -->
-                <div id="wizardStep1" class="wizard-step active">
-                    <h4 style="margin-bottom: 15px; color: var(--dark-color);">الخطوة 1: اختيار الحلقة</h4>
-                    <div class="form-group">
-                        <label class="form-label">اختر الحلقة</label>
-                        <select class="form-control" id="wizardHalaqa" onchange="loadWizardStudents()">
-                            <option value="">اختر الحلقة</option>
-                        </select>
-                    </div>
-                    <div class="form-actions">
-                        <button class="btn btn-secondary" onclick="closeAssignmentWizard()">إلغاء</button>
-                        <button class="btn" onclick="nextWizardStep()">التالي</button>
-                    </div>
-                </div>
-                
-                <!-- الخطوة 2: اختيار الطلاب -->
-                <div id="wizardStep2" class="wizard-step" style="display: none;">
-                    <h4 style="margin-bottom: 15px; color: var(--dark-color);">الخطوة 2: اختيار الطلاب</h4>
-                    <div class="form-group">
-                        <label class="form-label">اختر الطلاب</label>
-                        <div id="wizardStudentsList" style="max-height: 300px; overflow-y: auto; border: 1px solid var(--border-color); padding: 15px; border-radius: var(--radius);">
-                            <!-- سيتم تعبئته ديناميكياً -->
-                        </div>
-                        <div style="margin-top: 10px;">
-                            <button type="button" class="btn btn-small btn-secondary" onclick="selectAllStudents()">
-                                <i class="fas fa-check-square"></i> اختيار الكل
-                            </button>
-                            <button type="button" class="btn btn-small btn-secondary" onclick="deselectAllStudents()">
-                                <i class="fas fa-times-circle"></i> إلغاء الكل
-                            </button>
-                        </div>
-                    </div>
-                    <div class="form-actions">
-                        <button class="btn btn-secondary" onclick="prevWizardStep()">السابق</button>
-                        <button class="btn" onclick="nextWizardStep()">التالي</button>
-                    </div>
-                </div>
-                
-                <!-- الخطوة 3: تفاصيل الواجب -->
-                <div id="wizardStep3" class="wizard-step" style="display: none;">
-                    <h4 style="margin-bottom: 15px; color: var(--dark-color);">الخطوة 3: تفاصيل الواجب</h4>
-                    <div class="form-row">
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="form-label">عنوان الواجب</label>
-                                <input type="text" class="form-control" id="wizardAssignmentTitle" placeholder="مثال: حفظ سورة البقرة من آية ١ إلى ١٠">
-                            </div>
-                        </div>
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="form-label">نوع الواجب</label>
-                                <select class="form-control" id="wizardAssignmentType">
-                                    <option value="memorization">حفظ</option>
-                                    <option value="review">مراجعة</option>
-                                    <option value="tajweed">تجويد</option>
-                                    <option value="recitation">تلاوة</option>
-                                    <option value="test">اختبار</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="form-label">تاريخ الإعطاء</label>
-                                <input type="date" class="form-control" id="wizardGivenDate" value="">
-                            </div>
-                        </div>
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="form-label">تاريخ التسليم</label>
-                                <input type="date" class="form-control" id="wizardDueDate" value="">
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">تفاصيل الواجب</label>
-                        <textarea class="form-control form-textarea" id="wizardAssignmentDetails" rows="4" placeholder="اكتب تفاصيل الواجب المطلوب..."></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">ملاحظات إضافية</label>
-                        <textarea class="form-control form-textarea" id="wizardAssignmentNotes" rows="2" placeholder="ملاحظات للمعلم..."></textarea>
-                    </div>
-                    
-                    <div class="form-actions">
-                        <button class="btn btn-secondary" onclick="prevWizardStep()">السابق</button>
-                        <button class="btn btn-success" onclick="submitAssignmentWizard()">
-                            <i class="fas fa-save"></i> حفظ الواجب
-                        </button>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
     
-       <!-- فلاتر البحث -->
-                    <div class="filters">
-                        <div class="filter-row">
-                            <div class="filter-group">
-                                <label class="filter-label">البحث</label>
-                                <input type="text" class="filter-input" id="assignmentSearch" placeholder="ابحث عن واجب...">
-                            </div>
-                            <div class="filter-group">
-                                <label class="filter-label">الحلقة</label>
-                                <select class="filter-select" id="assignmentHalaqa">
-                                    <option value="">جميع الحلقات</option>
-                                    <!-- سيتم تعبئته ديناميكياً -->
-                                </select>
-                            </div>
-                            <div class="filter-group">
-                                <label class="filter-label">حالة التقييم</label>
-                                <select class="filter-select" id="assignmentGrade">
-                                    <option value="">جميع الحالات</option>
-                                    <option value="pending">لم يتم التقييم</option>
-                                    <option value="excellent">ممتاز</option>
-                                    <option value="good">جيد</option>
-                                    <option value="average">متوسط</option>
-                                    <option value="poor">ضعيف</option>
-                                </select>
-                            </div>
-                            <div class="filter-group">
-                                <label class="filter-label">&nbsp;</label>
-                                <button class="btn" style="width: 100%;" onclick="filterAssignments()">
-                                    <i class="fas fa-search"></i> بحث
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- بطاقات الواجبات -->
-                    <div class="assignments-grid" id="assignmentsGrid">
-                        <!-- سيتم تعبئته ديناميكياً -->
-                    </div>
-                    
-                    <!-- إحصائيات الواجبات -->
-                    <div class="stats-cards">
-                        <div class="stat-card">
-                            <div class="stat-icon" style="background-color: #3498db;">
-                                <i class="fas fa-tasks"></i>
-                            </div>
-                            <div class="stat-info">
-                                <div class="stat-value">48</div>
-                                <div class="stat-label">عدد الواجبات</div>
-                            </div>
-                        </div>
-                        
-                        <div class="stat-card">
-                            <div class="stat-icon" style="background-color: #2ecc71;">
-                                <i class="fas fa-check-circle"></i>
-                            </div>
-                            <div class="stat-info">
-                                <div class="stat-value">35</div>
-                                <div class="stat-label">واجبات مكتملة</div>
-                            </div>
-                        </div>
-                        
-                        <div class="stat-card">
-                            <div class="stat-icon" style="background-color: #f39c12;">
-                                <i class="fas fa-clock"></i>
-                            </div>
-                            <div class="stat-info">
-                                <div class="stat-value">8</div>
-                                <div class="stat-label">واجبات متأخرة</div>
-                            </div>
-                        </div>
-                        
-                        <div class="stat-card">
-                            <div class="stat-icon" style="background-color: #e74c3c;">
-                                <i class="fas fa-times-circle"></i>
-                            </div>
-                            <div class="stat-info">
-                                <div class="stat-value">5</div>
-                                <div class="stat-label">واجبات غير مسلمة</div>
-                            </div>
-                        </div>
-                    </div>
+    <!-- جدول أخذ الغياب -->
+    <div class="table-container">
+        <div class="table-header">
+            <h3 class="table-title">تسجيل الحضور اليومي</h3>
+            <div class="action-buttons">
+                <button class="btn btn-success btn-small" onclick="markAllPresent()">
+                    <i class="fas fa-check-circle"></i> جميعهم حاضرون
+                </button>
+                <button class="btn btn-danger btn-small" onclick="markAllAbsent()">
+                    <i class="fas fa-times-circle"></i> جميعهم غائبون
+                </button>
+                <button class="btn btn-primary btn-small" onclick="saveDailyAttendance()">
+                    <i class="fas fa-save"></i> حفظ الكل
+                </button>
+            </div>
+        </div>
+        
+        <div id="dailyAttendanceTableContainer">
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i>
+                <div>يرجى اختيار التاريخ والحلقة لعرض الطلاب وتسجيل الحضور</div>
+            </div>
+        </div>
+    </div>
 </div>
                 
                 <!-- صفحة التقارير -->
@@ -3202,131 +2919,7 @@
             </div>
         </div>
     </div>
-        <div class="modal" id="studentModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title" id="studentModalTitle">إضافة طالب جديد</h3>
-                <button class="modal-close" id="closeStudentModal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <form id="studentForm">
-                    <div class="form-row">
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="form-label">الاسم الأول</label>
-                                <input type="text" class="form-control" id="firstName" required>
-                            </div>
-                        </div>
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="form-label">اسم الأب</label>
-                                <input type="text" class="form-control" id="fatherName" required>
-                            </div>
-                        </div>
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="form-label">اسم الجد</label>
-                                <input type="text" class="form-control" id="grandfatherName" required>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="form-label">اسم العائلة</label>
-                                <input type="text" class="form-control" id="familyName" required>
-                            </div>
-                        </div>
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="form-label">تاريخ الميلاد</label>
-                                <input type="date" class="form-control" id="birthDate" required>
-                            </div>
-                        </div>
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="form-label">الجنس</label>
-                                <select class="form-control" id="gender" required>
-                                    <option value="">اختر الجنس</option>
-                                    <option value="male">ذكر</option>
-                                    <option value="female">أنثى</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="form-label">رقم الهاتف</label>
-                                <input type="tel" class="form-control" id="phone" required>
-                            </div>
-                        </div>
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="form-label">البريد الإلكتروني</label>
-                                <input type="email" class="form-control" id="email">
-                            </div>
-                        </div>
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="form-label">العنوان</label>
-                                <input type="text" class="form-control" id="address">
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="form-label">الحلقة</label>
-                                <select class="form-control" id="halaqaId" required>
-                                    <option value="">اختر الحلقة</option>
-                                    <option value="1">حلقة الفجر</option>
-                                    <option value="2">حلقة المساء</option>
-                                    <option value="3">حلقة المتوسطين</option>
-                                    <option value="4">حلقة الحفظ الجديد</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="form-label">مستوى الحفظ</label>
-                                <select class="form-control" id="memorizationLevel" required>
-                                    <option value="">اختر المستوى</option>
-                                    <option value="beginner">مبتدئ</option>
-                                    <option value="intermediate">متوسط</option>
-                                    <option value="advanced">متقدم</option>
-                                    <option value="review">مراجعة</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="form-label">الحالة</label>
-                                <select class="form-control" id="status" required>
-                                    <option value="active">نشط</option>
-                                    <option value="inactive">موقوف</option>
-                                    <option value="pending">متأخر</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">ملاحظات</label>
-                        <textarea class="form-control form-textarea" id="notes" rows="3"></textarea>
-                    </div>
-                    
-                    <div class="form-actions">
-                        <button type="button" class="btn btn-secondary" id="cancelStudentBtn">إلغاء</button>
-                        <button type="submit" class="btn" id="saveStudentBtn">حفظ الطالب</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+    
     <!-- نموذج تسجيل حضور المعلم -->
     <div class="modal" id="teacherAttendanceModal">
         <div class="modal-content">
@@ -3673,8 +3266,233 @@
             ]
         };
 
+
+        // إضافة هذه البيانات إلى systemData الموجودة
+systemData.students = [
+    {
+        id: 1,
+        name: "محمد أحمد",
+        halaqaId: 1,
+        halaqaName: "حلقة الفجر",
+        level: "5 أجزاء",
+        phone: "0551234567",
+        status: "active",
+        joinDate: "2023-01-15",
+        attendance: 95
+    },
+    {
+        id: 2,
+        name: "سارة عبدالله",
+        halaqaId: 2,
+        halaqaName: "حلقة المساء",
+        level: "3 أجزاء",
+        phone: "0552345678",
+        status: "active",
+        joinDate: "2023-02-20",
+        attendance: 88
+    },
+    {
+        id: 3,
+        name: "يوسف خالد",
+        halaqaId: 1,
+        halaqaName: "حلقة الفجر",
+        level: "10 أجزاء",
+        phone: "0553456789",
+        status: "active",
+        joinDate: "2022-11-10",
+        attendance: 75
+    },
+    {
+        id: 4,
+        name: "فاطمة سعيد",
+        halaqaId: 3,
+        halaqaName: "حلقة المتوسطين",
+        level: "جزء واحد",
+        phone: "0554567890",
+        status: "active",
+        joinDate: "2023-03-05",
+        attendance: 92
+    },
+    {
+        id: 5,
+        name: "خالد سليمان",
+        halaqaId: 2,
+        halaqaName: "حلقة المساء",
+        level: "8 أجزاء",
+        phone: "0555678901",
+        status: "active",
+        joinDate: "2023-04-18",
+        attendance: 96
+    },
+    {
+        id: 6,
+        name: "عمر محمد",
+        halaqaId: 3,
+        halaqaName: "حلقة المتوسطين",
+        level: "خاتم",
+        phone: "0556789012",
+        status: "active",
+        joinDate: "2022-09-12",
+        attendance: 85
+    },
+    {
+        id: 7,
+        name: "ريماس نواف",
+        halaqaId: 1,
+        halaqaName: "حلقة الفجر",
+        level: "2 أجزاء",
+        phone: "0557890123",
+        status: "active",
+        joinDate: "2023-05-22",
+        attendance: 90
+    }
+];
+
+systemData.halaqat = [
+    { 
+        id: 1, 
+        name: "حلقة الفجر", 
+        teacher: "أحمد محمد", 
+        level: "متوسط", 
+        studentCount: 3, 
+        maxStudents: 15, 
+        days: ["السبت", "الإثنين", "الأربعاء"], 
+        time: "05:30 - 06:30" 
+    },
+    { 
+        id: 2, 
+        name: "حلقة المساء", 
+        teacher: "سعيد خالد", 
+        level: "مبتدئ", 
+        studentCount: 2, 
+        maxStudents: 15, 
+        days: ["الأحد", "الثلاثاء", "الخميس"], 
+        time: "18:00 - 19:00" 
+    },
+    { 
+        id: 3, 
+        name: "حلقة المتوسطين", 
+        teacher: "محمد علي", 
+        level: "متقدم", 
+        studentCount: 2, 
+        maxStudents: 12, 
+        days: ["السبت", "الإثنين", "الأربعاء"], 
+        time: "17:00 - 18:00" 
+    }
+];
+
+systemData.assignments = [
+    {
+        id: 1,
+        studentId: 1,
+        studentName: "محمد أحمد",
+        halaqaId: 1,
+        halaqaName: "حلقة الفجر",
+        title: "حفظ سورة الفاتحة",
+        type: "memorization",
+        description: "حفظ سورة الفاتحة كاملة مع التجويد",
+        givenDate: "2023-10-01",
+        dueDate: "2023-10-08",
+        submittedDate: "2023-10-07",
+        submittedWork: "تم الحفظ بنجاح",
+        grade: "excellent",
+        score: 98,
+        feedback: "أداء ممتاز، حفظ متقن",
+        status: "graded"
+    },
+    {
+        id: 2,
+        studentId: 1,
+        studentName: "محمد أحمد",
+        halaqaId: 1,
+        halaqaName: "حلقة الفجر",
+        title: "مراجعة جزء عم",
+        type: "review",
+        description: "مراجعة الجزء الأخير من القرآن",
+        givenDate: "2023-10-10",
+        dueDate: "2023-10-17",
+        submittedDate: "2023-10-16",
+        submittedWork: "تمت المراجعة",
+        grade: "good",
+        score: 85,
+        feedback: "جيد جداً مع بعض الأخطاء البسيطة",
+        status: "graded"
+    },
+    {
+        id: 3,
+        studentId: 2,
+        studentName: "سارة عبدالله",
+        halaqaId: 2,
+        halaqaName: "حلقة المساء",
+        title: "أحكام النون الساكنة والتنوين",
+        type: "tajweed",
+        description: "دراسة أحكام النون الساكنة والتنوين",
+        givenDate: "2023-10-05",
+        dueDate: "2023-10-12",
+        submittedDate: "2023-10-15",
+        submittedWork: "متأخر في التسليم",
+        grade: "average",
+        score: 75,
+        feedback: "متأخر في التسليم ولكن الفهم جيد",
+        status: "graded"
+    },
+    {
+        id: 4,
+        studentId: 3,
+        studentName: "يوسف خالد",
+        halaqaId: 1,
+        halaqaName: "حلقة الفجر",
+        title: "تلاوة سورة البقرة",
+        type: "recitation",
+        description: "تلاوة الصفحات الأولى من سورة البقرة",
+        givenDate: "2023-10-15",
+        dueDate: "2023-10-22",
+        submittedDate: "",
+        submittedWork: "",
+        grade: "",
+        score: 0,
+        feedback: "",
+        status: "pending"
+    },
+    {
+        id: 5,
+        studentId: 4,
+        studentName: "فاطمة سعيد",
+        halaqaId: 3,
+        halaqaName: "حلقة المتوسطين",
+        title: "اختبار شهري",
+        type: "test",
+        description: "اختبار في المحفوظات والأحكام",
+        givenDate: "2023-10-20",
+        dueDate: "2023-10-25",
+        submittedDate: "2023-10-24",
+        submittedWork: "تم الاختبار",
+        grade: "excellent",
+        score: 95,
+        feedback: "نتيجة ممتازة",
+        status: "graded"
+    },
+    {
+        id: 6,
+        studentId: 5,
+        studentName: "خالد سليمان",
+        halaqaId: 2,
+        halaqaName: "حلقة المساء",
+        title: "حفظ سورة الكهف",
+        type: "memorization",
+        description: "حفظ أول 10 آيات من سورة الكهف",
+        givenDate: "2023-10-18",
+        dueDate: "2023-10-25",
+        submittedDate: "",
+        submittedWork: "",
+        grade: "",
+        score: 0,
+        feedback: "",
+        status: "pending"
+    }
+];
         // متغيرات النظام
-        // let currentHalaqaId = null;
+        let currentHalaqaId = null;
         let currentAssignmentId = null;
         let currentGradeAssignmentId = null;
 
@@ -3750,6 +3568,8 @@
 
         // تهيئة النماذج المنبثقة
         function initModals() {
+
+
             // نموذج الحضور
             document.getElementById('attendanceForm').addEventListener('submit', (e) => saveAttendance(e));
             document.getElementById('teacherAttendanceForm').addEventListener('submit', (e) => saveTeacherAttendance(e));
@@ -5143,8 +4963,7 @@
         // متغيرات النظام
         let currentStudentId = null;
         let currentTeacherId = null;
-        let currentHalaqaId = null;
-
+      
         // تهيئة النظام
         document.addEventListener('DOMContentLoaded', function() {
             initNavigation();
@@ -5198,34 +5017,34 @@
         }
 
         // تهيئة النماذج المنبثقة
-        function initModals() {
-            // نموذج الطلاب
-            document.getElementById('addStudentBtn').addEventListener('click', () => openStudentModal());
-            document.getElementById('closeStudentModal').addEventListener('click', () => closeStudentModal());
-            document.getElementById('cancelStudentBtn').addEventListener('click', () => closeStudentModal());
-            document.getElementById('studentForm').addEventListener('submit', (e) => saveStudent(e));
+        // function initModals() {
+        //     // نموذج الطلاب
+        //     document.getElementById('addStudentBtn').addEventListener('click', () => openStudentModal());
+        //     document.getElementById('closeStudentModal').addEventListener('click', () => closeStudentModal());
+        //     document.getElementById('cancelStudentBtn').addEventListener('click', () => closeStudentModal());
+        //     document.getElementById('studentForm').addEventListener('submit', (e) => saveStudent(e));
             
-            // نموذج المعلمين
-            document.getElementById('addTeacherBtn').addEventListener('click', () => openTeacherModal());
-            document.getElementById('closeTeacherModal').addEventListener('click', () => closeTeacherModal());
-            document.getElementById('cancelTeacherBtn').addEventListener('click', () => closeTeacherModal());
-            document.getElementById('teacherForm').addEventListener('submit', (e) => saveTeacher(e));
+        //     // نموذج المعلمين
+        //     document.getElementById('addTeacherBtn').addEventListener('click', () => openTeacherModal());
+        //     document.getElementById('closeTeacherModal').addEventListener('click', () => closeTeacherModal());
+        //     document.getElementById('cancelTeacherBtn').addEventListener('click', () => closeTeacherModal());
+        //     document.getElementById('teacherForm').addEventListener('submit', (e) => saveTeacher(e));
             
-            // نموذج الحلقات
-            document.getElementById('addHalaqaBtn').addEventListener('click', () => openHalaqaModal());
-            document.getElementById('closeHalaqaModal').addEventListener('click', () => closeHalaqaModal());
-            document.getElementById('cancelHalaqaBtn').addEventListener('click', () => closeHalaqaModal());
-            document.getElementById('halaqaForm').addEventListener('submit', (e) => saveHalaqa(e));
+        //     // نموذج الحلقات
+        //     document.getElementById('addHalaqaBtn').addEventListener('click', () => openHalaqaModal());
+        //     document.getElementById('closeHalaqaModal').addEventListener('click', () => closeHalaqaModal());
+        //     document.getElementById('cancelHalaqaBtn').addEventListener('click', () => closeHalaqaModal());
+        //     document.getElementById('halaqaForm').addEventListener('submit', (e) => saveHalaqa(e));
             
-            // إغلاق النماذج عند النقر خارجها
-            document.querySelectorAll('.modal').forEach(modal => {
-                modal.addEventListener('click', function(e) {
-                    if (e.target === this) {
-                        this.classList.remove('active');
-                    }
-                });
-            });
-        }
+        //     // إغلاق النماذج عند النقر خارجها
+        //     document.querySelectorAll('.modal').forEach(modal => {
+        //         modal.addEventListener('click', function(e) {
+        //             if (e.target === this) {
+        //                 this.classList.remove('active');
+        //             }
+        //         });
+        //     });
+        // }
 
         // تحميل الطلاب
         function loadStudents() {
@@ -5838,7 +5657,8 @@
                 });
             }
         });
-    // إضافة هذه الدوال إلى كود JavaScript الموجود
+   
+   // إضافة هذه الدوال إلى كود JavaScript الموجود
 
 // نظام أخذ الغياب اليومي
 function loadHalaqaStudentsForAttendance() {
@@ -6439,6 +6259,6 @@ function exportStudentRecord() {
     link.click();
     document.body.removeChild(link);
 }
-    </script>
+   </script>
 </body>
 </html>
