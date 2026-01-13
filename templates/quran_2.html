@@ -1,0 +1,1646 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام إدارة المدارس</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #1abc9c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --success-color: #2ecc71;
+            --warning-color: #e74c3c;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* الهيدر */
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px 0;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo i {
+            font-size: 2.5rem;
+            color: var(--accent-color);
+        }
+        
+        .logo h1 {
+            font-size: 1.8rem;
+        }
+        
+        .date-display {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 1.1rem;
+        }
+        
+        /* القائمة الرئيسية */
+        .main-nav {
+            background-color: var(--secondary-color);
+            border-radius: 8px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        
+        .nav-list {
+            display: flex;
+            list-style: none;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .nav-item {
+            flex: 1;
+            min-width: 140px;
+            text-align: center;
+        }
+        
+        .nav-link {
+            display: block;
+            padding: 18px 15px;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .nav-item:first-child .nav-link {
+            border-left: none;
+        }
+        
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+        
+        .nav-link.active {
+            background-color: var(--accent-color);
+        }
+        
+        .nav-link i {
+            margin-left: 8px;
+        }
+        
+        /* المحتوى الرئيسي */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .section {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            display: none;
+        }
+        
+        .section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--light-color);
+        }
+        
+        .section-header h2 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+        }
+        
+        .section-header i {
+            color: var(--accent-color);
+            font-size: 1.8rem;
+        }
+        
+        /* نماذج */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        .btn-success {
+            background-color: var(--success-color);
+        }
+        
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+        
+        .btn-warning {
+            background-color: var(--warning-color);
+        }
+        
+        .btn-warning:hover {
+            background-color: #c0392b;
+        }
+        
+        .btn-accent {
+            background-color: var(--accent-color);
+        }
+        
+        .btn-accent:hover {
+            background-color: #16a085;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+        
+        /* الجداول */
+        .table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        
+        th, td {
+            padding: 15px;
+            text-align: right;
+            border-bottom: 1px solid #eee;
+        }
+        
+        th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+        }
+        
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+        
+        .status {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .status-present {
+            background-color: rgba(46, 204, 113, 0.2);
+            color: #27ae60;
+        }
+        
+        .status-absent {
+            background-color: rgba(231, 76, 60, 0.2);
+            color: #c0392b;
+        }
+        
+        .status-pending {
+            background-color: rgba(241, 196, 15, 0.2);
+            color: #f39c12;
+        }
+        
+        /* بطاقات الإحصائيات */
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: transform 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+        }
+        
+        .stat-info h3 {
+            font-size: 2.2rem;
+            margin-bottom: 5px;
+            color: var(--primary-color);
+        }
+        
+        .stat-info p {
+            color: #666;
+            font-weight: 600;
+        }
+        
+        .card-1 .stat-icon { background-color: #3498db; }
+        .card-2 .stat-icon { background-color: #1abc9c; }
+        .card-3 .stat-icon { background-color: #9b59b6; }
+        .card-4 .stat-icon { background-color: #e74c3c; }
+        
+        /* الفوتر */
+        footer {
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 25px;
+            margin-top: 40px;
+            border-radius: 10px 10px 0 0;
+        }
+        
+        /* التجاوب مع الشاشات المختلفة */
+        @media (max-width: 992px) {
+            .nav-list {
+                flex-direction: column;
+            }
+            
+            .nav-item {
+                min-width: 100%;
+            }
+            
+            .nav-link {
+                border-left: none;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-school"></i>
+                    <h1>نظام إدارة المدارس</h1>
+                </div>
+                <div class="date-display" id="current-date"></div>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <nav class="main-nav">
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active" data-section="students">
+                        <i class="fas fa-user-graduate"></i>
+                        إضافة طالب
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-section="teachers">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                        المعلمين
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-section="circles">
+                        <i class="fas fa-users"></i>
+                        الحلقات
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-section="attendance">
+                        <i class="fas fa-clipboard-check"></i>
+                        الحضور والغياب
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-section="homework">
+                        <i class="fas fa-book"></i>
+                        الواجبات
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-section="subscriptions">
+                        <i class="fas fa-credit-card"></i>
+                        الاشتراكات
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-section="reports">
+                        <i class="fas fa-chart-bar"></i>
+                        التقارير
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        
+        <div class="stats-cards">
+            <div class="stat-card card-1">
+                <div class="stat-icon">
+                    <i class="fas fa-user-graduate"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="students-count">0</h3>
+                    <p>عدد الطلاب</p>
+                </div>
+            </div>
+            <div class="stat-card card-2">
+                <div class="stat-icon">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="teachers-count">0</h3>
+                    <p>عدد المعلمين</p>
+                </div>
+            </div>
+            <div class="stat-card card-3">
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="circles-count">0</h3>
+                    <p>عدد الحلقات</p>
+                </div>
+            </div>
+            <div class="stat-card card-4">
+                <div class="stat-icon">
+                    <i class="fas fa-clipboard-check"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="attendance-rate">0%</h3>
+                    <p>نسبة الحضور</p>
+                </div>
+            </div>
+        </div>
+        
+        <main class="main-content">
+            <!-- قسم إضافة طالب -->
+            <section id="students" class="section active">
+                <div class="section-header">
+                    <h2><i class="fas fa-user-graduate"></i> إضافة طالب جديد</h2>
+                    <i class="fas fa-user-plus"></i>
+                </div>
+                
+                <form id="add-student-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="student-name">اسم الطالب</label>
+                            <input type="text" id="student-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="student-age">العمر</label>
+                            <input type="number" id="student-age" min="5" max="20" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="student-class">الصف الدراسي</label>
+                            <select id="student-class" required>
+                                <option value="">اختر الصف</option>
+                                <option value="الصف الأول">الصف الأول</option>
+                                <option value="الصف الثاني">الصف الثاني</option>
+                                <option value="الصف الثالث">الصف الثالث</option>
+                                <option value="الصف الرابع">الصف الرابع</option>
+                                <option value="الصف الخامس">الصف الخامس</option>
+                                <option value="الصف السادس">الصف السادس</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="student-phone">رقم الهاتف</label>
+                            <input type="tel" id="student-phone" placeholder="05XXXXXXXX">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="student-address">العنوان</label>
+                        <textarea id="student-address" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save"></i> حفظ الطالب
+                        </button>
+                        <button type="reset" class="btn">
+                            <i class="fas fa-redo"></i> إعادة تعيين
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="table-container">
+                    <h3 style="margin-top: 30px; margin-bottom: 15px;">قائمة الطلاب</h3>
+                    <table id="students-table">
+                        <thead>
+                            <tr>
+                                <th>الرقم</th>
+                                <th>اسم الطالب</th>
+                                <th>العمر</th>
+                                <th>الصف</th>
+                                <th>رقم الهاتف</th>
+                                <th>تاريخ التسجيل</th>
+                            </tr>
+                        </thead>
+                        <tbody id="students-list">
+                            <!-- سيتم إضافة الطلاب هنا عبر JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            
+            <!-- قسم المعلمين -->
+            <section id="teachers" class="section">
+                <div class="section-header">
+                    <h2><i class="fas fa-chalkboard-teacher"></i> إدارة المعلمين</h2>
+                    <i class="fas fa-users-cog"></i>
+                </div>
+                
+                <form id="add-teacher-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="teacher-name">اسم المعلم</label>
+                            <input type="text" id="teacher-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="teacher-specialty">التخصص</label>
+                            <select id="teacher-specialty" required>
+                                <option value="">اختر التخصص</option>
+                                <option value="اللغة العربية">اللغة العربية</option>
+                                <option value="الرياضيات">الرياضيات</option>
+                                <option value="العلوم">العلوم</option>
+                                <option value="اللغة الإنجليزية">اللغة الإنجليزية</option>
+                                <option value="الدراسات الإسلامية">الدراسات الإسلامية</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="teacher-experience">سنوات الخبرة</label>
+                            <input type="number" id="teacher-experience" min="0" max="50" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="teacher-phone">رقم الهاتف</label>
+                            <input type="tel" id="teacher-phone" placeholder="05XXXXXXXX">
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save"></i> إضافة معلم
+                        </button>
+                        <button type="reset" class="btn">
+                            <i class="fas fa-redo"></i> إعادة تعيين
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="table-container">
+                    <h3 style="margin-top: 30px; margin-bottom: 15px;">قائمة المعلمين</h3>
+                    <table id="teachers-table">
+                        <thead>
+                            <tr>
+                                <th>الرقم</th>
+                                <th>اسم المعلم</th>
+                                <th>التخصص</th>
+                                <th>سنوات الخبرة</th>
+                                <th>رقم الهاتف</th>
+                            </tr>
+                        </thead>
+                        <tbody id="teachers-list">
+                            <!-- سيتم إضافة المعلمين هنا عبر JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            
+            <!-- قسم الحلقات -->
+            <section id="circles" class="section">
+                <div class="section-header">
+                    <h2><i class="fas fa-users"></i> إدارة الحلقات</h2>
+                    <i class="fas fa-layer-group"></i>
+                </div>
+                
+                <form id="add-circle-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="circle-name">اسم الحلقة</label>
+                            <input type="text" id="circle-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="circle-teacher">المشرف</label>
+                            <select id="circle-teacher" required>
+                                <option value="">اختر المشرف</option>
+                                <!-- سيتم تعبئة المعلمين هنا عبر JavaScript -->
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="circle-time">موعد الحلقة</label>
+                            <input type="text" id="circle-time" placeholder="مثال: الأحد والثلاثاء 4-6 مساءً">
+                        </div>
+                        <div class="form-group">
+                            <label for="circle-location">مكان الحلقة</label>
+                            <input type="text" id="circle-location" placeholder="مثال: القاعة رقم 3">
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save"></i> إضافة حلقة
+                        </button>
+                        <button type="reset" class="btn">
+                            <i class="fas fa-redo"></i> إعادة تعيين
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="table-container">
+                    <h3 style="margin-top: 30px; margin-bottom: 15px;">قائمة الحلقات</h3>
+                    <table id="circles-table">
+                        <thead>
+                            <tr>
+                                <th>الرقم</th>
+                                <th>اسم الحلقة</th>
+                                <th>المشرف</th>
+                                <th>الموعد</th>
+                                <th>المكان</th>
+                                <th>عدد الطلاب</th>
+                            </tr>
+                        </thead>
+                        <tbody id="circles-list">
+                            <!-- سيتم إضافة الحلقات هنا عبر JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            
+            <!-- قسم الحضور والغياب -->
+            <section id="attendance" class="section">
+                <div class="section-header">
+                    <h2><i class="fas fa-clipboard-check"></i> تسجيل الحضور والغياب</h2>
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="attendance-date">تاريخ الحضور</label>
+                        <input type="date" id="attendance-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="attendance-circle">الحلقة</label>
+                        <select id="attendance-circle" required>
+                            <option value="">اختر الحلقة</option>
+                            <!-- سيتم تعبئة الحلقات هنا عبر JavaScript -->
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <h3 style="margin-top: 30px; margin-bottom: 15px;">تسجيل حضور الطلاب</h3>
+                    <table id="attendance-table">
+                        <thead>
+                            <tr>
+                                <th>اسم الطالب</th>
+                                <th>الحالة</th>
+                                <th>ملاحظات</th>
+                                <th>التقييم</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attendance-list">
+                            <!-- سيتم إضافة قائمة الطلاب هنا عبر JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="action-buttons">
+                    <button id="save-attendance" class="btn btn-success">
+                        <i class="fas fa-save"></i> حفظ الحضور
+                    </button>
+                </div>
+            </section>
+            
+            <!-- قسم الواجبات -->
+            <section id="homework" class="section">
+                <div class="section-header">
+                    <h2><i class="fas fa-book"></i> إدارة الواجبات</h2>
+                    <i class="fas fa-tasks"></i>
+                </div>
+                
+                <form id="add-homework-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="homework-title">عنوان الواجب</label>
+                            <input type="text" id="homework-title" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="homework-circle">الحلقة</label>
+                            <select id="homework-circle" required>
+                                <option value="">اختر الحلقة</option>
+                                <!-- سيتم تعبئة الحلقات هنا عبر JavaScript -->
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="homework-description">وصف الواجب</label>
+                        <textarea id="homework-description" rows="4" required></textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="homework-date">تاريخ الواجب</label>
+                            <input type="date" id="homework-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="homework-due-date">موعد التسليم</label>
+                            <input type="date" id="homework-due-date" required>
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save"></i> إضافة واجب
+                        </button>
+                        <button type="reset" class="btn">
+                            <i class="fas fa-redo"></i> إعادة تعيين
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="table-container">
+                    <h3 style="margin-top: 30px; margin-bottom: 15px;">قائمة الواجبات</h3>
+                    <table id="homework-table">
+                        <thead>
+                            <tr>
+                                <th>الرقم</th>
+                                <th>عنوان الواجب</th>
+                                <th>الحلقة</th>
+                                <th>تاريخ الواجب</th>
+                                <th>موعد التسليم</th>
+                                <th>الحالة</th>
+                            </tr>
+                        </thead>
+                        <tbody id="homework-list">
+                            <!-- سيتم إضافة الواجبات هنا عبر JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            
+            <!-- قسم الاشتراكات -->
+            <section id="subscriptions" class="section">
+                <div class="section-header">
+                    <h2><i class="fas fa-credit-card"></i> إدارة الاشتراكات</h2>
+                    <i class="fas fa-money-check-alt"></i>
+                </div>
+                
+                <form id="add-subscription-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="subscription-student">الطالب</label>
+                            <select id="subscription-student" required>
+                                <option value="">اختر الطالب</option>
+                                <!-- سيتم تعبئة الطلاب هنا عبر JavaScript -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="subscription-amount">قيمة الاشتراك</label>
+                            <input type="number" id="subscription-amount" min="0" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="subscription-month">الشهر</label>
+                            <select id="subscription-month" required>
+                                <option value="">اختر الشهر</option>
+                                <option value="يناير">يناير</option>
+                                <option value="فبراير">فبراير</option>
+                                <option value="مارس">مارس</option>
+                                <option value="أبريل">أبريل</option>
+                                <option value="مايو">مايو</option>
+                                <option value="يونيو">يونيو</option>
+                                <option value="يوليو">يوليو</option>
+                                <option value="أغسطس">أغسطس</option>
+                                <option value="سبتمبر">سبتمبر</option>
+                                <option value="أكتوبر">أكتوبر</option>
+                                <option value="نوفمبر">نوفمبر</option>
+                                <option value="ديسمبر">ديسمبر</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="subscription-status">حالة الدفع</label>
+                            <select id="subscription-status" required>
+                                <option value="مدفوعة">مدفوعة</option>
+                                <option value="غير مدفوعة">غير مدفوعة</option>
+                                <option value="متأخرة">متأخرة</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save"></i> تسجيل اشتراك
+                        </button>
+                        <button type="reset" class="btn">
+                            <i class="fas fa-redo"></i> إعادة تعيين
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="table-container">
+                    <h3 style="margin-top: 30px; margin-bottom: 15px;">سجل الاشتراكات</h3>
+                    <table id="subscriptions-table">
+                        <thead>
+                            <tr>
+                                <th>الرقم</th>
+                                <th>اسم الطالب</th>
+                                <th>الشهر</th>
+                                <th>قيمة الاشتراك</th>
+                                <th>حالة الدفع</th>
+                                <th>تاريخ التسجيل</th>
+                            </tr>
+                        </thead>
+                        <tbody id="subscriptions-list">
+                            <!-- سيتم إضافة الاشتراكات هنا عبر JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            
+            <!-- قسم التقارير -->
+            <section id="reports" class="section">
+                <div class="section-header">
+                    <h2><i class="fas fa-chart-bar"></i> التقارير والإحصائيات</h2>
+                    <i class="fas fa-chart-pie"></i>
+                </div>
+                
+                <div class="stats-cards">
+                    <div class="stat-card card-1">
+                        <div class="stat-icon">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="total-subscriptions">0</h3>
+                            <p>إجمالي الاشتراكات</p>
+                        </div>
+                    </div>
+                    <div class="stat-card card-2">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="completed-homework">0%</h3>
+                            <p>نسبة إنجاز الواجبات</p>
+                        </div>
+                    </div>
+                    <div class="stat-card card-3">
+                        <div class="stat-icon">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="attendance-percentage">0%</h3>
+                            <p>متوسط الحضور</p>
+                        </div>
+                    </div>
+                    <div class="stat-card card-4">
+                        <div class="stat-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="unpaid-count">0</h3>
+                            <p>اشتراكات غير مدفوعة</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <h3 style="margin-top: 30px; margin-bottom: 15px;">تقارير مفصلة</h3>
+                    <div class="action-buttons">
+                        <button id="report-students" class="btn btn-accent">
+                            <i class="fas fa-user-graduate"></i> تقرير الطلاب
+                        </button>
+                        <button id="report-teachers" class="btn btn-accent">
+                            <i class="fas fa-chalkboard-teacher"></i> تقرير المعلمين
+                        </button>
+                        <button id="report-attendance" class="btn btn-accent">
+                            <i class="fas fa-clipboard-check"></i> تقرير الحضور
+                        </button>
+                        <button id="report-financial" class="btn btn-accent">
+                            <i class="fas fa-credit-card"></i> تقرير مالي
+                        </button>
+                    </div>
+                    
+                    <div id="report-output" style="margin-top: 30px; padding: 20px; background-color: #f8f9fa; border-radius: 8px; display: none;">
+                        <h4 id="report-title"></h4>
+                        <div id="report-content"></div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <footer>
+        <div class="container">
+            <p>نظام إدارة المدارس &copy; <span id="current-year"></span> - تم التطوير باستخدام HTML, CSS, JavaScript</p>
+            <p style="margin-top: 10px; font-size: 0.9rem;">هذا النموذج يوضح كيفية بناء نظام إدارة متكامل للمدارس والحلقات التعليمية</p>
+        </div>
+    </footer>
+
+    <script>
+        // بيانات التطبيق
+        let appData = {
+            students: [],
+            teachers: [],
+            circles: [],
+            attendance: [],
+            homework: [],
+            subscriptions: [],
+            nextStudentId: 1,
+            nextTeacherId: 1,
+            nextCircleId: 1,
+            nextHomeworkId: 1,
+            nextSubscriptionId: 1
+        };
+
+        // تهيئة التطبيق عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', function() {
+            // عرض التاريخ الحالي
+            updateDate();
+            
+            // تعيين سنة التذييل
+            document.getElementById('current-year').textContent = new Date().getFullYear();
+            
+            // تهيئة البيانات المبدئية
+            initializeSampleData();
+            
+            // تحديث الإحصائيات
+            updateStats();
+            
+            // إعداد المستمعين للأحداث
+            setupEventListeners();
+            
+            // عرض قسم إضافة الطالب كافتراضي
+            showSection('students');
+        });
+        
+        // تحديث التاريخ والوقت
+        function updateDate() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const dateString = now.toLocaleDateString('ar-EG', options);
+            document.getElementById('current-date').textContent = dateString;
+        }
+        
+        // تهيئة بيانات نموذجية
+        function initializeSampleData() {
+            // بيانات الطلاب المبدئية
+            appData.students = [
+                { id: appData.nextStudentId++, name: "أحمد محمد", age: 12, class: "الصف السادس", phone: "0512345678", address: "الرياض - حي المروج", registrationDate: "2023-09-01" },
+                { id: appData.nextStudentId++, name: "فاطمة علي", age: 10, class: "الصف الرابع", phone: "0523456789", address: "الرياض - حي النخيل", registrationDate: "2023-09-05" },
+                { id: appData.nextStudentId++, name: "خالد عبدالله", age: 11, class: "الصف الخامس", phone: "0534567890", address: "الرياض - حي الربيع", registrationDate: "2023-09-10" }
+            ];
+            
+            // بيانات المعلمين المبدئية
+            appData.teachers = [
+                { id: appData.nextTeacherId++, name: "محمد أحمد", specialty: "اللغة العربية", experience: 8, phone: "0545678901" },
+                { id: appData.nextTeacherId++, name: "سارة الخالد", specialty: "الرياضيات", experience: 5, phone: "0556789012" },
+                { id: appData.nextTeacherId++, name: "عبدالرحمن سعيد", specialty: "العلوم", experience: 10, phone: "0567890123" }
+            ];
+            
+            // بيانات الحلقات المبدئية
+            appData.circles = [
+                { id: appData.nextCircleId++, name: "حلقة القرآن الكريم", teacherId: 1, teacherName: "محمد أحمد", time: "الأحد والثلاثاء 4-6 مساءً", location: "القاعة رقم 1", studentCount: 15 },
+                { id: appData.nextCircleId++, name: "حلقة الرياضيات", teacherId: 2, teacherName: "سارة الخالد", time: "الإثنين والأربعاء 5-7 مساءً", location: "المعمل رقم 2", studentCount: 12 }
+            ];
+            
+            // بيانات الواجبات المبدئية
+            appData.homework = [
+                { id: appData.nextHomeworkId++, title: "تمارين الرياضيات - الدرس 3", circleId: 2, circleName: "حلقة الرياضيات", description: "حل التمارين من صفحة 45 إلى 50", date: "2023-10-10", dueDate: "2023-10-17", status: "مكتمل" },
+                { id: appData.nextHomeworkId++, title: "حفظ سورة البقرة الآيات 1-10", circleId: 1, circleName: "حلقة القرآن الكريم", description: "حفظ وتلاوة الآيات مع التجويد", date: "2023-10-12", dueDate: "2023-10-19", status: "قيد التنفيذ" }
+            ];
+            
+            // بيانات الاشتراكات المبدئية
+            appData.subscriptions = [
+                { id: appData.nextSubscriptionId++, studentId: 1, studentName: "أحمد محمد", month: "سبتمبر", amount: 200, status: "مدفوعة", date: "2023-09-05" },
+                { id: appData.nextSubscriptionId++, studentId: 2, studentName: "فاطمة علي", month: "سبتمبر", amount: 200, status: "مدفوعة", date: "2023-09-06" },
+                { id: appData.nextSubscriptionId++, studentId: 3, studentName: "خالد عبدالله", month: "سبتمبر", amount: 200, status: "غير مدفوعة", date: "2023-09-10" }
+            ];
+            
+            // تحديث القوائم المنسدلة
+            updateDropdowns();
+            
+            // عرض البيانات في الجداول
+            displayStudents();
+            displayTeachers();
+            displayCircles();
+            displayHomework();
+            displaySubscriptions();
+        }
+        
+        // إعداد المستمعين للأحداث
+        function setupEventListeners() {
+            // التنقل بين الأقسام
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const sectionId = this.getAttribute('data-section');
+                    
+                    // تحديث القائمة النشطة
+                    document.querySelectorAll('.nav-link').forEach(item => item.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // عرض القسم المحدد
+                    showSection(sectionId);
+                });
+            });
+            
+            // نموذج إضافة طالب
+            document.getElementById('add-student-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                addStudent();
+            });
+            
+            // نموذج إضافة معلم
+            document.getElementById('add-teacher-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                addTeacher();
+            });
+            
+            // نموذج إضافة حلقة
+            document.getElementById('add-circle-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                addCircle();
+            });
+            
+            // نموذج إضافة واجب
+            document.getElementById('add-homework-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                addHomework();
+            });
+            
+            // نموذج إضافة اشتراك
+            document.getElementById('add-subscription-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                addSubscription();
+            });
+            
+            // حفظ الحضور
+            document.getElementById('save-attendance').addEventListener('click', saveAttendance);
+            
+            // تحديث قائمة الحضور عند اختيار حلقة
+            document.getElementById('attendance-circle').addEventListener('change', updateAttendanceList);
+            
+            // أزرار التقارير
+            document.getElementById('report-students').addEventListener('click', () => generateReport('students'));
+            document.getElementById('report-teachers').addEventListener('click', () => generateReport('teachers'));
+            document.getElementById('report-attendance').addEventListener('click', () => generateReport('attendance'));
+            document.getElementById('report-financial').addEventListener('click', () => generateReport('financial'));
+        }
+        
+        // عرض قسم معين وإخفاء الآخرين
+        function showSection(sectionId) {
+            // إخفاء جميع الأقسام
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // عرض القسم المحدد
+            document.getElementById(sectionId).classList.add('active');
+            
+            // إذا كان القسم هو الحضور، قم بتحديث القائمة
+            if (sectionId === 'attendance') {
+                updateAttendanceList();
+            }
+        }
+        
+        // تحديث القوائم المنسدلة
+        function updateDropdowns() {
+            // تحديث قائمة المعلمين في قسم الحلقات
+            const teacherSelect = document.getElementById('circle-teacher');
+            teacherSelect.innerHTML = '<option value="">اختر المشرف</option>';
+            appData.teachers.forEach(teacher => {
+                const option = document.createElement('option');
+                option.value = teacher.id;
+                option.textContent = teacher.name;
+                teacherSelect.appendChild(option);
+            });
+            
+            // تحديث قائمة الحلقات في قسم الحضور والواجبات
+            const circleSelects = ['attendance-circle', 'homework-circle'];
+            circleSelects.forEach(selectId => {
+                const select = document.getElementById(selectId);
+                select.innerHTML = '<option value="">اختر الحلقة</option>';
+                appData.circles.forEach(circle => {
+                    const option = document.createElement('option');
+                    option.value = circle.id;
+                    option.textContent = circle.name;
+                    select.appendChild(option);
+                });
+            });
+            
+            // تحديث قائمة الطلاب في قسم الاشتراكات
+            const studentSelect = document.getElementById('subscription-student');
+            studentSelect.innerHTML = '<option value="">اختر الطالب</option>';
+            appData.students.forEach(student => {
+                const option = document.createElement('option');
+                option.value = student.id;
+                option.textContent = student.name;
+                studentSelect.appendChild(option);
+            });
+        }
+        
+        // تحديث الإحصائيات
+        function updateStats() {
+            // عدد الطلاب
+            document.getElementById('students-count').textContent = appData.students.length;
+            
+            // عدد المعلمين
+            document.getElementById('teachers-count').textContent = appData.teachers.length;
+            
+            // عدد الحلقات
+            document.getElementById('circles-count').textContent = appData.circles.length;
+            
+            // نسبة الحضور
+            const attendanceRate = appData.attendance.length > 0 ? 
+                Math.round((appData.attendance.filter(a => a.status === 'حاضر').length / appData.attendance.length) * 100) : 0;
+            document.getElementById('attendance-rate').textContent = `${attendanceRate}%`;
+            
+            // إجمالي الاشتراكات
+            const totalSubscriptions = appData.subscriptions.reduce((sum, sub) => sum + sub.amount, 0);
+            document.getElementById('total-subscriptions').textContent = `${totalSubscriptions} ريال`;
+            
+            // نسبة إنجاز الواجبات
+            const completedHomework = appData.homework.filter(h => h.status === 'مكتمل').length;
+            const homeworkCompletionRate = appData.homework.length > 0 ? 
+                Math.round((completedHomework / appData.homework.length) * 100) : 0;
+            document.getElementById('completed-homework').textContent = `${homeworkCompletionRate}%`;
+            
+            // نسبة الحضور في التقارير
+            document.getElementById('attendance-percentage').textContent = `${attendanceRate}%`;
+            
+            // عدد الاشتراكات غير المدفوعة
+            const unpaidCount = appData.subscriptions.filter(s => s.status === 'غير مدفوعة').length;
+            document.getElementById('unpaid-count').textContent = unpaidCount;
+        }
+        
+        // إضافة طالب جديد
+        function addStudent() {
+            const name = document.getElementById('student-name').value;
+            const age = parseInt(document.getElementById('student-age').value);
+            const studentClass = document.getElementById('student-class').value;
+            const phone = document.getElementById('student-phone').value;
+            const address = document.getElementById('student-address').value;
+            const registrationDate = new Date().toISOString().split('T')[0];
+            
+            const newStudent = {
+                id: appData.nextStudentId++,
+                name,
+                age,
+                class: studentClass,
+                phone,
+                address,
+                registrationDate
+            };
+            
+            appData.students.push(newStudent);
+            displayStudents();
+            updateDropdowns();
+            updateStats();
+            
+            // إعادة تعيين النموذج
+            document.getElementById('add-student-form').reset();
+            
+            // إشعار بنجاح الإضافة
+            alert(`تمت إضافة الطالب ${name} بنجاح!`);
+        }
+        
+        // عرض الطلاب في الجدول
+        function displayStudents() {
+            const tbody = document.getElementById('students-list');
+            tbody.innerHTML = '';
+            
+            appData.students.forEach(student => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${student.id}</td>
+                    <td>${student.name}</td>
+                    <td>${student.age}</td>
+                    <td>${student.class}</td>
+                    <td>${student.phone}</td>
+                    <td>${student.registrationDate}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        // إضافة معلم جديد
+        function addTeacher() {
+            const name = document.getElementById('teacher-name').value;
+            const specialty = document.getElementById('teacher-specialty').value;
+            const experience = parseInt(document.getElementById('teacher-experience').value);
+            const phone = document.getElementById('teacher-phone').value;
+            
+            const newTeacher = {
+                id: appData.nextTeacherId++,
+                name,
+                specialty,
+                experience,
+                phone
+            };
+            
+            appData.teachers.push(newTeacher);
+            displayTeachers();
+            updateDropdowns();
+            updateStats();
+            
+            // إعادة تعيين النموذج
+            document.getElementById('add-teacher-form').reset();
+            
+            // إشعار بنجاح الإضافة
+            alert(`تمت إضافة المعلم ${name} بنجاح!`);
+        }
+        
+        // عرض المعلمين في الجدول
+        function displayTeachers() {
+            const tbody = document.getElementById('teachers-list');
+            tbody.innerHTML = '';
+            
+            appData.teachers.forEach(teacher => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${teacher.id}</td>
+                    <td>${teacher.name}</td>
+                    <td>${teacher.specialty}</td>
+                    <td>${teacher.experience} سنة</td>
+                    <td>${teacher.phone}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        // إضافة حلقة جديدة
+        function addCircle() {
+            const name = document.getElementById('circle-name').value;
+            const teacherId = parseInt(document.getElementById('circle-teacher').value);
+            const time = document.getElementById('circle-time').value;
+            const location = document.getElementById('circle-location').value;
+            
+            // العثور على اسم المعلم
+            const teacher = appData.teachers.find(t => t.id === teacherId);
+            const teacherName = teacher ? teacher.name : 'غير محدد';
+            
+            const newCircle = {
+                id: appData.nextCircleId++,
+                name,
+                teacherId,
+                teacherName,
+                time,
+                location,
+                studentCount: 0
+            };
+            
+            appData.circles.push(newCircle);
+            displayCircles();
+            updateDropdowns();
+            updateStats();
+            
+            // إعادة تعيين النموذج
+            document.getElementById('add-circle-form').reset();
+            
+            // إشعار بنجاح الإضافة
+            alert(`تمت إضافة الحلقة ${name} بنجاح!`);
+        }
+        
+        // عرض الحلقات في الجدول
+        function displayCircles() {
+            const tbody = document.getElementById('circles-list');
+            tbody.innerHTML = '';
+            
+            appData.circles.forEach(circle => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${circle.id}</td>
+                    <td>${circle.name}</td>
+                    <td>${circle.teacherName}</td>
+                    <td>${circle.time}</td>
+                    <td>${circle.location}</td>
+                    <td>${circle.studentCount}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        // تحديث قائمة الحضور عند اختيار حلقة
+        function updateAttendanceList() {
+            const circleId = parseInt(document.getElementById('attendance-circle').value);
+            const tbody = document.getElementById('attendance-list');
+            tbody.innerHTML = '';
+            
+            if (!circleId) return;
+            
+            // العثور على الطلاب المنتمين للحلقة (في تطبيق حقيقي، سيكون هناك ربط بين الطلاب والحلقات)
+            appData.students.forEach(student => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${student.name}</td>
+                    <td>
+                        <select class="attendance-status">
+                            <option value="حاضر">حاضر</option>
+                            <option value="غائب">غائب</option>
+                            <option value="متأخر">متأخر</option>
+                        </select>
+                    </td>
+                    <td><input type="text" class="attendance-notes" placeholder="ملاحظات"></td>
+                    <td>
+                        <select class="attendance-evaluation">
+                            <option value="ممتاز">ممتاز</option>
+                            <option value="جيد جداً">جيد جداً</option>
+                            <option value="جيد">جيد</option>
+                            <option value="مقبول">مقبول</option>
+                            <option value="ضعيف">ضعيف</option>
+                        </select>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        // حفظ بيانات الحضور
+        function saveAttendance() {
+            const date = document.getElementById('attendance-date').value;
+            const circleId = parseInt(document.getElementById('attendance-circle').value);
+            
+            if (!date || !circleId) {
+                alert('يرجى تحديد التاريخ والحلقة أولاً');
+                return;
+            }
+            
+            const circle = appData.circles.find(c => c.id === circleId);
+            if (!circle) return;
+            
+            const rows = document.querySelectorAll('#attendance-list tr');
+            let attendanceCount = 0;
+            
+            rows.forEach(row => {
+                const studentName = row.cells[0].textContent;
+                const status = row.querySelector('.attendance-status').value;
+                const notes = row.querySelector('.attendance-notes').value;
+                const evaluation = row.querySelector('.attendance-evaluation').value;
+                
+                appData.attendance.push({
+                    date,
+                    circleId,
+                    circleName: circle.name,
+                    studentName,
+                    status,
+                    notes,
+                    evaluation
+                });
+                
+                if (status === 'حاضر') attendanceCount++;
+            });
+            
+            // تحديث عدد الطلاب الحاضرين في الحلقة
+            circle.studentCount = attendanceCount;
+            displayCircles();
+            updateStats();
+            
+            alert('تم حفظ بيانات الحضور بنجاح!');
+        }
+        
+        // إضافة واجب جديد
+        function addHomework() {
+            const title = document.getElementById('homework-title').value;
+            const circleId = parseInt(document.getElementById('homework-circle').value);
+            const description = document.getElementById('homework-description').value;
+            const date = document.getElementById('homework-date').value;
+            const dueDate = document.getElementById('homework-due-date').value;
+            
+            // العثور على اسم الحلقة
+            const circle = appData.circles.find(c => c.id === circleId);
+            const circleName = circle ? circle.name : 'غير محدد';
+            
+            const newHomework = {
+                id: appData.nextHomeworkId++,
+                title,
+                circleId,
+                circleName,
+                description,
+                date,
+                dueDate,
+                status: 'قيد التنفيذ'
+            };
+            
+            appData.homework.push(newHomework);
+            displayHomework();
+            updateStats();
+            
+            // إعادة تعيين النموذج
+            document.getElementById('add-homework-form').reset();
+            
+            // إشعار بنجاح الإضافة
+            alert(`تمت إضافة الواجب ${title} بنجاح!`);
+        }
+        
+        // عرض الواجبات في الجدول
+        function displayHomework() {
+            const tbody = document.getElementById('homework-list');
+            tbody.innerHTML = '';
+            
+            appData.homework.forEach(homework => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${homework.id}</td>
+                    <td>${homework.title}</td>
+                    <td>${homework.circleName}</td>
+                    <td>${homework.date}</td>
+                    <td>${homework.dueDate}</td>
+                    <td><span class="status ${homework.status === 'مكتمل' ? 'status-present' : 'status-pending'}">${homework.status}</span></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        // إضافة اشتراك جديد
+        function addSubscription() {
+            const studentId = parseInt(document.getElementById('subscription-student').value);
+            const amount = parseInt(document.getElementById('subscription-amount').value);
+            const month = document.getElementById('subscription-month').value;
+            const status = document.getElementById('subscription-status').value;
+            
+            // العثور على اسم الطالب
+            const student = appData.students.find(s => s.id === studentId);
+            const studentName = student ? student.name : 'غير محدد';
+            
+            const newSubscription = {
+                id: appData.nextSubscriptionId++,
+                studentId,
+                studentName,
+                month,
+                amount,
+                status,
+                date: new Date().toISOString().split('T')[0]
+            };
+            
+            appData.subscriptions.push(newSubscription);
+            displaySubscriptions();
+            updateStats();
+            
+            // إعادة تعيين النموذج
+            document.getElementById('add-subscription-form').reset();
+            
+            // إشعار بنجاح الإضافة
+            alert(`تم تسجيل اشتراك الطالب ${studentName} بنجاح!`);
+        }
+        
+        // عرض الاشتراكات في الجدول
+        function displaySubscriptions() {
+            const tbody = document.getElementById('subscriptions-list');
+            tbody.innerHTML = '';
+            
+            appData.subscriptions.forEach(subscription => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${subscription.id}</td>
+                    <td>${subscription.studentName}</td>
+                    <td>${subscription.month}</td>
+                    <td>${subscription.amount} ريال</td>
+                    <td><span class="status ${subscription.status === 'مدفوعة' ? 'status-present' : 'status-absent'}">${subscription.status}</span></td>
+                    <td>${subscription.date}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        // إنشاء التقارير
+        function generateReport(type) {
+            const reportOutput = document.getElementById('report-output');
+            const reportTitle = document.getElementById('report-title');
+            const reportContent = document.getElementById('report-content');
+            
+            reportOutput.style.display = 'block';
+            
+            switch(type) {
+                case 'students':
+                    reportTitle.textContent = 'تقرير الطلاب';
+                    let studentsHtml = `<p>إجمالي عدد الطلاب: ${appData.students.length}</p>`;
+                    studentsHtml += `<table class="report-table"><thead><tr><th>الاسم</th><th>الصف</th><th>العمر</th><th>تاريخ التسجيل</th></tr></thead><tbody>`;
+                    
+                    appData.students.forEach(student => {
+                        studentsHtml += `<tr><td>${student.name}</td><td>${student.class}</td><td>${student.age}</td><td>${student.registrationDate}</td></tr>`;
+                    });
+                    
+                    studentsHtml += '</tbody></table>';
+                    reportContent.innerHTML = studentsHtml;
+                    break;
+                    
+                case 'teachers':
+                    reportTitle.textContent = 'تقرير المعلمين';
+                    let teachersHtml = `<p>إجمالي عدد المعلمين: ${appData.teachers.length}</p>`;
+                    teachersHtml += `<table class="report-table"><thead><tr><th>الاسم</th><th>التخصص</th><th>سنوات الخبرة</th><th>رقم الهاتف</th></tr></thead><tbody>`;
+                    
+                    appData.teachers.forEach(teacher => {
+                        teachersHtml += `<tr><td>${teacher.name}</td><td>${teacher.specialty}</td><td>${teacher.experience}</td><td>${teacher.phone}</td></tr>`;
+                    });
+                    
+                    teachersHtml += '</tbody></table>';
+                    reportContent.innerHTML = teachersHtml;
+                    break;
+                    
+                case 'attendance':
+                    reportTitle.textContent = 'تقرير الحضور';
+                    let attendanceHtml = '';
+                    
+                    if (appData.attendance.length === 0) {
+                        attendanceHtml = '<p>لا توجد بيانات حضور حتى الآن.</p>';
+                    } else {
+                        // تجميع بيانات الحضور حسب التاريخ
+                        const attendanceByDate = {};
+                        appData.attendance.forEach(record => {
+                            if (!attendanceByDate[record.date]) {
+                                attendanceByDate[record.date] = {
+                                    present: 0,
+                                    absent: 0,
+                                    total: 0
+                                };
+                            }
+                            
+                            attendanceByDate[record.date].total++;
+                            if (record.status === 'حاضر') {
+                                attendanceByDate[record.date].present++;
+                            } else {
+                                attendanceByDate[record.date].absent++;
+                            }
+                        });
+                        
+                        attendanceHtml = '<table class="report-table"><thead><tr><th>التاريخ</th><th>الحاضرون</th><th>الغائبون</th><th>الإجمالي</th><th>نسبة الحضور</th></tr></thead><tbody>';
+                        
+                        for (const date in attendanceByDate) {
+                            const data = attendanceByDate[date];
+                            const attendanceRate = Math.round((data.present / data.total) * 100);
+                            attendanceHtml += `<tr><td>${date}</td><td>${data.present}</td><td>${data.absent}</td><td>${data.total}</td><td>${attendanceRate}%</td></tr>`;
+                        }
+                        
+                        attendanceHtml += '</tbody></table>';
+                    }
+                    
+                    reportContent.innerHTML = attendanceHtml;
+                    break;
+                    
+                case 'financial':
+                    reportTitle.textContent = 'تقرير مالي';
+                    let financialHtml = `<p>إجمالي الإشتراكات: ${appData.subscriptions.reduce((sum, sub) => sum + sub.amount, 0)} ريال</p>`;
+                    
+                    // الاشتراكات المدفوعة وغير المدفوعة
+                    const paid = appData.subscriptions.filter(s => s.status === 'مدفوعة');
+                    const unpaid = appData.subscriptions.filter(s => s.status !== 'مدفوعة');
+                    
+                    financialHtml += `<p>الاشتراكات المدفوعة: ${paid.length} (${paid.reduce((sum, sub) => sum + sub.amount, 0)} ريال)</p>`;
+                    financialHtml += `<p>الاشتراكات غير المدفوعة: ${unpaid.length} (${unpaid.reduce((sum, sub) => sum + sub.amount, 0)} ريال)</p>`;
+                    
+                    financialHtml += '<h4>تفاصيل الاشتراكات:</h4>';
+                    financialHtml += '<table class="report-table"><thead><tr><th>اسم الطالب</th><th>الشهر</th><th>المبلغ</th><th>الحالة</th></tr></thead><tbody>';
+                    
+                    appData.subscriptions.forEach(sub => {
+                        financialHtml += `<tr><td>${sub.studentName}</td><td>${sub.month}</td><td>${sub.amount} ريال</td><td>${sub.status}</td></tr>`;
+                    });
+                    
+                    financialHtml += '</tbody></table>';
+                    reportContent.innerHTML = financialHtml;
+                    break;
+            }
+        }
+    </script>
+</body>
+</html>

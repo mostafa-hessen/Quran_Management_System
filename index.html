@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>باقات نظام إدارة المدارس | مصطفى حسين رمضان</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #1abc9c;
+            --gold-color: #f39c12;
+            --silver-color: #95a5a6;
+            --bronze-color: #cd7f32;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --success-color: #2ecc71;
+            --warning-color: #e74c3c;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* الهيدر */
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            position: relative;
+        }
+        
+        .developer-info {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: right;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .developer-name {
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+        
+        .developer-contact {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .logo i {
+            font-size: 3rem;
+            color: var(--accent-color);
+        }
+        
+        .logo h1 {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+        
+        /* أزرار التحكم */
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 15px 30px;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: var(--shadow);
+        }
+        
+        .btn:hover {
+            background-color: #2980b9;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn-print {
+            background-color: var(--accent-color);
+        }
+        
+        .btn-print:hover {
+            background-color: #16a085;
+        }
+        
+        .btn-download {
+            background-color: var(--success-color);
+        }
+        
+        .btn-download:hover {
+            background-color: #27ae60;
+        }
+        
+        /* الباقات */
+        .packages {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        
+        .package {
+            background-color: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s;
+            position: relative;
+        }
+        
+        .package:hover {
+            transform: translateY(-10px);
+        }
+        
+        .package-header {
+            padding: 30px 25px;
+            color: white;
+            text-align: center;
+        }
+        
+        .package-1 .package-header {
+            background: linear-gradient(135deg, var(--bronze-color), #b56c1a);
+        }
+        
+        .package-2 .package-header {
+            background: linear-gradient(135deg, var(--silver-color), #7f8c8d);
+        }
+        
+        .package-3 .package-header {
+            background: linear-gradient(135deg, var(--accent-color), #16a085);
+        }
+        
+        .package-4 .package-header {
+            background: linear-gradient(135deg, var(--secondary-color), #2980b9);
+        }
+        
+        .package-5 .package-header {
+            background: linear-gradient(135deg, var(--gold-color), #d68910);
+        }
+        
+        .package-title {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+        
+        .package-price {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .package-price span {
+            font-size: 1.2rem;
+            font-weight: normal;
+        }
+        
+        .package-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .package-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        .package-body {
+            padding: 30px 25px;
+        }
+        
+        .features-list {
+            list-style: none;
+        }
+        
+        .feature-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        
+        .feature-item:last-child {
+            border-bottom: none;
+        }
+        
+        .feature-icon {
+            color: var(--accent-color);
+            font-size: 1.2rem;
+            margin-top: 3px;
+        }
+        
+        .feature-text {
+            flex: 1;
+        }
+        
+        .feature-included {
+            color: #27ae60;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+        
+        .feature-not-included {
+            color: #e74c3c;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+        
+        .feature-optional {
+            color: #f39c12;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+        
+        /* ملخص الأسعار */
+        .price-summary {
+            background-color: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            margin-bottom: 40px;
+        }
+        
+        .price-summary h2 {
+            color: var(--primary-color);
+            margin-bottom: 25px;
+            text-align: center;
+            font-size: 1.8rem;
+        }
+        
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .summary-table th, .summary-table td {
+            padding: 18px;
+            text-align: right;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .summary-table th {
+            background-color: #f8f9fa;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        .summary-table tr:last-child td {
+            border-bottom: none;
+            font-weight: 700;
+            font-size: 1.2rem;
+            background-color: #f8f9fa;
+        }
+        
+        .total-price {
+            color: var(--accent-color);
+            font-size: 1.5rem;
+        }
+        
+        /* فوتر */
+        footer {
+            text-align: center;
+            padding: 30px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            margin-top: 40px;
+        }
+        
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #555;
+        }
+        
+        .contact-item i {
+            color: var(--accent-color);
+        }
+        
+        .important-note {
+            background-color: #fff8e1;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border-right: 4px solid #ffc107;
+        }
+        
+        /* طباعة */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            
+            .controls, footer {
+                display: none;
+            }
+            
+            .package {
+                break-inside: avoid;
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+            
+            .package:hover {
+                transform: none;
+            }
+            
+            .developer-info {
+                position: static;
+                margin-bottom: 20px;
+            }
+        }
+        
+        /* تجاوبية */
+        @media (max-width: 768px) {
+            .packages {
+                grid-template-columns: 1fr;
+            }
+            
+            .logo {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .logo h1 {
+                font-size: 2rem;
+            }
+            
+            .developer-info {
+                position: static;
+                margin-bottom: 20px;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .contact-info {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="developer-info">
+                <div class="developer-name">مصطفى حسين رمضان</div>
+                <div class="developer-contact">
+                    <div>📱 01157787113</div>
+                    <div>✉️ mustafahussienatya@gmail.com</div>
+                </div>
+            </div>
+            
+            <div class="logo">
+                <i class="fas fa-school"></i>
+                <h1>باقات نظام إدارة المدارس</h1>
+            </div>
+            <p class="subtitle">
+                نظام متكامل لإدارة المدارس والحلقات التعليمية بباقات مرنة تناسب احتياجاتك. اختر الباقة المناسبة لمدرستك أو قم بدمج الباقات للحصول على نظام متكامل.
+            </p>
+        </header>
+        
+        <div class="controls">
+            <button class="btn btn-print" onclick="window.print()">
+                <i class="fas fa-print"></i> طباعة الباقات
+            </button>
+            <button class="btn btn-download" id="download-pdf">
+                <i class="fas fa-file-pdf"></i> تحميل PDF
+            </button>
+            <button class="btn" id="select-all">
+                <i class="fas fa-check-double"></i> اختيار جميع الباقات
+            </button>
+
+                  <a class="btn" id="" target="templates/quran_4.html">
+                <i class="fas fa-check-double"></i> تقدر تاخد فكره من هنا
+                
+                  </a>
+        </div>
+        
+        <div class="packages">
+            <!-- الباقة 1 -->
+            <div class="package package-1">
+                <div class="package-badge">الأساسيات</div>
+                <div class="package-header">
+                    <h3 class="package-title">🧱 الباقة الأساسية</h3>
+                    <div class="package-price">4,000 <span>جنيه</span></div>
+                    <p class="package-subtitle">تشغيل محلي بدون إنترنت</p>
+                </div>
+                <div class="package-body">
+                    <ul class="features-list">
+                        <li class="feature-item">
+                            <i class="fas fa-check-circle feature-icon"></i>
+                            <div class="feature-text">
+                                <span class="feature-included">تشمل:</span> إدارة الطلاب (اسم - سن - تليفون)
+                            </div>
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-check-circle feature-icon"></i>
+                            <div class="feature-text">
+                                <span class="feature-included">تشمل:</span> إدارة المعلمين وإضافة معلم
+                            </div>
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-check-circle feature-icon"></i>
+                            <div class="feature-text">
+                                <span class="feature-included">تشمل:</span> إدارة الحلقات (تحديد المواعيد - الوقت - الطلاب - المعلم)
+                            </div>
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-check-circle feature-icon"></i>
+                            <div class="feature-text">
+                                <span class="feature-included">تشمل:</span> نظام الاشتراكات (سنوي - شهري - مدفوع - متأخر - جزئي)
+                            </div>
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-check-circle feature-icon"></i>
+                            <div class="feature-text">
+                                <span class="feature-included">تشمل:</span> حضور وغياب الطلاب
+                            </div>
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-check-circle feature-icon"></i>
+                            <div class="feature-text">
+                                <span class="feature-included">تشمل:</span> صلاحيات (مدير فقط)
+                            </div>
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-times-circle feature-icon" style="color: #e74c3c;"></i>
+                            <div class="feature-text">
+                                <span class="feature-not-included">بدون:</span> رفع على الإنترنت
+                            </div>
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-times-circle feature-icon" style="color: #e74c3c;"></i>
+                            <div class="feature-text">
+                                <span class="feature-not-included">بدون:</span> تقارير متقدمة
+                            </div>
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-times-circle feature-icon" style="color: #e74c3c;"></i>
+                            <div class="feature-text">
+                                <span class="feature-not-included">بدون:</span> أولياء أمور
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- الباقة 2 -->
+            <div class="package package-2">
+                <div class="package-badge">الإضافات (1)</div>
+                <div class="package-header">
+                    <h3 class="package-title">➕ الباقة الموسعة</h3>
+                    <div class="package-price">2,000 <span>جنيه</span></div>
+                    <p class="package-subtitle">تشغيل موسع + أونلاين</p>
+                </div>
+                <div class="package-body">
+                    <ul class="features-list">
+                        <li class="feature-item">
+                            <i class="fas fa-check-circle feature-icon"></i>
+                            <div class="feature-text">
+                                <span class="feature-included">تشمل:</span> رفع الموقع على الإنترنت
+                            </div>
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-check-circle feature-icon"></i>
+                            <div class="feature-text">
+                                <span class="feature-included">تشمل:</span> صفحة المعلم (تسجيل حضور حلقته)
+                            </div>
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-check-circle feature-icon"></i>
+                            <div class="feature-text">
+                                <span class="feature-included">تشمل:</span> صفحة السكرتيرة (صلاحيات محدودة)
+                            </div>
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-check-circle feature-icon"></i>
+                            <div class="feature-text">
+                                <span class="feature-included">تشمل:</span> واجبات الطلاب في كل حلقة
+                            </div>
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-check-circle feature-icon"></i>
+                            <div class="feature-text">
+                                <span class="feature-included">تشمل:</span> تقييم الطالب في الحلقة
+                            </div>
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-plus-circle feature-icon" style="color: #f39c12;"></i>
+                            <div class="feature-text">
+                                <span class="feature-optional">اختياري:</span> تصوير واجب الطالب (+500 جنيه)
+                            </div>
+                        </li>
+                        <li class="feature-item">
+                            <div class="feature-text" style="margin-top: 10px; padding: 10px; background-color: #f8f9fa; border-radius: 8px; text-align: center; font-weight: 600;">
+                                <i class="fas fa-info-circle" style="color: #3498db; margin-left: 5px;"></i>
+                                تتطلب الباقة الأساسية
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- الباقة 3 -->
+            <div class="package package-3">
+                <div class="package-badge">المتابعة</div>
+                <div class="package-header">
+                    <h3 class="package-title">📊 باقة المتابعة</h3>
+                    <div class="package-price">1,500 <span>جنيه</span></div>
+                    <p class="package-subtitle">متابعة الأداء والانضباط</p>
+                </div>
+                <div class="package-body">
+                    <ul class="features-list">
+                        <li class="feature-item">
+                            <i class="fas fa-check-circle feature-icon"></i>
+                            <div class="feature-text">
+                                <span class="feature-included">تشمل:</span> تقارير الطلاب (حضور - التزام - تقييم)
+                            </div>
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-check-circle feature-icon"></i>
+                            <div class="feature-text">
+                                <span class="feature-included">تشمل:</span> تقارير المعلمين
+                            </div>
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-check-circle feature-icon"></i>
+                            <div class="feature-text">
+                                <span class="feature-included">تشمل:</span> حضور المعلمين
+                            </div>
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-check-circle feature-icon"></i>
+                            <div class="feature-text">
+                                <span class="feature-included">تشمل:</span> سجل الطالب (غياب - حضور - واجبات - تقييم)
+                            </div>
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-check-circle feature-icon"></i>
+                            <div class="feature-text">
+                                <span class="feature-included">تشمل:</span> معدل تقييم الطالب
+                            </div>
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-check-circle feature-icon"></i>
+                            <div class="feature-text">
+                                <span class="feature-included">تشمل:</span> طباعة التقارير (PDF)
+                            </div>
+                        </li>
+                        <li class="feature-item">
+                            <div class="feature-text" style="margin-top: 10px; padding: 10px; background-color: #f8f9fa; border-radius: 8px; text-align: center; font-weight: 600;">
+                                <i class="fas fa-info-circle" style="color: #3498db; margin-left: 5px;"></i>
+                                تتطلب الباقة الأساسية
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- الباقة 4 -->
+            <div class="package package-4">
+                <div class="package-badge">أولياء الأمور</div>
+                <div class="package-header">
+                    <h3 class="package-title">👨‍👩‍👦 باقة أولياء الأمور</h3>
+                    <div class="package-price">1,800 <span>جنيه</span></div>
+                    <p class="package-subtitle">شفافية ومتابعة من البيت</p>
+                </div>
+                <div class="package-body">
+                    <ul class="features-list">
+                        <li class="feature-item">
+                            <i class="fas fa-check-circle feature-icon"></i>
+                            <div class="feature-text">
+                                <span class="feature-included">تشمل:</span> صفحة ولي الأمر المخصصة
+                            </div>
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-check-circle feature-icon"></i>
+                            <div class="feature-text">
+                                <span class="feature-included">تشمل:</span> تقارير الابن (حضور - تقييم - واجبات)
+                            </div>
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-check-circle feature-icon"></i>
+                            <div class="feature-text">
+                                <span class="feature-included">تشمل:</span> عرض واجبات الابن
+                            </div>
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-check-circle feature-icon"></i>
+                            <div class="feature-text">
+                                <span class="feature-included">تشمل:</span> إشعارات للمتابعة
+                            </div>
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-check-circle feature-icon"></i>
+                            <div class="feature-text">
+                                <span class="feature-included">تشمل:</span> صور (الطالب + الواجب)
+                            </div>
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-check-circle feature-icon"></i>
+                            <div class="feature-text">
+                                <span class="feature-included">تشمل:</span> متابعة الاشتراكات المتأخرة (كم يوم باقي - منتهي)
+                            </div>
+                        </li>
+                        <li class="feature-item">
+                            <div class="feature-text" style="margin-top: 10px; padding: 10px; background-color: #f8f9fa; border-radius: 8px; text-align: center; font-weight: 600;">
+                                <i class="fas fa-info-circle" style="color: #3498db; margin-left: 5px;"></i>
+                                تتطلب الباقة الأساسية
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- الباقة 5 -->
+            <div class="package package-5">
+                <div class="package-badge">المحاسبة</div>
+                <div class="package-header">
+                    <h3 class="package-title">💰 باقة المحاسبة</h3>
+                    <div class="package-price">2,000 <span>جنيه</span></div>
+                    <p class="package-subtitle">فلوس واضحة وإدارة صح</p>
+                </div>
+                <div class="package-body">
+                    <ul class="features-list">
+                        <li class="feature-item">
+                            <i class="fas fa-check-circle feature-icon"></i>
+                            <div class="feature-text">
+                                <span class="feature-included">تشمل:</span> نظام مصروفات متكامل
+                            </div>
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-check-circle feature-icon"></i>
+                            <div class="feature-text">
+                                <span class="feature-included">تشمل:</span> نظام إيرادات تفصيلي
+                            </div>
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-check-circle feature-icon"></i>
+                            <div class="feature-text">
+                                <span class="feature-included">تشمل:</span> تقارير مالية شاملة
+                            </div>
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-check-circle feature-icon"></i>
+                            <div class="feature-text">
+                                <span class="feature-included">تشمل:</span> حساب الأرباح والخسائر
+                            </div>
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-check-circle feature-icon"></i>
+                            <div class="feature-text">
+                                <span class="feature-included">تشمل:</span> إشعارات لولي الأمر عن الاشتراك المتأخر (إيميل)
+                            </div>
+                        </li>
+                        <li class="feature-item">
+                            <div class="feature-text" style="margin-top: 10px; padding: 10px; background-color: #f8f9fa; border-radius: 8px; text-align: center; font-weight: 600;">
+                                <i class="fas fa-info-circle" style="color: #3498db; margin-left: 5px;"></i>
+                                تتطلب الباقة الأساسية
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ملخص الأسعار -->
+        <div class="price-summary">
+            <h2>ملخص الأسعار والتركيبات</h2>
+            <table class="summary-table">
+                <thead>
+                    <tr>
+                        <th>التركيبة</th>
+                        <th>الباقات المضمنة</th>
+                        <th>السعر الإجمالي</th>
+                        <th>_</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>الأساسيات فقط</td>
+                        <td>الباقة 1</td>
+                        <td>4,000 جنيه</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>الأساسيات + الإضافات</td>
+                        <td>الباقة 1 + الباقة 2</td>
+                        <td>6,000 جنيه</td>
+                        <td>_</td>
+                    </tr>
+                    <tr>
+                        <td>الأساسيات + الإضافات + المتابعة</td>
+                        <td>الباقة 1 + الباقة 2 + الباقة 3</td>
+                        <td>7,500 جنيه</td>
+                        <td>_</td>
+                    </tr>
+                    <tr>
+                        <td>الأساسيات + الإضافات + المتابعة + أولياء الأمور</td>
+                        <td>الباقة 1 + الباقة 2 + الباقة 3 + الباقة 4</td>
+                        <td>9,300 جنيه</td>
+                        <td>_</td>
+                    </tr>
+                    <tr>
+                        <td><strong>النظام المتكامل (جميع الباقات)</strong></td>
+                        <td>جميع الباقات (1+2+3+4+5)</td>
+                        <td class="total-price"><strong>10,500 جنيه</strong></td>
+                        <td>خصم خاص</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><strong>النظام المتكامل مع تصوير الواجب</strong></td>
+                        <td class="total-price"><strong>11,000 جنيه</strong></td>
+                        <td>خصم خاص
+
+                            <strong  style="color: red;"  class="text-red">
+                            توفير 10%
+
+                            </strong>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div style="margin-top: 25px; padding: 20px; background-color: #e8f6f3; border-radius: 10px; text-align: center;">
+                <h3 style="color: #16a085; margin-bottom: 10px;">خصم خاص للتركيبات المتكاملة!</h3>
+                <p style="color: #555; font-size: 1.1rem;">
+                    عند طلب النظام المتكامل (جميع الباقات) تحصل على خصم 10% من السعر الإجمالي الأصلي
+                </p>
+                <p style="font-size: 1.3rem; font-weight: 700; color: #2c3e50; margin-top: 10px;">
+                    السعر الأصلي: <span style="color: #e74c3c; text-decoration: line-through;">11,300</span> 
+                    <span style="margin: 0 15px;">→</span>
+                    السعر بعد الخصم: <span style="color: #27ae60;">10,500 جنيه</span>
+                </p>
+                <p style="margin-top: 10px; color: #666; font-size: 1rem;">
+                    (مع تصوير الواجب: <span style="color: #27ae60; font-weight: 600;">11,000 جنيه</span>)
+                </p>
+            </div>
+        </div>
+        
+        <footer>
+            <h3>للحصول على النظام أو الاستفسار</h3>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <i class="fas fa-user"></i>
+                    <span>مصطفى حسين رمضان</span>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-phone"></i>
+                    <span>01157787113</span>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-envelope"></i>
+                    <span>mustafahussienatya@gmail.com</span>
+                </div>
+            </div>
+            
+            <div class="important-note">
+                <p><strong>ملاحظات هامة:</strong></p>
+                <p>• جميع الأسعار لا تشمل الاستضافة ولا الدومين</p>
+                <p>• دعم فني لمدة شهر مجاناً</p>
+                <p>• تدريب كامل على النظام</p>
+            </div>
+            
+            <p style="margin-top: 20px; color: #777;">
+                <!-- جميع الأسعار تشمل الضريبة  -->
+                - يمكن التعديل حسب احتياجاتك الخاصة 
+                - الأسعار قابلة للتغير
+            </p>
+        </footer>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // زر اختيار جميع الباقات
+            document.getElementById('select-all').addEventListener('click', function() {
+                const packages = document.querySelectorAll('.package');
+                packages.forEach(pkg => {
+                    pkg.style.boxShadow = '0 0 0 3px #2ecc71';
+                    
+                    // إزالة التأثير بعد 2 ثانية
+                    setTimeout(() => {
+                        pkg.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1)';
+                    }, 2000);
+                });
+                
+                // عرض رسالة
+                alert('تم اختيار جميع الباقات! السعر الإجمالي للنظام المتكامل: 10,500 جنيه (11,000 جنيه مع تصوير الواجب)');
+            });
+            
+            // زر تحميل PDF (محاكاة)
+            document.getElementById('download-pdf').addEventListener('click', function() {
+                // في التطبيق الفعلي، يمكن استخدام مكتبة مثل jsPDF
+                alert('جارٍ تحميل ملف PDF... (في التطبيق الفعلي، سيتم إنشاء PDF حقيقي)');
+                
+                // محاكاة تحميل PDF
+                const pdfContent = generatePDF();
+                console.log('PDF Content:', pdfContent);
+                
+                // تغيير نص الزر مؤقتاً
+                const originalText = this.innerHTML;
+                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التحميل...';
+                this.disabled = true;
+                
+                // محاكاة عملية التحميل
+                setTimeout(() => {
+                    this.innerHTML = originalText;
+                    this.disabled = false;
+                    
+                    // عرض نافذة منبثقة بالمحتوى
+                    const modal = document.createElement('div');
+                    modal.style.cssText = `
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background-color: rgba(0,0,0,0.7);
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        z-index: 1000;
+                    `;
+                    
+                    modal.innerHTML = `
+                        <div style="background-color: white; padding: 30px; border-radius: 15px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto;">
+                            <h2 style="color: #2c3e50; margin-bottom: 20px; text-align: center;">عرض الباقات - مصطفى حسين رمضان</h2>
+                            <div style="background-color: #f8f9fa; padding: 20px; border-radius: 10px; white-space: pre-line; font-family: monospace; line-height: 1.8; direction: rtl;">
+                                ${pdfContent}
+                            </div>
+                            <div style="margin-top: 25px; text-align: center;">
+                                <button id="close-modal" style="padding: 12px 25px; background-color: #3498db; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; margin: 0 10px;">إغلاق</button>
+                                <button id="copy-content" style="padding: 12px 25px; background-color: #2ecc71; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; margin: 0 10px;">نسخ المحتوى</button>
+                            </div>
+                        </div>
+                    `;
+                    
+                    document.body.appendChild(modal);
+                    
+                    // إغلاق النافذة المنبثقة
+                    document.getElementById('close-modal').addEventListener('click', function() {
+                        document.body.removeChild(modal);
+                    });
+                    
+                    // نسخ المحتوى
+                    document.getElementById('copy-content').addEventListener('click', function() {
+                        navigator.clipboard.writeText(pdfContent).then(() => {
+                            alert('تم نسخ محتوى الباقات إلى الحافظة!');
+                        });
+                    });
+                    
+                    // إغلاق النافذة عند النقر خارجها
+                    modal.addEventListener('click', function(e) {
+                        if (e.target === modal) {
+                            document.body.removeChild(modal);
+                        }
+                    });
+                }, 1500);
+            });
+            
+            // إضافة تأثيرات تفاعلية للباقات عند المرور عليها
+            document.querySelectorAll('.package').forEach(pkg => {
+                pkg.addEventListener('mouseenter', function() {
+                    const badge = this.querySelector('.package-badge');
+                    if (badge) {
+                        badge.style.transform = 'scale(1.1)';
+                    }
+                });
+                
+                pkg.addEventListener('mouseleave', function() {
+                    const badge = this.querySelector('.package-badge');
+                    if (badge) {
+                        badge.style.transform = 'scale(1)';
+                    }
+                });
+                
+                // عند النقر على الباقة
+                pkg.addEventListener('click', function() {
+                    const title = this.querySelector('.package-title').textContent;
+                    const price = this.querySelector('.package-price').textContent;
+                    const subtitle = this.querySelector('.package-subtitle').textContent;
+                    
+                    // عرض تفاصيل الباقة
+                    const modal = document.createElement('div');
+                    modal.style.cssText = `
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background-color: rgba(0,0,0,0.7);
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        z-index: 1000;
+                    `;
+                    
+                    modal.innerHTML = `
+                        <div style="background-color: white; padding: 30px; border-radius: 15px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto;">
+                            <h2 style="color: #2c3e50; margin-bottom: 10px;">${title}</h2>
+                            <p style="color: #666; margin-bottom: 20px;">${subtitle}</p>
+                            <p style="font-size: 1.5rem; font-weight: bold; color: #e74c3c; margin-bottom: 25px;">${price}</p>
+                            <p style="margin-bottom: 25px; color: #555; padding: 15px; background-color: #f8f9fa; border-radius: 8px;">
+                                <i class="fas fa-info-circle" style="color: #3498db; margin-left: 8px;"></i>
+                                تم اختيار هذه الباقة. لمزيد من التفاصيل أو الطلب، يرجى التواصل معنا عبر المعلومات الموجودة في أسفل الصفحة.
+                            </p>
+                            <div style="text-align: center;">
+                                <button id="close-modal" style="padding: 12px 25px; background-color: #e74c3c; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">إغلاق</button>
+                            </div>
+                        </div>
+                    `;
+                    
+                    document.body.appendChild(modal);
+                    
+                    // إغلاق النافذة المنبثقة
+                    document.getElementById('close-modal').addEventListener('click', function() {
+                        document.body.removeChild(modal);
+                    });
+                    
+                    // إغلاق النافذة عند النقر خارجها
+                    modal.addEventListener('click', function(e) {
+                        if (e.target === modal) {
+                            document.body.removeChild(modal);
+                        }
+                    });
+                });
+            });
+        });
+        
+        // دالة لإنشاء PDF (محاكاة)
+        function generatePDF() {
+            return `
+عرض باقات نظام إدارة المدارس
+مقدم من: مصطفى حسين رمضان
+هاتف: 01157787113
+بريد إلكتروني: mustafahussienatya@gmail.com
+==========================================
+
+الباقة 1: الباقة الأساسية - 4,000 جنيه
+• إدارة الطلاب (اسم - سن - تليفون)
+• إدارة المعلمين وإضافة معلم
+• إدارة الحلقات (تحديد المواعيد - الوقت - الطلاب - المعلم)
+• نظام الاشتراكات (سنوي - شهري - مدفوع - متأخر - جزئي)
+• حضور وغياب الطلاب
+• صلاحيات (مدير فقط)
+
+الباقة 2: الباقة الموسعة - 2,000 جنيه
+• رفع الموقع على الإنترنت
+• صفحة المعلم (تسجيل حضور حلقته)
+• صفحة السكرتيرة (صلاحيات محدودة)
+• واجبات الطلاب في كل حلقة
+• تقييم الطالب في الحلقة
+• تصوير واجب الطالب (+500 جنيه) - اختياري
+
+الباقة 3: باقة المتابعة - 1,500 جنيه
+• تقارير الطلاب (حضور - التزام - تقييم)
+• تقارير المعلمين
+• حضور المعلمين
+• سجل الطالب (غياب - حضور - واجبات - تقييم)
+• معدل تقييم الطالب
+• طباعة التقارير (PDF)
+
+الباقة 4: باقة أولياء الأمور - 1,800 جنيه
+• صفحة ولي الأمر المخصصة
+• تقارير الابن (حضور - تقييم - واجبات)
+• عرض واجبات الابن
+• إشعارات للمتابعة
+• صور (الطالب + الواجب)
+• متابعة الاشتراكات المتأخرة
+
+الباقة 5: باقة المحاسبة - 2,000 جنيه
+• نظام مصروفات متكامل
+• نظام إيرادات تفصيلي
+• تقارير مالية شاملة
+• حساب الأرباح والخسائر
+• إشعارات لولي الأمر عن الاشتراك المتأخر
+
+ملخص الأسعار:
+• الأساسيات فقط: 4,000 جنيه
+• الأساسيات + الإضافات: 6,000 جنيه
+• الأساسيات + الإضافات + المتابعة: 7,500 جنيه
+• الأساسيات + الإضافات + المتابعة + أولياء الأمور: 9,300 جنيه
+• النظام المتكامل (جميع الباقات): 10,500 جنيه
+• النظام المتكامل مع تصوير الواجب: 11,000 جنيه
+
+ملاحظات هامة:
+• جميع الأسعار لا تشمل الاستضافة ولا الدومين
+• دعم فني لمدة شهر مجاناً
+• تدريب كامل على النظام
+• الأسعار تشمل الضريبة
+            `;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام إدارة حلقات تحفيظ القرآن الكريم</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome للايقونات -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- الخط العربي -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-green: #1a5d1a;
+            --secondary-green: #2d7d2d;
+            --light-green: #e8f5e9;
+            --gold: #d4af37;
+            --light-gold: #f8f3e6;
+            --dark-text: #1a202c;
+            --light-text: #718096;
+        }
+        
+        * {
+            font-family: 'Cairo', sans-serif;
+            box-sizing: border-box;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: var(--dark-text);
+        }
+        
+        .page {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* تخصيصات Tailwind */
+        .sidebar-transition {
+            transition: all 0.3s ease;
+        }
+        
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            z-index: 1000;
+            animation: slideIn 0.5s ease;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateY(-100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .mobile-sidebar {
+            transform: translateX(100%);
+        }
+        
+        .mobile-sidebar.active {
+            transform: translateX(0);
+        }
+        
+        .stats-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* تخصيصات للتصميم الإسلامي */
+        .islamic-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%231a5d1a' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        
+        .quran-icon {
+            color: var(--gold);
+            text-shadow: 0 0 5px rgba(212, 175, 55, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+    <!-- إشعارات Toast -->
+    <div id="toastContainer" class="toast"></div>
+    
+    <!-- الصفحة الرئيسية (Landing Page) -->
+    <div id="landingPage" class="page active">
+        <!-- الهيدر -->
+        <header class="bg-white shadow-sm">
+            <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+                <div class="flex items-center">
+                    <div class="bg-green-100 p-2 rounded-lg ml-3">
+                        <i class="fas fa-book-quran text-2xl text-green-600"></i>
+                    </div>
+                    <h1 class="text-xl font-bold text-green-800">نظام إدارة حلقات تحفيظ القرآن الكريم</h1>
+                </div>
+                <button id="loginBtn" class="bg-green-700 hover:bg-green-800 text-white px-6 py-2 rounded-lg font-medium transition duration-300">
+                    الدخول إلى النظام
+                </button>
+            </div>
+        </header>
+        
+        <!-- المحتوى الرئيسي -->
+        <main>
+            <!-- قسم البطل -->
+            <section class="py-12 md:py-20 islamic-pattern">
+                <div class="container mx-auto px-4 text-center">
+                    <div class="max-w-3xl mx-auto">
+                        <h2 class="text-3xl md:text-5xl font-bold text-green-900 mb-6">إدارة حلقات التحفيظ بكل سهولة واحترافية</h2>
+                        <p class="text-lg md:text-xl text-gray-700 mb-10 leading-relaxed">
+                            نظام متكامل لإدارة حلقات تحفيظ القرآن الكريم، يتيح لك تسجيل الطلاب والمدرسين، متابعة الحضور والانصراف، إدارة الاشتراكات والمصروفات، وإنشاء التقارير بضغطة زر.
+                        </p>
+                        <button id="startBtn" class="bg-green-700 hover:bg-green-800 text-white px-8 py-3 rounded-lg font-medium text-lg transition duration-300 shadow-lg">
+                            ابدأ الآن <i class="fas fa-arrow-left mr-2"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- قسم المميزات -->
+            <section class="py-16 bg-white">
+                <div class="container mx-auto px-4">
+                    <h2 class="text-3xl font-bold text-center text-green-900 mb-12">مميزات النظام</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <!-- ميزة 1 -->
+                        <div class="bg-green-50 p-6 rounded-xl border border-green-100">
+                            <div class="bg-green-100 w-14 h-14 rounded-lg flex items-center justify-center mb-5">
+                                <i class="fas fa-users text-2xl text-green-700"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-green-800 mb-3">إدارة شاملة</h3>
+                            <p class="text-gray-700">إدارة كاملة للطلاب، المعلمين، والحلقات في مكان واحد مع إمكانية البحث والتصفية.</p>
+                        </div>
+                        
+                        <!-- ميزة 2 -->
+                        <div class="bg-green-50 p-6 rounded-xl border border-green-100">
+                            <div class="bg-green-100 w-14 h-14 rounded-lg flex items-center justify-center mb-5">
+                                <i class="fas fa-calendar-check text-2xl text-green-700"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-green-800 mb-3">متابعة الحضور</h3>
+                            <p class="text-gray-700">تسجيل حضور وانصراف الطلاب والمعلمين بسهولة مع إمكانية إنشاء تقارير مفصلة.</p>
+                        </div>
+                        
+                        <!-- ميزة 3 -->
+                        <div class="bg-green-50 p-6 rounded-xl border border-green-100">
+                            <div class="bg-green-100 w-14 h-14 rounded-lg flex items-center justify-center mb-5">
+                                <i class="fas fa-chart-pie text-2xl text-green-700"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-green-800 mb-3">تقارير وتحليلات</h3>
+                            <p class="text-gray-700">تقارير إحصائية مفصلة تساعدك في اتخاذ القرارات الصحيحة لمتابعة تقدم الحلقة.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- قسم المستخدمين -->
+            <section class="py-16 bg-gray-50">
+                <div class="container mx-auto px-4">
+                    <h2 class="text-3xl font-bold text-center text-green-900 mb-12">من يستخدم النظام؟</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                        <!-- المشرف -->
+                        <div class="bg-white p-8 rounded-xl shadow-md border-r-4 border-green-600">
+                            <div class="flex items-center mb-6">
+                                <div class="bg-green-600 text-white p-3 rounded-full ml-4">
+                                    <i class="fas fa-user-shield text-xl"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold text-green-800">المشرف</h3>
+                            </div>
+                            <ul class="space-y-3 text-gray-700">
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-green-600 mt-1 ml-2"></i>
+                                    <span>إدارة جميع الحلقات والمعلمين والطلاب</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-green-600 mt-1 ml-2"></i>
+                                    <span>متابعة الحضور والانصراف</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-green-600 mt-1 ml-2"></i>
+                                    <span>مراقبة الاشتراكات والمصروفات</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-green-600 mt=1 ml-2"></i>
+                                    <span>إنشاء التقارير الشاملة</span>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <!-- المعلم -->
+                        <div class="bg-white p-8 rounded-xl shadow-md border-r-4 border-gold">
+                            <div class="flex items-center mb-6">
+                                <div class="bg-gold text-white p-3 rounded-full ml-4">
+                                    <i class="fas fa-chalkboard-teacher text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-2xl font-bold text-green-800">المعلم</h3>
+                                    <p class="text-gray-600">(مدرس الحلقة)</p>
+                                </div>
+                            </div>
+                            <ul class="space-y-3 text-gray-700">
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-gold mt-1 ml-2"></i>
+                                    <span>تسجيل حضور وانصراف الطلاب</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-gold mt-1 ml-2"></i>
+                                    <span>تسجيل التسميع والتقدم</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-gold mt-1 ml-2"></i>
+                                    <span>متابعة طلابه وحلقته</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-gold mt=1 ml-2"></i>
+                                    <span>إشعارات ومتابعة الحضور</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- قسم الدخول -->
+            <section class="py-12 bg-green-900 text-white">
+                <div class="container mx-auto px-4 text-center">
+                    <h2 class="text-2xl font-bold mb-6">جاهز لبدء استخدام النظام؟</h2>
+                    <p class="mb-8 max-w-2xl mx-auto text-green-100">انضم إلى عشرات حلقات التحفيظ التي تستخدم نظامنا لإدارة عملياتها اليومية بسهولة وكفاءة.</p>
+                    <button id="loginBtn2" class="bg-white text-green-800 hover:bg-green-50 px-10 py-3 rounded-lg font-bold text-lg transition duration-300">
+                        الدخول إلى النظام <i class="fas fa-arrow-left mr-2"></i>
+                    </button>
+                </div>
+            </section>
+        </main>
+        
+        <!-- الفوتر -->
+        <footer class="bg-gray-900 text-white py-8">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <div class="mb-6 md:mb-0">
+                        <div class="flex items-center">
+                            <i class="fas fa-book-quran text-2xl text-green-400 mr-3"></i>
+                            <h3 class="text-xl font-bold">نظام إدارة حلقات تحفيظ القرآن الكريم</h3>
+                        </div>
+                        <p class="text-gray-400 mt-2">© 2023 جميع الحقوق محفوظة</p>
+                    </div>
+                    <div class="flex space-x-6 space-x-reverse">
+                        <a href="#" class="text-gray-400 hover:text-white transition duration-300">
+                            <i class="fab fa-twitter text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition duration-300">
+                            <i class="fab fa-facebook text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition duration-300">
+                            <i class="fab fa-instagram text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+    <!-- لوحة التحكم (Dashboard) -->
+    <div id="dashboardPage" class="page">
+        <!-- الـ Header العلوي -->
+        <header class="bg-white shadow-sm py-3 px-4 fixed top-0 left-0 right-0 z-30">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <button id="menuToggle" class="text-gray-700 text-xl ml-4 md:hidden">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="flex items-center">
+                        <div class="bg-green-100 p-2 rounded-lg ml-3">
+                            <i class="fas fa-book-quran text-xl text-green-600"></i>
+                        </div>
+                        <h1 class="text-lg font-bold text-green-800 hidden md:block">نظام إدارة حلقات تحفيظ القرآن الكريم</h1>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-4 space-x-reverse">
+                    <!-- التاريخ والوقت -->
+                    <div class="hidden md:block text-right">
+                        <div id="currentDate" class="font-medium text-gray-800"></div>
+                        <div id="currentTime" class="text-sm text-gray-600"></div>
+                    </div>
+                    
+                    <!-- الإشعارات -->
+                    <div class="relative">
+                        <button id="notificationBtn" class="text-gray-700 hover:text-green-700 text-xl relative">
+                            <i class="fas fa-bell"></i>
+                            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">3</span>
+                        </button>
+                    </div>
+                    
+                    <!-- معلومات المستخدم -->
+                    <div class="flex items-center">
+                        <div class="text-right hidden md:block ml-3">
+                            <div class="font-medium text-gray-800">المشرف أحمد</div>
+                            <div class="text-sm text-gray-600">مدير النظام</div>
+                        </div>
+                        <div class="bg-green-700 text-white w-10 h-10 rounded-full flex items-center justify-center">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- الهيكل الرئيسي -->
+        <div class="flex pt-14">
+            <!-- الـ Sidebar -->
+            <aside id="sidebar" class="bg-green-900 text-white w-64 min-h-screen fixed right-0 top-0 pt-14 sidebar-transition hidden md:block">
+                <div class="p-4 overflow-y-auto h-full">
+                    <!-- معلومات المستخدم المصغرة -->
+                    <div class="flex items-center p-3 mb-6 bg-green-800 rounded-lg md:hidden">
+                        <div class="bg-green-600 text-white w-10 h-10 rounded-full flex items-center justify-center ml-3">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div>
+                            <div class="font-medium">المشرف أحمد</div>
+                            <div class="text-sm text-green-200">مدير النظام</div>
+                        </div>
+                    </div>
+                    
+                    <!-- قائمة التنقل -->
+                    <nav>
+                        <ul class="space-y-1">
+                            <!-- إدارة البيانات -->
+                            <li>
+                                <button id="dataManagementBtn" class="w-full text-right flex items-center justify-between p-3 hover:bg-green-800 rounded-lg transition duration-300">
+                                    <span class="flex items-center">
+                                        <i class="fas fa-database ml-3"></i>
+                                        <span>إدارة البيانات</span>
+                                    </span>
+                                    <i class="fas fa-chevron-down text-xs"></i>
+                                </button>
+                                <ul id="dataManagementSubmenu" class="mr-6 mt-1 space-y-1 hidden">
+                                    <li>
+                                        <button data-page="students" class="w-full text-right p-2 hover:bg-green-800 rounded transition duration-300 flex items-center">
+                                            <i class="fas fa-user-graduate ml-3 text-sm"></i>
+                                            <span>الطلاب</span>
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button data-page="teachers" class="w-full text-right p-2 hover:bg-green-800 rounded transition duration-300 flex items-center">
+                                            <i class="fas fa-chalkboard-teacher ml-3 text-sm"></i>
+                                            <span>المعلمين</span>
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button data-page="circles" class="w-full text-right p-2 hover:bg-green-800 rounded transition duration-300 flex items-center">
+                                            <i class="fas fa-users ml-3 text-sm"></i>
+                                            <span>الحلقات</span>
+                                        </button>
+                                    </li>
+                                </ul>
+                            </li>
+                            
+                            <!-- الحضور والانصراف -->
+                            <li>
+                                <button data-page="attendance" class="w-full text-right flex items-center p-3 hover:bg-green-800 rounded-lg transition duration-300 active-page">
+                                    <i class="fas fa-calendar-check ml-3"></i>
+                                    <span>الحضور والانصراف</span>
+                                </button>
+                            </li>
+                            
+                            <!-- الاشتراكات -->
+                            <li>
+                                <button data-page="subscriptions" class="w-full text-right flex items-center p-3 hover:bg-green-800 rounded-lg transition duration-300">
+                                    <i class="fas fa-money-check-alt ml-3"></i>
+                                    <span>الاشتراكات</span>
+                                </button>
+                            </li>
+                            
+                            <!-- المصروفات -->
+                            <li>
+                                <button data-page="expenses" class="w-full text-right flex items-center p-3 hover:bg-green-800 rounded-lg transition duration-300">
+                                    <i class="fas fa-file-invoice-dollar ml-3"></i>
+                                    <span>المصروفات</span>
+                                </button>
+                            </li>
+                            
+                            <!-- التقارير -->
+                            <li>
+                                <button data-page="reports" class="w-full text-right flex items-center p-3 hover:bg-green-800 rounded-lg transition duration-300">
+                                    <i class="fas fa-chart-pie ml-3"></i>
+                                    <span>التقارير</span>
+                                </button>
+                            </li>
+                            
+                            <!-- الإعدادات -->
+                            <li>
+                                <button data-page="settings" class="w-full text-right flex items-center p-3 hover:bg-green-800 rounded-lg transition duration-300">
+                                    <i class="fas fa-cog ml-3"></i>
+                                    <span>الإعدادات</span>
+                                </button>
+                            </li>
+                            
+                            <!-- تسجيل خروج -->
+                            <li class="pt-6 mt-6 border-t border-green-800">
+                                <button id="logoutBtn" class="w-full text-right flex items-center p-3 hover:bg-green-800 rounded-lg transition duration-300">
+                                    <i class="fas fa-sign-out-alt ml-3"></i>
+                                    <span>تسجيل خروج</span>
+                                </button>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </aside>
+            
+            <!-- الـ Sidebar للموبايل -->
+            <div id="mobileSidebar" class="mobile-sidebar fixed inset-0 z-40 md:hidden">
+                <!-- خلفية معتمة -->
+                <div id="sidebarOverlay" class="absolute inset-0 bg-black bg-opacity-50"></div>
+                
+                <!-- الـ Sidebar نفسها -->
+                <div class="absolute right-0 top-0 w-64 h-full bg-green-900 text-white overflow-y-auto pt-4">
+                    <div class="flex justify-end p-4">
+                        <button id="closeSidebar" class="text-2xl">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <!-- نفس محتوى الـ Sidebar -->
+                    <div class="p-4">
+                        <!-- معلومات المستخدم المصغرة -->
+                        <div class="flex items-center p-3 mb-6 bg-green-800 rounded-lg">
+                            <div class="bg-green-600 text-white w-10 h-10 rounded-full flex items-center justify-center ml-3">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div>
+                                <div class="font-medium">المشرف أحمد</div>
+                                <div class="text-sm text-green-200">مدير النظام</div>
+                            </div>
+                        </div>
+                        
+                        <!-- قائمة التنقل -->
+                        <nav>
+                            <ul class="space-y-1">
+                                <!-- إدارة البيانات -->
+                                <li>
+                                    <button id="mobileDataManagementBtn" class="w-full text-right flex items-center justify-between p-3 hover:bg-green-800 rounded-lg transition duration-300">
+                                        <span class="flex items-center">
+                                            <i class="fas fa-database ml-3"></i>
+                                            <span>إدارة البيانات</span>
+                                        </span>
+                                        <i class="fas fa-chevron-down text-xs"></i>
+                                    </button>
+                                    <ul id="mobileDataManagementSubmenu" class="mr-6 mt-1 space-y-1 hidden">
+                                        <li>
+                                            <button data-page="students" class="w-full text-right p-2 hover:bg-green-800 rounded transition duration-300 flex items-center">
+                                                <i class="fas fa-user-graduate ml-3 text-sm"></i>
+                                                <span>الطلاب</span>
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <button data-page="teachers" class="w-full text-right p-2 hover:bg-green-800 rounded transition duration-300 flex items-center">
+                                                <i class="fas fa-chalkboard-teacher ml-3 text-sm"></i>
+                                                <span>المعلمين</span>
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <button data-page="circles" class="w-full text-right p-2 hover:bg-green-800 rounded transition duration-300 flex items-center">
+                                                <i class="fas fa-users ml-3 text-sm"></i>
+                                                <span>الحلقات</span>
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </li>
+                                
+                                <!-- الحضور والانصراف -->
+                                <li>
+                                    <button data-page="attendance" class="w-full text-right flex items-center p-3 hover:bg-green-800 rounded-lg transition duration-300 mobile-nav-btn">
+                                        <i class="fas fa-calendar-check ml-3"></i>
+                                        <span>الحضور والانصراف</span>
+                                    </button>
+                                </li>
+                                
+                                <!-- الاشتراكات -->
+                                <li>
+                                    <button data-page="subscriptions" class="w-full text-right flex items-center p-3 hover:bg-green-800 rounded-lg transition duration-300 mobile-nav-btn">
+                                        <i class="fas fa-money-check-alt ml-3"></i>
+                                        <span>الاشتراكات</span>
+                                    </button>
+                                </li>
+                                
+                                <!-- المصروفات -->
+                                <li>
+                                    <button data-page="expenses" class="w-full text-right flex items-center p-3 hover:bg-green-800 rounded-lg transition duration-300 mobile-nav-btn">
+                                        <i class="fas fa-file-invoice-dollar ml-3"></i>
+                                        <span>المصروفات</span>
+                                    </button>
+                                </li>
+                                
+                                <!-- التقارير -->
+                                <li>
+                                    <button data-page="reports" class="w-full text-right flex items-center p-3 hover:bg-green-800 rounded-lg transition duration-300 mobile-nav-btn">
+                                        <i class="fas fa-chart-pie ml-3"></i>
+                                        <span>التقارير</span>
+                                    </button>
+                                </li>
+                                
+                                <!-- الإعدادات -->
+                                <li>
+                                    <button data-page="settings" class="w-full text-right flex items-center p-3 hover:bg-green-800 rounded-lg transition duration-300 mobile-nav-btn">
+                                        <i class="fas fa-cog ml-3"></i>
+                                        <span>الإعدادات</span>
+                                    </button>
+                                </li>
+                                
+                                <!-- تسجيل خروج -->
+                                <li class="pt-6 mt-6 border-t border-green-800">
+                                    <button id="mobileLogoutBtn" class="w-full text-right flex items-center p-3 hover:bg-green-800 rounded-lg transition duration-300">
+                                        <i class="fas fa-sign-out-alt ml-3"></i>
+                                        <span>تسجيل خروج</span>
+                                    </button>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- المحتوى الرئيسي -->
+            <main class="flex-1 mr-0 md:mr-64 p-4 md:p-6 transition-all duration-300">
+                <!-- هنا سيتم عرض محتوى الصفحات الفرعية -->
+                <div id="dashboardContent">
+                    <!-- المحتوى الافتراضي (الحضور والانصراف) -->
+                    <div id="attendancePage" class="page-content active">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-2xl font-bold text-green-900">الحضور والانصراف</h2>
+                            <div class="text-sm text-gray-600">
+                                <i class="fas fa-calendar-alt ml-2"></i>
+                                <span id="attendanceDate"></span>
+                            </div>
+                        </div>
+                        
+                        <!-- بطاقة تسجيل الحضور -->
+                        <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+                            <h3 class="text-xl font-bold text-green-800 mb-6 border-b pb-3">تسجيل حضور جديد</h3>
+                            
+                            <form id="attendanceForm">
+                                <!-- اختيار التاريخ -->
+                                <div class="mb-6">
+                                    <label for="attendanceDateInput" class="block text-gray-700 font-medium mb-2">
+                                        <i class="fas fa-calendar ml-2"></i>
+                                        تاريخ الحضور
+                                    </label>
+                                    <input type="date" id="attendanceDateInput" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition" required>
+                                    <p class="text-red-500 text-sm mt-1 hidden" id="dateError">يجب اختيار تاريخ صحيح</p>
+                                </div>
+                                
+                                <!-- اختيار المعلم -->
+                                <div class="mb-6">
+                                    <label for="teacherSelect" class="block text-gray-700 font-medium mb-2">
+                                        <i class="fas fa-chalkboard-teacher ml-2"></i>
+                                        المعلم
+                                    </label>
+                                    <select id="teacherSelect" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition" required>
+                                        <option value="">اختر المعلم</option>
+                                        <!-- سيتم ملء الخيارات بواسطة JavaScript -->
+                                    </select>
+                                    <p class="text-red-500 text-sm mt-1 hidden" id="teacherError">يجب اختيار معلم</p>
+                                </div>
+                                
+                                <!-- وقت الحضور والانصراف -->
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                    <div>
+                                        <label for="checkInTime" class="block text-gray-700 font-medium mb-2">
+                                            <i class="fas fa-sign-in-alt ml-2"></i>
+                                            وقت الحضور
+                                        </label>
+                                        <input type="time" id="checkInTime" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition" required>
+                                        <p class="text-red-500 text-sm mt-1 hidden" id="checkInError">يجب تحديد وقت الحضور</p>
+                                    </div>
+                                    
+                                    <div>
+                                        <label for="checkOutTime" class="block text-gray-700 font-medium mb-2">
+                                            <i class="fas fa-sign-out-alt ml-2"></i>
+                                            وقت الانصراف
+                                        </label>
+                                        <input type="time" id="checkOutTime" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition" required>
+                                        <p class="text-red-500 text-sm mt-1 hidden" id="checkOutError">يجب تحديد وقت الانصراف</p>
+                                    </div>
+                                </div>
+                                
+                                <!-- حالة الحضور -->
+                                <div class="mb-8">
+                                    <label class="block text-gray-700 font-medium mb-3">
+                                        <i class="fas fa-user-check ml-2"></i>
+                                        حالة الحضور
+                                    </label>
+                                    <div class="flex flex-wrap gap-4">
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="attendanceStatus" value="present" class="h-5 w-5 text-green-600 focus:ring-green-500" checked>
+                                            <span class="mr-2 text-gray-700">حاضر</span>
+                                        </label>
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="attendanceStatus" value="absent" class="h-5 w-5 text-red-600 focus:ring-red-500">
+                                            <span class="mr-2 text-gray-700">غياب</span>
+                                        </label>
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="attendanceStatus" value="late" class="h-5 w-5 text-yellow-600 focus:ring-yellow-500">
+                                            <span class="mr-2 text-gray-700">متأخر</span>
+                                        </label>
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="attendanceStatus" value="excused" class="h-5 w-5 text-blue-600 focus:ring-blue-500">
+                                            <span class="mr-2 text-gray-700">بعذر</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <!-- ملاحظات -->
+                                <div class="mb-8">
+                                    <label for="notes" class="block text-gray-700 font-medium mb-2">
+                                        <i class="fas fa-sticky-note ml-2"></i>
+                                        ملاحظات (اختياري)
+                                    </label>
+                                    <textarea id="notes" rows="3" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition" placeholder="أي ملاحظات إضافية..."></textarea>
+                                </div>
+                                
+                                <!-- أزرار الحفظ -->
+                                <div class="flex justify-end space-x-3 space-x-reverse">
+                                    <button type="button" id="cancelBtn" class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition duration-300 font-medium">
+                                        إلغاء
+                                    </button>
+                                    <button type="submit" id="saveAttendanceBtn" class="px-8 py-3 bg-green-700 text-white rounded-lg hover:bg-green-800 transition duration-300 font-medium">
+                                        <i class="fas fa-save ml-2"></i>
+                                        حفظ الحضور
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <!-- جدول الحضور المسجل -->
+                        <div class="bg-white rounded-xl shadow-md p-6">
+                            <h3 class="text-xl font-bold text-green-800 mb-6 border-b pb-3">سجل الحضور اليومي</h3>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead>
+                                        <tr class="bg-gray-50">
+                                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">المعلم</th>
+                                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">التاريخ</th>
+                                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">الحضور</th>
+                                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">الانصراف</th>
+                                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">الحالة</th>
+                                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">الملاحظات</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="attendanceTableBody" class="bg-white divide-y divide-gray-200">
+                                        <!-- سيتم ملء الجدول بواسطة JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <p id="noAttendanceMessage" class="text-center text-gray-500 py-8">لا توجد سجلات حضور لهذا اليوم.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- صفحة التقارير -->
+                    <div id="reportsPage" class="page-content hidden">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-2xl font-bold text-green-900">التقارير والإحصاءات</h2>
+                            <div class="text-sm text-gray-600">
+                                <i class="fas fa-chart-bar ml-2"></i>
+                                <span>آخر تحديث: اليوم</span>
+                            </div>
+                        </div>
+                        
+                        <!-- بطاقات الإحصاءات -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                            <!-- عدد الطلاب -->
+                            <div class="stats-card bg-white rounded-xl shadow-md p-6 border-l-4 border-green-600">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h3 class="text-lg font-bold text-gray-800">عدد الطلاب</h3>
+                                        <p class="text-3xl font-bold text-green-700 mt-2" id="studentsCount">0</p>
+                                        <p class="text-gray-600 text-sm mt-1">طالب مسجل في النظام</p>
+                                    </div>
+                                    <div class="bg-green-100 p-4 rounded-full">
+                                        <i class="fas fa-user-graduate text-2xl text-green-600"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- عدد المعلمين -->
+                            <div class="stats-card bg-white rounded-xl shadow-md p-6 border-l-4 border-blue-600">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h3 class="text-lg font-bold text-gray-800">عدد المعلمين</h3>
+                                        <p class="text-3xl font-bold text-blue-700 mt-2" id="teachersCount">0</p>
+                                        <p class="text-gray-600 text-sm mt-1">معلم نشط في النظام</p>
+                                    </div>
+                                    <div class="bg-blue-100 p-4 rounded-full">
+                                        <i class="fas fa-chalkboard-teacher text-2xl text-blue-600"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- نسبة الحضور -->
+                            <div class="stats-card bg-white rounded-xl shadow-md p-6 border-l-4 border-gold">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h3 class="text-lg font-bold text-gray-800">نسبة الحضور</h3>
+                                        <p class="text-3xl font-bold text-yellow-700 mt-2" id="attendanceRate">0%</p>
+                                        <p class="text-gray-600 text-sm mt-1">متوسط الحضور هذا الشهر</p>
+                                    </div>
+                                    <div class="bg-yellow-100 p-4 rounded-full">
+                                        <i class="fas fa-percentage text-2xl text-yellow-600"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- فلترة بالتاريخ -->
+                        <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+                            <h3 class="text-xl font-bold text-green-800 mb-6">فلترة التقارير حسب التاريخ</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                    <label for="reportStartDate" class="block text-gray-700 font-medium mb-2">من تاريخ</label>
+                                    <input type="date" id="reportStartDate" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition">
+                                </div>
+                                <div>
+                                    <label for="reportEndDate" class="block text-gray-700 font-medium mb-2">إلى تاريخ</label>
+                                    <input type="date" id="reportEndDate" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition">
+                                </div>
+                                <div class="flex items-end">
+                                    <button id="filterReportsBtn" class="w-full px-6 py-3 bg-green-700 text-white rounded-lg hover:bg-green-800 transition duration-300 font-medium">
+                                        <i class="fas fa-filter ml-2"></i>
+                                        تطبيق الفلترة
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- جدول التقارير -->
+                        <div class="bg-white rounded-xl shadow-md p-6">
+                            <h3 class="text-xl font-bold text-green-800 mb-6">تقارير الحضور الشهرية</h3>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead>
+                                        <tr class="bg-gray-50">
+                                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">الشهر</th>
+                                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">عدد أيام الحضور</th>
+                                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">عدد أيام الغياب</th>
+                                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">نسبة الحضور</th>
+                                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">الحالة</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="reportsTableBody" class="bg-white divide-y divide-gray-200">
+                                        <!-- سيتم ملء الجدول بواسطة JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- صفحات أخرى (هيكل أساسي) -->
+                    <div id="studentsPage" class="page-content hidden">
+                        <h2 class="text-2xl font-bold text-green-900 mb-6">إدارة الطلاب</h2>
+                        <div class="bg-white rounded-xl shadow-md p-8 text-center">
+                            <i class="fas fa-user-graduate text-5xl text-gray-300 mb-4"></i>
+                            <h3 class="text-xl font-bold text-gray-700 mb-2">صفحة إدارة الطلاب</h3>
+                            <p class="text-gray-600">هذه الصفحة تحت التطوير. سيتم إضافة محتوى إدارة الطلاب هنا.</p>
+                        </div>
+                    </div>
+                    
+                    <div id="teachersPage" class="page-content hidden">
+                        <h2 class="text-2xl font-bold text-green-900 mb-6">إدارة المعلمين</h2>
+                        <div class="bg-white rounded-xl shadow-md p-8 text-center">
+                            <i class="fas fa-chalkboard-teacher text-5xl text-gray-300 mb-4"></i>
+                            <h3 class="text-xl font-bold text-gray-700 mb-2">صفحة إدارة المعلمين</h3>
+                            <p class="text-gray-600">هذه الصفحة تحت التطوير. سيتم إضافة محتوى إدارة المعلمين هنا.</p>
+                        </div>
+                    </div>
+                    
+                    <div id="circlesPage" class="page-content hidden">
+                        <h2 class="text-2xl font-bold text-green-900 mb-6">إدارة الحلقات</h2>
+                        <div class="bg-white rounded-xl shadow-md p-8 text-center">
+                            <i class="fas fa-users text-5xl text-gray-300 mb-4"></i>
+                            <h3 class="text-xl font-bold text-gray-700 mb-2">صفحة إدارة الحلقات</h3>
+                            <p class="text-gray-600">هذه الصفحة تحت التطوير. سيتم إضافة محتوى إدارة الحلقات هنا.</p>
+                        </div>
+                    </div>
+                    
+                    <div id="subscriptionsPage" class="page-content hidden">
+                        <h2 class="text-2xl font-bold text-green-900 mb-6">إدارة الاشتراكات</h2>
+                        <div class="bg-white rounded-xl shadow-md p-8 text-center">
+                            <i class="fas fa-money-check-alt text-5xl text-gray-300 mb-4"></i>
+                            <h3 class="text-xl font-bold text-gray-700 mb-2">صفحة إدارة الاشتراكات</h3>
+                            <p class="text-gray-600">هذه الصفحة تحت التطوير. سيتم إضافة محتوى إدارة الاشتراكات هنا.</p>
+                        </div>
+                    </div>
+                    
+                    <div id="expensesPage" class="page-content hidden">
+                        <h2 class="text-2xl font-bold text-green-900 mb-6">إدارة المصروفات</h2>
+                        <div class="bg-white rounded-xl shadow-md p-8 text-center">
+                            <i class="fas fa-file-invoice-dollar text-5xl text-gray-300 mb-4"></i>
+                            <h3 class="text-xl font-bold text-gray-700 mb-2">صفحة إدارة المصروفات</h3>
+                            <p class="text-gray-600">هذه الصفحة تحت التطوير. سيتم إضافة محتوى إدارة المصروفات هنا.</p>
+                        </div>
+                    </div>
+                    
+                    <div id="settingsPage" class="page-content hidden">
+                        <h2 class="text-2xl font-bold text-green-900 mb-6">الإعدادات</h2>
+                        <div class="bg-white rounded-xl shadow-md p-8 text-center">
+                            <i class="fas fa-cog text-5xl text-gray-300 mb-4"></i>
+                            <h3 class="text-xl font-bold text-gray-700 mb-2">صفحة الإعدادات</h3>
+                            <p class="text-gray-600">هذه الصفحة تحت التطوير. سيتم إضافة محتوى الإعدادات هنا.</p>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // بيانات وهمية (Mock Data)
+        const mockData = {
+            teachers: [
+                { id: 1, name: "الشيخ محمد أحمد", circle: "حلقة الفجر" },
+                { id: 2, name: "الشيخ عمر خالد", circle: "حلقة الضحى" },
+                { id: 3, name: "الشيخ سعيد محمود", circle: "حلقة العصر" },
+                { id: 4, name: "الشيخ خالد وليد", circle: "حلقة المغرب" },
+                { id: 5, name: "الشيخ أحمد يوسف", circle: "حلقة العشاء" }
+            ],
+            attendanceRecords: [],
+            studentsCount: 145,
+            teachersCount: 5,
+            attendanceRate: 87,
+            monthlyReports: [
+                { month: "يناير 2023", presentDays: 26, absentDays: 4, attendanceRate: 87, status: "جيد" },
+                { month: "ديسمبر 2022", presentDays: 24, absentDays: 6, attendanceRate: 80, status: "مقبول" },
+                { month: "نوفمبر 2022", presentDays: 28, absentDays: 2, attendanceRate: 93, status: "ممتاز" },
+                { month: "أكتوبر 2022", presentDays: 25, absentDays: 5, attendanceRate: 83, status: "جيد" },
+                { month: "سبتمبر 2022", presentDays: 22, absentDays: 8, attendanceRate: 73, status: "مقبول" }
+            ]
+        };
+        
+        // عناصر DOM الرئيسية
+        const pages = {
+            landing: document.getElementById('landingPage'),
+            dashboard: document.getElementById('dashboardPage')
+        };
+        
+        const contentPages = {
+            attendance: document.getElementById('attendancePage'),
+            reports: document.getElementById('reportsPage'),
+            students: document.getElementById('studentsPage'),
+            teachers: document.getElementById('teachersPage'),
+            circles: document.getElementById('circlesPage'),
+            subscriptions: document.getElementById('subscriptionsPage'),
+            expenses: document.getElementById('expensesPage'),
+            settings: document.getElementById('settingsPage')
+        };
+        
+        // تهيئة النظام
+        document.addEventListener('DOMContentLoaded', function() {
+            initSystem();
+            setupEventListeners();
+            loadMockData();
+            updateDateTime();
+            setInterval(updateDateTime, 60000); // تحديث الوقت كل دقيقة
+        });
+        
+        // تهيئة النظام
+        function initSystem() {
+            // تعيين التاريخ الحالي في حقل التاريخ
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('attendanceDateInput').value = today;
+            document.getElementById('attendanceDate').textContent = formatDate(today);
+            
+            // تعيين تواريخ الفلترة
+            const firstDayOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0];
+            document.getElementById('reportStartDate').value = firstDayOfMonth;
+            document.getElementById('reportEndDate').value = today;
+        }
+        
+        // إعداد مستمعي الأحداث
+        function setupEventListeners() {
+            // أزرار الدخول إلى النظام
+            document.getElementById('loginBtn').addEventListener('click', showDashboard);
+            document.getElementById('loginBtn2').addEventListener('click', showDashboard);
+            document.getElementById('startBtn').addEventListener('click', showDashboard);
+            
+            // تسجيل خروج
+            document.getElementById('logoutBtn').addEventListener('click', showLanding);
+            document.getElementById('mobileLogoutBtn').addEventListener('click', showLanding);
+            
+            // إدارة القوائم الجانبية
+            document.getElementById('dataManagementBtn').addEventListener('click', toggleSubmenu);
+            document.getElementById('mobileDataManagementBtn').addEventListener('click', toggleMobileSubmenu);
+            
+            // التنقل بين الصفحات في القائمة الجانبية
+            document.querySelectorAll('[data-page]').forEach(button => {
+                button.addEventListener('click', function() {
+                    const pageId = this.getAttribute('data-page');
+                    showContentPage(pageId);
+                    
+                    // إغلاق القائمة الجانبية على الموبايل
+                    if (window.innerWidth < 768) {
+                        document.getElementById('mobileSidebar').classList.remove('active');
+                    }
+                });
+            });
+            
+            // التنقل بين الصفحات في القائمة الجانبية للموبايل
+            document.querySelectorAll('.mobile-nav-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const pageId = this.getAttribute('data-page');
+                    showContentPage(pageId);
+                    document.getElementById('mobileSidebar').classList.remove('active');
+                });
+            });
+            
+            // إدارة القائمة الجانبية على الموبايل
+            document.getElementById('menuToggle').addEventListener('click', function() {
+                document.getElementById('mobileSidebar').classList.add('active');
+            });
+            
+            document.getElementById('closeSidebar').addEventListener('click', function() {
+                document.getElementById('mobileSidebar').classList.remove('active');
+            });
+            
+            document.getElementById('sidebarOverlay').addEventListener('click', function() {
+                document.getElementById('mobileSidebar').classList.remove('active');
+            });
+            
+            // إدارة نموذج الحضور
+            document.getElementById('attendanceForm').addEventListener('submit', saveAttendance);
+            document.getElementById('cancelBtn').addEventListener('click', resetAttendanceForm);
+            
+            // فلترة التقارير
+            document.getElementById('filterReportsBtn').addEventListener('click', filterReports);
+            
+            // تحديث التاريخ عند تغييره
+            document.getElementById('attendanceDateInput').addEventListener('change', function() {
+                document.getElementById('attendanceDate').textContent = formatDate(this.value);
+                loadAttendanceRecords(this.value);
+            });
+        }
+        
+        // تحميل البيانات الوهمية
+        function loadMockData() {
+            // ملء اختيار المعلمين
+            const teacherSelect = document.getElementById('teacherSelect');
+            teacherSelect.innerHTML = '<option value="">اختر المعلم</option>';
+            
+            mockData.teachers.forEach(teacher => {
+                const option = document.createElement('option');
+                option.value = teacher.id;
+                option.textContent = `${teacher.name} - ${teacher.circle}`;
+                teacherSelect.appendChild(option);
+            });
+            
+            // تحديث الإحصاءات
+            document.getElementById('studentsCount').textContent = mockData.studentsCount;
+            document.getElementById('teachersCount').textContent = mockData.teachersCount;
+            document.getElementById('attendanceRate').textContent = `${mockData.attendanceRate}%`;
+            
+            // تحميل سجلات الحضور
+            loadAttendanceRecords(document.getElementById('attendanceDateInput').value);
+            
+            // تحميل تقارير الحضور
+            loadReportsTable();
+        }
+        
+        // تحميل سجلات الحضور
+        function loadAttendanceRecords(date) {
+            const tableBody = document.getElementById('attendanceTableBody');
+            const noAttendanceMessage = document.getElementById('noAttendanceMessage');
+            
+            // فلترة السجلات حسب التاريخ
+            const filteredRecords = mockData.attendanceRecords.filter(record => record.date === date);
+            
+            if (filteredRecords.length === 0) {
+                tableBody.innerHTML = '';
+                noAttendanceMessage.classList.remove('hidden');
+            } else {
+                noAttendanceMessage.classList.add('hidden');
+                tableBody.innerHTML = '';
+                
+                filteredRecords.forEach(record => {
+                    const teacher = mockData.teachers.find(t => t.id === record.teacherId);
+                    if (!teacher) return;
+                    
+                    const statusColors = {
+                        present: 'bg-green-100 text-green-800',
+                        absent: 'bg-red-100 text-red-800',
+                        late: 'bg-yellow-100 text-yellow-800',
+                        excused: 'bg-blue-100 text-blue-800'
+                    };
+                    
+                    const statusText = {
+                        present: 'حاضر',
+                        absent: 'غياب',
+                        late: 'متأخر',
+                        excused: 'بعذر'
+                    };
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">${teacher.name}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-700">${formatDate(record.date)}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-700">${record.checkIn}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-700">${record.checkOut}</td>
+                        <td class="px-4 py-3 whitespace-nowrap">
+                            <span class="px-3 py-1 text-xs font-medium rounded-full ${statusColors[record.status]}">
+                                ${statusText[record.status]}
+                            </span>
+                        </td>
+                        <td class="px-4 py-3 text-sm text-gray-700">${record.notes || '-'}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            }
+        }
+        
+        // تحميل جدول التقارير
+        function loadReportsTable() {
+            const tableBody = document.getElementById('reportsTableBody');
+            tableBody.innerHTML = '';
+            
+            mockData.monthlyReports.forEach(report => {
+                const row = document.createElement('tr');
+                
+                // تحديد لون الحالة
+                let statusColor = 'bg-yellow-100 text-yellow-800';
+                if (report.attendanceRate >= 90) {
+                    statusColor = 'bg-green-100 text-green-800';
+                } else if (report.attendanceRate >= 80) {
+                    statusColor = 'bg-blue-100 text-blue-800';
+                } else if (report.attendanceRate < 70) {
+                    statusColor = 'bg-red-100 text-red-800';
+                }
+                
+                row.innerHTML = `
+                    <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">${report.month}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-700">${report.presentDays} يوم</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-700">${report.absentDays} يوم</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm font-medium ${report.attendanceRate >= 90 ? 'text-green-700' : report.attendanceRate >= 80 ? 'text-blue-700' : report.attendanceRate >= 70 ? 'text-yellow-700' : 'text-red-700'}">
+                        ${report.attendanceRate}%
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap">
+                        <span class="px-3 py-1 text-xs font-medium rounded-full ${statusColor}">
+                            ${report.status}
+                        </span>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+        
+        // حفظ الحضور
+        function saveAttendance(e) {
+            e.preventDefault();
+            
+            // التحقق من صحة البيانات
+            if (!validateAttendanceForm()) {
+                return;
+            }
+            
+            // جمع البيانات من النموذج
+            const attendanceData = {
+                id: Date.now(), // معرف فريد
+                date: document.getElementById('attendanceDateInput').value,
+                teacherId: parseInt(document.getElementById('teacherSelect').value),
+                checkIn: document.getElementById('checkInTime').value,
+                checkOut: document.getElementById('checkOutTime').value,
+                status: document.querySelector('input[name="attendanceStatus"]:checked').value,
+                notes: document.getElementById('notes').value.trim()
+            };
+            
+            // العثور على اسم المعلم
+            const teacher = mockData.teachers.find(t => t.id === attendanceData.teacherId);
+            
+            // إضافة السجل إلى البيانات
+            mockData.attendanceRecords.push(attendanceData);
+            
+            // تحديث الجدول
+            loadAttendanceRecords(attendanceData.date);
+            
+            // إعادة تعيين النموذج
+            resetAttendanceForm();
+            
+            // عرض إشعار النجاح
+            showToast(`تم تسجيل حضور ${teacher.name} بنجاح`, 'success');
+            
+            // تحديث نسبة الحضور (زيادة بنسبة 1% كنموذج)
+            if (mockData.attendanceRate < 100) {
+                mockData.attendanceRate += 1;
+                document.getElementById('attendanceRate').textContent = `${mockData.attendanceRate}%`;
+            }
+        }
+        
+        // التحقق من صحة نموذج الحضور
+        function validateAttendanceForm() {
+            let isValid = true;
+            
+            // التحقق من التاريخ
+            const dateInput = document.getElementById('attendanceDateInput');
+            const dateError = document.getElementById('dateError');
+            if (!dateInput.value) {
+                dateError.classList.remove('hidden');
+                isValid = false;
+            } else {
+                dateError.classList.add('hidden');
+            }
+            
+            // التحقق من اختيار المعلم
+            const teacherSelect = document.getElementById('teacherSelect');
+            const teacherError = document.getElementById('teacherError');
+            if (!teacherSelect.value) {
+                teacherError.classList.remove('hidden');
+                isValid = false;
+            } else {
+                teacherError.classList.add('hidden');
+            }
+            
+            // التحقق من وقت الحضور
+            const checkInTime = document.getElementById('checkInTime');
+            const checkInError = document.getElementById('checkInError');
+            if (!checkInTime.value) {
+                checkInError.classList.remove('hidden');
+                isValid = false;
+            } else {
+                checkInError.classList.add('hidden');
+            }
+            
+            // التحقق من وقت الانصراف
+            const checkOutTime = document.getElementById('checkOutTime');
+            const checkOutError = document.getElementById('checkOutError');
+            if (!checkOutTime.value) {
+                checkOutError.classList.remove('hidden');
+                isValid = false;
+            } else {
+                checkOutError.classList.add('hidden');
+            }
+            
+            return isValid;
+        }
+        
+        // إعادة تعيين نموذج الحضور
+        function resetAttendanceForm() {
+            document.getElementById('attendanceForm').reset();
+            
+            // إعادة تعيين التاريخ الحالي
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('attendanceDateInput').value = today;
+            document.getElementById('attendanceDate').textContent = formatDate(today);
+            
+            // إخفاء أخطاء التحقق
+            document.querySelectorAll('[id$="Error"]').forEach(error => {
+                error.classList.add('hidden');
+            });
+            
+            // تحميل سجلات اليوم
+            loadAttendanceRecords(today);
+        }
+        
+        // فلترة التقارير
+        function filterReports() {
+            const startDate = document.getElementById('reportStartDate').value;
+            const endDate = document.getElementById('reportEndDate').value;
+            
+            if (!startDate || !endDate) {
+                showToast('يرجى اختيار تاريخ البداية والنهاية', 'error');
+                return;
+            }
+            
+            if (new Date(startDate) > new Date(endDate)) {
+                showToast('تاريخ البداية يجب أن يكون قبل تاريخ النهاية', 'error');
+                return;
+            }
+            
+            showToast(`تم تطبيق الفلترة من ${formatDate(startDate)} إلى ${formatDate(endDate)}`, 'success');
+            
+            // هنا يمكن إضافة منطق الفلترة الحقيقي
+            // لكن في هذا المثال، سنعرض فقط رسالة نجاح
+        }
+        
+        // عرض صفحة المحتوى
+        function showContentPage(pageId) {
+            // إخفاء جميع صفحات المحتوى
+            Object.values(contentPages).forEach(page => {
+                page.classList.remove('active');
+                page.classList.add('hidden');
+            });
+            
+            // إزالة النشاط من جميع عناصر القائمة
+            document.querySelectorAll('.active-page').forEach(item => {
+                item.classList.remove('active-page');
+            });
+            
+            // إضافة النشاط للعنصر المحدد
+            document.querySelectorAll(`[data-page="${pageId}"]`).forEach(item => {
+                item.classList.add('active-page');
+            });
+            
+            // إظهار صفحة المحتوى المطلوبة
+            if (contentPages[pageId]) {
+                contentPages[pageId].classList.remove('hidden');
+                contentPages[pageId].classList.add('active');
+            }
+        }
+        
+        // عرض لوحة التحكم
+        function showDashboard() {
+            pages.landing.classList.remove('active');
+            pages.dashboard.classList.add('active');
+            
+            // إظهار صفحة الحضور والانصراف افتراضيًا
+            showContentPage('attendance');
+            
+            // تحديث التاريخ والوقت
+            updateDateTime();
+        }
+        
+        // عرض الصفحة الرئيسية
+        function showLanding() {
+            pages.dashboard.classList.remove('active');
+            pages.landing.classList.add('active');
+            
+            // إغلاق القائمة الجانبية على الموبايل إذا كانت مفتوحة
+            document.getElementById('mobileSidebar').classList.remove('active');
+        }
+        
+        // تبديل القوائم الفرعية
+        function toggleSubmenu() {
+            const submenu = document.getElementById('dataManagementSubmenu');
+            const icon = this.querySelector('.fa-chevron-down');
+            
+            submenu.classList.toggle('hidden');
+            icon.classList.toggle('fa-chevron-down');
+            icon.classList.toggle('fa-chevron-up');
+        }
+        
+        function toggleMobileSubmenu() {
+            const submenu = document.getElementById('mobileDataManagementSubmenu');
+            const icon = this.querySelector('.fa-chevron-down');
+            
+            submenu.classList.toggle('hidden');
+            icon.classList.toggle('fa-chevron-down');
+            icon.classList.toggle('fa-chevron-up');
+        }
+        
+        // تحديث التاريخ والوقت
+        function updateDateTime() {
+            const now = new Date();
+            
+            // التاريخ
+            const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const dateStr = now.toLocaleDateString('ar-SA', dateOptions);
+            document.getElementById('currentDate').textContent = dateStr;
+            
+            // الوقت
+            const timeStr = now.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('currentTime').textContent = timeStr;
+        }
+        
+        // تنسيق التاريخ
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric' });
+        }
+        
+        // عرض إشعارات Toast
+        function showToast(message, type = 'info') {
+            const toastContainer = document.getElementById('toastContainer');
+            
+            // ألوان حسب النوع
+            const colors = {
+                success: 'bg-green-600',
+                error: 'bg-red-600',
+                warning: 'bg-yellow-600',
+                info: 'bg-blue-600'
+            };
+            
+            // أيقونات حسب النوع
+            const icons = {
+                success: 'fa-check-circle',
+                error: 'fa-exclamation-circle',
+                warning: 'fa-exclamation-triangle',
+                info: 'fa-info-circle'
+            };
+            
+            const toast = document.createElement('div');
+            toast.className = `p-4 rounded-lg shadow-lg text-white ${colors[type]} flex items-center justify-between mb-3`;
+            toast.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas ${icons[type]} text-xl ml-3"></i>
+                    <span>${message}</span>
+                </div>
+                <button class="text-white hover:text-gray-200 text-xl">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            
+            // زر الإغلاق
+            toast.querySelector('button').addEventListener('click', function() {
+                toast.remove();
+            });
+            
+            // إضافة الإشعار إلى الحاوية
+            toastContainer.appendChild(toast);
+            
+            // إزالة الإشعار تلقائياً بعد 5 ثواني
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.remove();
+                }
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

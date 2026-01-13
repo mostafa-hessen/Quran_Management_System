@@ -1,0 +1,469 @@
+<!--
+ملف: نظام إدارة حلقات القرآن
+الوصف: مستند يجمع مواصفات التنفيذ (Requirements + Modules) + نموذج واجهة أولي واحدي (HTML/CSS/JS)
+لغة الواجهة: عربية (RTL)
+
+---
+جزء أول: مواصفات تنفيذية مختصرة (Requirements)
+
+1) نظرة عامة
+   - نظام ويب متكامل لإدارة حلقات القرآن: لوحة إدارة (Admin Dashboard)، واجهة معلم، واجهة طالب/ولي أمر.
+   - مكون أساسي: نظام اشتراكات ومدفوعات.
+   - تقارير وتحليلات (Charts, exportable CSV/PDF).
+
+2) المستخدمون والأدوار
+   - Admin (مشرف): صلاحيات كاملة.
+   - Teacher (معلم): إدارة حلقاته، حضور، تقييم طلاب.
+   - Student (طالب): ملف الأداء، الحضور.
+   - Parent (ولي أمر): مشاهدة تقارير الطفل ودفع اشتراك.
+
+3) المتطلبات الوظيفية الأساسية
+   - إدارة المستخدمين (CRUD) مع رفع صورة وحقول بيانات.
+   - إدارة الحلقات (CRUD) + ربط معلمين وطلاب.
+   - حضور الجلسات: تسجيل حالة (حاضر، غائب، متأخر، بعذر).
+   - تسجيل أداء الحفظ: سورة، آية البداية/النهاية، عدد آيات، درجة الإتقان، أخطاء.
+   - نظام اشتراكات: باقات (شهري، سنوي)، ربط اشتراك بالطالب، مدفوعات، تذكير قرب الانتهاء.
+   - تقارير: حضور، تقدم حفظي، تقارير مالية، تقارير حلقات.
+   - إشعارات: رسائل بريد أو إشعارات داخلية (web notifications).
+
+4) المتطلبات غير الوظيفية
+   - أداء: صفحات تحميل سريعة، تصفح لجداول حتى 10k سجل (paging + server-side filtering).
+   - أمان: مصادقة (JWT أو جلسات) + صلاحيات على مستوى السجلات.
+   - نسخ احتياطي دوري لقاعدة البيانات.
+   - وصول APIs RESTful + وثائق (OpenAPI/Swagger).
+
+5) تقنيات مقترحة
+   - Frontend: HTML5, CSS3 (Sass if preferred) + Vanilla JS أو React/Vue.
+   - Backend: Node.js (Express) أو Laravel (PHP) أو Django.
+   - DB: PostgreSQL / MySQL.
+   - Payments: Stripe / PayTabs / Fawry (حسب البلد).
+   - Hosting: Vercel/Netlify (frontend) + DigitalOcean/AWS (backend + DB).
+
+---
+جزء ثاني: Modules (Modules / Endpoints / Data models)
+
+Module: Auth
+  - POST /api/auth/login
+  - POST /api/auth/logout
+  - POST /api/auth/refresh
+  - POST /api/auth/register (admin only)
+
+Module: Users
+  - GET /api/users?role=teacher|student|parent
+  - GET /api/users/:id
+  - POST /api/users
+  - PUT /api/users/:id
+  - DELETE /api/users/:id
+  - Data model (users): id, name, email, phone, role, status, join_date, profile_pic
+
+Module: Halaqat (Circles)
+  - GET /api/halaqat
+  - POST /api/halaqat
+  - PUT /api/halaqat/:id
+  - DELETE /api/halaqat/:id
+  - Data model (halaqa): id, name, teacher_id, stage, max_students, schedule (days+time)
+
+Module: Attendance
+  - POST /api/halaqat/:id/sessions (create session)
+  - POST /api/sessions/:session_id/attendance (list of student statuses)
+  - GET /api/users/:id/attendance
+
+Module: Performance
+  - POST /api/performance (student_id, session_id, type, surah, from_ayah, to_ayah, score, notes)
+  - GET /api/users/:id/performance
+
+Module: Subscriptions & Payments
+  - GET /api/subscriptions/packages
+  - POST /api/subscriptions/packages
+  - PUT /api/subscriptions/packages/:id
+  - POST /api/subscriptions/assign (student_id, package_id, start_date)
+  - GET /api/users/:id/subscriptions
+  - POST /api/payments (amount, method, ref, student_id)
+  - Webhook endpoint: POST /api/payments/webhook
+  - Data model (packages): id, title, price, duration_days, type (individual|halaqa), features
+  - Data model (subscription): id, student_id, package_id, start_date, end_date, status
+
+Module: Reports
+  - GET /api/reports/attendance?from=&to=&halaqa_id=
+  - GET /api/reports/progress?student_id=&from=&to=
+  - Export: /api/reports/export?type=csv|pdf
+
+---
+جزء ثالث: نموذج مخطط قاعدة بيانات مختصر (entities)
+  - users
+  - halaqat
+  - halaqa_students (halaqa_id, student_id)
+  - sessions (halaqa_id, date)
+  - attendance (session_id, student_id, status, timestamp)
+  - performance
+  - subscriptions
+  - packages
+  - payments
+
+---
+جزء رابع: سير استخدام نظام الاشتراكات (Subscription flow)
+ 1) Admin ينشئ باقة (مدة، سعر، نوع).
+ 2) Parent/Student يختار الباقة ويدفع (redirect لبوابة الدفع أو داخل-app).
+ 3) عند الدفع يتم تفعيل الاشتراك وربط الطالب.
+ 4) نظام يقوم بتذكير قبل انتهاء الاشتراك (مثلاً 7 أيام، 3 أيام).
+ 5) حالة الاشتراك تمنع أو تسمح بالوصول للموارد (مثلاً الحجز داخل الحلقة).
+
+---
+جزء خامس: واجهات/شاشات أساسية
+  - Login
+  - Dashboard (أعلى: إحصائيات عامة، وسط: تقارير سريعة، أسفل: آخر الأحداث)
+  - Students (قائمة، بحث، فلتر، export)
+  - Teachers
+  - Halaqat (قوائم، إدارة الجدول)
+  - Sessions & Attendance
+  - Performance (سجل الطالب، تقييم)
+  - Subscriptions & Payments (إنشاء باقة، ربط، تلقيمات مالية)
+  - Reports
+  - Settings (roles & permissions, payment gateways)
+
+-->
+
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>لوحة إدارة - نظام حلقات القرآن (بروتوتايب)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#f6f8fb; --card:#fff; --muted:#6b7280; --accent:#0ea5a4; --accent-2:#06b6d4; --danger:#ef4444;
+      --sidebar:#0f1724; --sidebar-text:#e6eef6;
+    }
+    *{box-sizing:border-box;font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans Arabic', 'Helvetica Neue', Arial}
+    body{margin:0;background:var(--bg);color:#0f1724}
+    .app{display:flex;min-height:100vh}
+    /* Sidebar */
+    .sidebar{width:260px;background:linear-gradient(180deg,var(--sidebar),#0b1220);color:var(--sidebar-text);padding:20px;}
+    .brand{font-size:18px;font-weight:700;margin-bottom:18px}
+    .nav{margin-top:12px}
+    .nav a{display:flex;gap:12px;align-items:center;padding:10px;border-radius:8px;color:var(--sidebar-text);text-decoration:none;margin-bottom:6px}
+    .nav a:hover{background:rgba(255,255,255,0.03)}
+    .nav a .icon{width:28px;height:28px;background:rgba(255,255,255,0.06);display:inline-flex;align-items:center;justify-content:center;border-radius:6px}
+
+    /* Main */
+    .main{flex:1;padding:18px 24px}
+    .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+    .search{display:flex;gap:8px;align-items:center}
+    .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:18px}
+    .card{background:var(--card);padding:14px;border-radius:10px;box-shadow:0 1px 2px rgba(16,24,40,0.04)}
+    .kpi{font-size:22px;font-weight:700}
+    .kpi-sub{font-size:12px;color:var(--muted)}
+
+    /* layout */
+    .grid-2{display:grid;grid-template-columns:2fr 1fr;gap:14px}
+
+    /* table */
+    table{width:100%;border-collapse:collapse;background:var(--card);border-radius:8px;overflow:hidden}
+    th,td{padding:10px;text-align:right;border-bottom:1px solid #f1f5f9}
+    thead th{background:#fbfdfe;font-weight:600}
+
+    /* small components */
+    .btn{display:inline-block;padding:8px 12px;border-radius:8px;background:var(--accent);color:white;text-decoration:none;font-weight:600;cursor:pointer}
+    .btn.ghost{background:transparent;color:var(--accent);border:1px solid rgba(14,165,164,0.12)}
+    .badge{display:inline-block;padding:6px 8px;border-radius:999px;background:#eef6f6;color:var(--accent-2);font-weight:700}
+
+    /* modal */
+    .modal-backdrop{position:fixed;inset:0;background:rgba(2,6,23,0.45);display:none;align-items:center;justify-content:center}
+    .modal{background:var(--card);padding:18px;border-radius:10px;width:520px}
+
+    /* responsive */
+    @media(max-width:900px){.sidebar{display:none}.main{padding:12px}}
+
+    /* RTL adjustments */
+    .dir-rtl{text-align:right}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">نظام إدارة حلقات القرآن</div>
+      <div class="muted">لوحة الإدارة</div>
+      <nav class="nav" aria-label="القائمة الرئيسية">
+        <a href="#" onclick="openPage('dashboard')"><span class="icon">🏠</span> لوحة التحكم</a>
+        <a href="#" onclick="openPage('students')"><span class="icon">🧑‍🎓</span> الطلاب</a>
+        <a href="#" onclick="openPage('teachers')"><span class="icon">👨‍🏫</span> المعلمون</a>
+        <a href="#" onclick="openPage('halaqat')"><span class="icon">🕌</span> الحلقات</a>
+        <a href="#" onclick="openPage('attendance')"><span class="icon">📋</span> الحضور</a>
+        <a href="#" onclick="openPage('subscriptions')"><span class="icon">💳</span> الاشتراكات</a>
+        <a href="#" onclick="openPage('reports')"><span class="icon">📊</span> التقارير</a>
+        <a href="#" onclick="openPage('settings')"><span class="icon">⚙️</span> الإعدادات</a>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="search">
+          <input id="globalSearch" oninput="renderActivePage()" placeholder="ابحث عن طالب أو حلقة..." style="padding:8px;border-radius:8px;border:1px solid #e6eef6;width:320px">
+          <button class="btn ghost" onclick="openModal('createStudent')">+ طالب جديد</button>
+        </div>
+        <div>
+          <span class="badge">المشتركين: <strong id="countSubscribers">0</strong></span>
+          <button class="btn" onclick="openPage('subscriptions')">إدارة الاشتراكات</button>
+        </div>
+      </div>
+
+      <!-- Pages container (simple single-page switching)-->
+      <section id="page-dashboard" class="page">
+        <div class="cards">
+          <div class="card">
+            <div class="kpi" id="kpiStudents">0</div>
+            <div class="kpi-sub">عدد الطلاب</div>
+          </div>
+          <div class="card">
+            <div class="kpi" id="kpiTeachers">0</div>
+            <div class="kpi-sub">عدد المعلمين</div>
+          </div>
+          <div class="card">
+            <div class="kpi" id="kpiHalaqat">0</div>
+            <div class="kpi-sub">عدد الحلقات</div>
+          </div>
+          <div class="card">
+            <div class="kpi" id="kpiActiveSubs">0</div>
+            <div class="kpi-sub">الاشتراكات النشطة</div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div>
+            <div class="card">
+              <h3>آخر الطلاب</h3>
+              <table id="studentsTable">
+                <thead><tr><th>اسم</th><th>هاتف</th><th>الحالة</th><th>باقة</th><th>إجراءات</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+
+            <div class="card" style="margin-top:14px">
+              <h3>أحداث سريعة</h3>
+              <ul id="activityList" style="padding-left:0;list-style:none;margin:0"></ul>
+            </div>
+          </div>
+
+          <div>
+            <div class="card">
+              <h3>مخطط تطور الطالب (تجريبي)</h3>
+              <canvas id="chartProgress" width="300" height="180"></canvas>
+            </div>
+
+            <div class="card" style="margin-top:14px">
+              <h3>إجماليات مالية</h3>
+              <div>إجمالي المدفوعات: <strong id="totalPayments">0</strong> ج.م</div>
+              <div>المتأخرات: <strong id="duePayments">0</strong> ج.م</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Students Page -->
+      <section id="page-students" class="page" style="display:none">
+        <div class="card">
+          <h3>قائمة الطلاب</h3>
+          <div style="margin-bottom:10px;display:flex;gap:8px;justify-content:flex-end">
+            <button class="btn" onclick="exportCSV('students')">تصدير CSV</button>
+          </div>
+          <table id="studentsFullTable"><thead><tr><th>اسم</th><th>هاتف</th><th>انضم</th><th>حالة</th><th>حلقة</th><th>باقة</th></tr></thead><tbody></tbody></table>
+        </div>
+      </section>
+
+      <!-- Subscriptions Page -->
+      <section id="page-subscriptions" class="page" style="display:none">
+        <div class="card">
+          <h3>إدارة الباقات</h3>
+          <div style="display:flex;gap:8px;justify-content:flex-end;margin-bottom:10px">
+            <button class="btn" onclick="openModal('createPackage')">+ باقة جديدة</button>
+          </div>
+          <table id="packagesTable"><thead><tr><th>اسم الباقة</th><th>السعر</th><th>المدة (يوم)</th><th>نوع</th><th>إجراءات</th></tr></thead><tbody></tbody></table>
+        </div>
+
+        <div class="card" style="margin-top:12px">
+          <h3>المدفوعات الأخيرة</h3>
+          <table id="paymentsTable"><thead><tr><th>الطالب</th><th>الباقة</th><th>المبلغ</th><th>تاريخ</th></tr></thead><tbody></tbody></table>
+        </div>
+      </section>
+
+      <!-- Other pages placeholders -->
+      <section id="page-teachers" class="page" style="display:none"><div class="card"><h3>المعلمون</h3><p>قائمة المعلمين وادارة الحلقات</p></div></section>
+      <section id="page-halaqat" class="page" style="display:none"><div class="card"><h3>الحلقات</h3><p>ادارة الجداول ونقل الطلاب</p></div></section>
+      <section id="page-attendance" class="page" style="display:none"><div class="card"><h3>الحضور</h3><p>تسجيل حضور لكل جلسة</p></div></section>
+      <section id="page-reports" class="page" style="display:none"><div class="card"><h3>التقارير</h3><p>تقارير حضور، تقدم، مالي</p></div></section>
+      <section id="page-settings" class="page" style="display:none"><div class="card"><h3>الإعدادات</h3><p>بوابات الدفع، الصلاحيات، إعدادات عامة</p></div></section>
+
+    </main>
+  </div>
+
+  <!-- Modal backdrop -->
+  <div id="modalBackdrop" class="modal-backdrop">
+    <div class="modal" id="modalContent"></div>
+  </div>
+
+  <script>
+    // --------- Demo data (simulate backend) ----------
+    const db = {
+      students: [
+        {id:1,name:'أحمد علي',phone:'01012345678',joined:'2025-01-10',status:'نشط',halaqa:'الحلقة 1',packageId:1},
+        {id:2,name:'سارة محمد',phone:'01198765432',joined:'2024-12-20',status:'نشط',halaqa:'الحلقة 2',packageId:2},
+        {id:3,name:'محمد حسن',phone:'0105554433',joined:'2024-11-01',status:'موقوف',halaqa:'',packageId:null}
+      ],
+      teachers:[{id:1,name:'م / كريم'},{id:2,name:'م / نور'}],
+      halaqat:[{id:1,name:'الحلقة 1',teacher:1},{id:2,name:'الحلقة 2',teacher:2}],
+      packages:[{id:1,title:'باقات فردي - شهري',price:200,duration:30,type:'فردي'},{id:2,title:'باقات حلقة - شهري',price:1000,duration:30,type:'حلقة'}],
+      payments: [{id:1,studentId:1,packageId:1,amount:200,date:'2025-01-11'}]
+    };
+
+    function $(s) {return document.querySelector(s)}
+    function $all(s){return document.querySelectorAll(s)}
+
+    // Page switching
+    function openPage(page){
+      document.querySelectorAll('.page').forEach(p=>p.style.display='none');
+      const el = document.getElementById('page-'+page);
+      if(el) el.style.display='block';
+      renderActivePage();
+    }
+    openPage('dashboard');
+
+    function renderActivePage(){
+      // global search
+      const q = document.getElementById('globalSearch').value.trim();
+      renderKPIs();
+      renderStudentsTable(q);
+      renderStudentsFullTable(q);
+      renderPackages();
+      renderPayments();
+      renderChart();
+    }
+
+    function renderKPIs(){
+      $('#kpiStudents').textContent = db.students.length;
+      $('#kpiTeachers').textContent = db.teachers.length;
+      $('#kpiHalaqat').textContent = db.halaqat.length;
+      $('#kpiActiveSubs').textContent = db.payments.length;
+      $('#countSubscribers').textContent = db.payments.length;
+      // financials
+      const total = db.payments.reduce((s,p)=>s+p.amount,0);
+      $('#totalPayments').textContent = total;
+      $('#duePayments').textContent = 0; // demo
+    }
+
+    function renderStudentsTable(q=''){
+      const tbody = document.querySelector('#studentsTable tbody'); tbody.innerHTML='';
+      const list = db.students.filter(s => !q || s.name.includes(q) || s.phone.includes(q));
+      list.slice(0,6).forEach(s=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${s.name}</td><td>${s.phone}</td><td>${s.status}</td><td>${s.packageId?db.packages.find(p=>p.id===s.packageId).title:'-'} </td><td><button class='btn ghost' onclick='openAssign(${s.id})'>ادارة</button></td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderStudentsFullTable(q=''){
+      const tbody = document.querySelector('#studentsFullTable tbody'); tbody.innerHTML='';
+      const list = db.students.filter(s => !q || s.name.includes(q) || s.phone.includes(q));
+      list.forEach(s =>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${s.name}</td><td>${s.phone}</td><td>${s.joined}</td><td>${s.status}</td><td>${s.halaqa}</td><td>${s.packageId?db.packages.find(p=>p.id===s.packageId).title:'-'}</td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderPackages(){
+      const tbody = document.querySelector('#packagesTable tbody'); tbody.innerHTML='';
+      db.packages.forEach(p=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${p.title}</td><td>${p.price}</td><td>${p.duration}</td><td>${p.type}</td><td><button class='btn ghost' onclick='editPackage(${p.id})'>تعديل</button> <button class='btn ghost' onclick='deletePackage(${p.id})'>حذف</button></td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderPayments(){
+      const tbody = document.querySelector('#paymentsTable tbody'); tbody.innerHTML='';
+      db.payments.forEach(pay =>{
+        const student = db.students.find(s=>s.id===pay.studentId)||{name:'غير معروف'};
+        const pack = db.packages.find(p=>p.id===pay.packageId)||{title:'-'};
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${student.name}</td><td>${pack.title}</td><td>${pay.amount}</td><td>${pay.date}</td>`;
+        tbody.appendChild(tr);
+      })
+    }
+
+    // modal management
+    function openModal(name){
+      const backdrop = document.getElementById('modalBackdrop');
+      const content = document.getElementById('modalContent');
+      if(name==='createStudent'){
+        content.innerHTML = `\n          <h3>إضافة طالب جديد</h3>\n          <div style='display:flex;flex-direction:column;gap:8px;margin-top:8px'>\n            <input id='newName' placeholder='الاسم' />\n            <input id='newPhone' placeholder='الهاتف' />\n            <div style='display:flex;gap:8px;justify-content:flex-end'>\n              <button class='btn' onclick='saveStudent()'>حفظ</button>\n              <button class='btn ghost' onclick='closeModal()'>إلغاء</button>\n            </div>\n          </div>`;
+      } else if(name==='createPackage'){
+        content.innerHTML = `\n          <h3>إنشاء باقة</h3>\n          <div style='display:flex;flex-direction:column;gap:8px;margin-top:8px'>\n            <input id='pkgTitle' placeholder='اسم الباقة' />\n            <input id='pkgPrice' placeholder='السعر' type='number' />\n            <input id='pkgDuration' placeholder='المدة (يوم)' type='number' />\n            <select id='pkgType'><option value='فردي'>فردي</option><option value='حلقة'>حلقة</option></select>\n            <div style='display:flex;gap:8px;justify-content:flex-end'>\n              <button class='btn' onclick='savePackage()'>حفظ</button>\n              <button class='btn ghost' onclick='closeModal()'>إلغاء</button>\n            </div>\n          </div>`;
+      }
+      backdrop.style.display='flex';
+    }
+    function closeModal(){document.getElementById('modalBackdrop').style.display='none'}
+
+    function saveStudent(){
+      const name = $('#newName').value.trim(); const phone = $('#newPhone').value.trim();
+      if(!name) return alert('الاسم مطلوب');
+      const id = Date.now();
+      db.students.push({id,name,phone,joined:new Date().toISOString().slice(0,10),status:'نشط',halaqa:'',packageId:null});
+      closeModal(); renderActivePage();
+    }
+
+    function savePackage(){
+      const title = $('#pkgTitle').value.trim(); const price = Number($('#pkgPrice').value); const duration = Number($('#pkgDuration').value); const type = $('#pkgType').value;
+      if(!title||!price) return alert('الاسم والسعر مطلوبان');
+      const id = Date.now(); db.packages.push({id,title,price,duration,type}); closeModal(); renderActivePage();
+    }
+
+    function editPackage(id){
+      const p = db.packages.find(x=>x.id===id); if(!p) return; openModal('createPackage');
+      setTimeout(()=>{ $('#pkgTitle').value=p.title; $('#pkgPrice').value=p.price; $('#pkgDuration').value=p.duration; $('#pkgType').value=p.type },50);
+    }
+    function deletePackage(id){ if(!confirm('حذف الباقة؟')) return; db.packages = db.packages.filter(x=>x.id!==id); renderActivePage(); }
+
+    function openAssign(studentId){
+      const s = db.students.find(x=>x.id===studentId);
+      const content = document.getElementById('modalContent');
+      document.getElementById('modalBackdrop').style.display='flex';
+      content.innerHTML = `<h3>ادارة ${s.name}</h3><div style='display:flex;flex-direction:column;gap:8px;margin-top:8px'>\n        <label>اختر باقة</label>\n        <select id='assignPkg'>${db.packages.map(p=>`<option value='${p.id}'>${p.title} - ${p.price}</option>`).join('')}</select>\n        <div style='display:flex;gap:8px;justify-content:flex-end;margin-top:6px'>\n          <button class='btn' onclick='assignPackage(${s.id})'>حفظ</button>\n          <button class='btn ghost' onclick='closeModal()'>إلغاء</button>\n        </div>\n      </div>`;
+    }
+    function assignPackage(studentId){ const pkgId = Number($('#assignPkg').value); const s = db.students.find(x=>x.id===studentId); s.packageId = pkgId; db.payments.push({id:Date.now(),studentId,packageId:pkgId,amount:db.packages.find(p=>p.id===pkgId).price,date:new Date().toISOString().slice(0,10)}); closeModal(); renderActivePage(); }
+
+    function exportCSV(kind){
+      if(kind==='students'){
+        const rows = [['name,phone,joined,status,halaqa,package']];
+        const csv = ['الاسم,الهاتف,تاريخ الانضمام,الحالة,الحلقة,الباقة'];
+        db.students.forEach(s=> csv.push(`${s.name},${s.phone},${s.joined},${s.status},${s.halaqa},${s.packageId?db.packages.find(p=>p.id===s.packageId).title:'-'}`));
+        const blob = new Blob([csv.join('\n')],{type:'text/csv'});
+        const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href=url; a.download='students.csv'; a.click(); URL.revokeObjectURL(url);
+      }
+    }
+
+    // Simple chart (no external libs) - demo line chart
+    function renderChart(){
+      const canvas = document.getElementById('chartProgress'); const ctx = canvas.getContext('2d');
+      // sample weekly data
+      const data=[3,5,4,6,7,8,9];
+      const w = canvas.width; const h = canvas.height; ctx.clearRect(0,0,w,h);
+      // axes
+      ctx.beginPath(); ctx.moveTo(30,10); ctx.lineTo(30,h-20); ctx.lineTo(w-10,h-20); ctx.strokeStyle='#e6eef6'; ctx.stroke();
+      // draw line
+      const max = Math.max(...data)+2; ctx.beginPath();
+      data.forEach((val,i)=>{
+        const x = 30 + (i*(w-50)/(data.length-1));
+        const y = (h-20) - ( (h-40)*(val/max) );
+        if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+        ctx.fillRect(x-2,y-2,4,4);
+      }); ctx.strokeStyle=varOr('#0ea5a4','#0ea5a4'); ctx.stroke();
+    }
+    function varOr(a,b){return a||b}
+
+    // initial render
+    renderActivePage();
+
+  </script>
+</body>
+</html>

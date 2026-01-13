@@ -1,0 +1,2766 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام إدارة حلقات القرآن</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/apexcharts@3.35.0/dist/apexcharts.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <style>
+        :root {
+            --primary-color: #2c5f2d;
+            --secondary-color: #97bc62;
+            --accent-color: #2c5f2d;
+            --light-color: #f5f9f5;
+            --dark-color: #1a3c1a;
+            --text-color: #333;
+            --text-light: #666;
+            --border-color: #e0e0e0;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --radius: 8px;
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+        
+        body {
+            background-color: #f8faf8;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* الشريط الجانبي */
+        .sidebar {
+            width: 260px;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px 0;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            z-index: 100;
+        }
+        
+        .sidebar-header {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo-icon {
+            font-size: 28px;
+            color: var(--secondary-color);
+        }
+        
+        .logo-text {
+            font-size: 22px;
+            font-weight: 700;
+        }
+        
+        .menu {
+            list-style: none;
+            padding: 0 15px;
+        }
+        
+        .menu-item {
+            margin-bottom: 5px;
+        }
+        
+        .menu-link {
+            display: flex;
+            align-items: center;
+            padding: 14px 15px;
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            border-radius: var(--radius);
+            transition: var(--transition);
+            gap: 12px;
+            cursor: pointer;
+        }
+        
+        .menu-link:hover, .menu-link.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        .menu-icon {
+            font-size: 18px;
+            width: 24px;
+        }
+        
+        .menu-text {
+            font-size: 15px;
+            font-weight: 500;
+        }
+        
+        /* المحتوى الرئيسي */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        /* رأس الصفحة */
+        .header {
+            background-color: white;
+            padding: 18px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            z-index: 50;
+        }
+        
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--dark-color);
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .notification {
+            position: relative;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            background-color: #e74c3c;
+            color: white;
+            font-size: 11px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+        
+        .user-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background-color: var(--secondary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: white;
+        }
+        
+        .user-name {
+            font-weight: 600;
+        }
+        
+        .user-role {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+        
+        /* محتوى الصفحة */
+        .content {
+            flex: 1;
+            padding: 25px;
+            overflow-y: auto;
+        }
+        
+        /* إحصائيات سريعة */
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background-color: white;
+            border-radius: var(--radius);
+            padding: 22px;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: var(--transition);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+        }
+        
+        .stat-icon.students {
+            background-color: #3498db;
+        }
+        
+        .stat-icon.teachers {
+            background-color: #2ecc71;
+        }
+        
+        .stat-icon.halaqat {
+            background-color: #9b59b6;
+        }
+        
+        .stat-icon.subscriptions {
+            background-color: #e67e22;
+        }
+        
+        .stat-info {
+            flex: 1;
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--dark-color);
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-top: 5px;
+        }
+        
+        /* المخططات والتقارير */
+        .charts-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .chart-container {
+            background-color: white;
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+        
+        .chart-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--dark-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .chart-title i {
+            color: var(--primary-color);
+        }
+        
+        .chart {
+            height: 300px;
+        }
+        
+        /* الجداول */
+        .tables-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .table-container {
+            background-color: white;
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+        
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .table-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+        
+        .view-all {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .view-all:hover {
+            text-decoration: underline;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        thead {
+            background-color: #f8f9fa;
+        }
+        
+        th {
+            padding: 14px 12px;
+            text-align: right;
+            font-weight: 600;
+            color: var(--dark-color);
+            border-bottom: 2px solid var(--border-color);
+        }
+        
+        td {
+            padding: 14px 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .status {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        
+        .status.active {
+            background-color: #d5f4e6;
+            color: #27ae60;
+        }
+        
+        .status.inactive {
+            background-color: #ffeaea;
+            color: #e74c3c;
+        }
+        
+        .status.pending {
+            background-color: #fff4e6;
+            color: #f39c12;
+        }
+        
+        /* قسم الاشتراكات */
+        .subscription-plans {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .plan-card {
+            background-color: white;
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: var(--transition);
+            border: 2px solid transparent;
+        }
+        
+        .plan-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .plan-card.popular {
+            border-color: var(--primary-color);
+            position: relative;
+        }
+        
+        .popular-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--primary-color);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        
+        .plan-name {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 10px;
+        }
+        
+        .plan-price {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+        
+        .plan-period {
+            color: var(--text-light);
+            margin-bottom: 20px;
+        }
+        
+        .plan-features {
+            list-style: none;
+            text-align: right;
+            margin-bottom: 25px;
+        }
+        
+        .plan-features li {
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .plan-features li:last-child {
+            border-bottom: none;
+        }
+        
+        .plan-features li i {
+            color: var(--primary-color);
+            margin-left: 10px;
+        }
+        
+        /* عناصر التحكم */
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            font-size: 15px;
+        }
+        
+        .btn:hover {
+            background-color: var(--dark-color);
+        }
+        
+        .btn-secondary {
+            background-color: #e8f5e8;
+            color: var(--primary-color);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #d8eed8;
+        }
+        
+        .btn-small {
+            padding: 8px 15px;
+            font-size: 14px;
+        }
+        
+        .btn-add {
+            background-color: var(--secondary-color);
+        }
+        
+        .btn-edit {
+            background-color: #3498db;
+        }
+        
+        .btn-delete {
+            background-color: #e74c3c;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        /* فلاتر البحث */
+        .filters {
+            background-color: white;
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+        }
+        
+        .filter-row {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .filter-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+        
+        .filter-input, .filter-select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            font-size: 15px;
+            transition: var(--transition);
+        }
+        
+        .filter-input:focus, .filter-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(44, 95, 45, 0.1);
+        }
+        
+        /* أشكال خاصة للصفحات */
+        .page-section {
+            display: none;
+        }
+        
+        .page-section.active {
+            display: block;
+        }
+        
+        /* نماذج الإضافة والتعديل */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background-color: white;
+            border-radius: var(--radius);
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .modal-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--dark-color);
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+        
+        .modal-body {
+            padding: 25px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .form-col {
+            flex: 1;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            font-size: 15px;
+            transition: var(--transition);
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(44, 95, 45, 0.1);
+        }
+        
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        /* التذييل */
+        .footer {
+            background-color: white;
+            padding: 20px 30px;
+            text-align: center;
+            color: var(--text-light);
+            font-size: 14px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        /* القوائم المنسدلة */
+        .dropdown {
+            position: relative;
+        }
+        
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: white;
+            box-shadow: var(--shadow);
+            border-radius: var(--radius);
+            width: 200px;
+            padding: 10px 0;
+            display: none;
+            z-index: 1000;
+        }
+        
+        .dropdown-menu.show {
+            display: block;
+        }
+        
+        .dropdown-item {
+            display: block;
+            padding: 12px 20px;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+        
+        /* تصميم متجاوب */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 70px;
+            }
+            
+            .logo-text, .menu-text {
+                display: none;
+            }
+            
+            .menu-link {
+                justify-content: center;
+                padding: 15px;
+            }
+            
+            .sidebar-header {
+                justify-content: center;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px;
+            }
+            
+            .content {
+                padding: 15px;
+            }
+            
+            .charts-section, .tables-section, .subscription-plans {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .stats-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .user-info {
+                display: none;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+        
+        /* تخصيص Select2 */
+        .select2-container--default .select2-selection--single {
+            height: 46px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+        }
+        
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 46px;
+            padding-right: 15px;
+            text-align: right;
+        }
+        
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 46px;
+            left: 10px;
+            right: auto;
+        }
+        
+        .select2-container--default .select2-results__option--highlighted[aria-selected] {
+            background-color: var(--primary-color);
+        }
+        
+        /* بطاقات الطلاب والمعلمين */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+        
+        .card-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background-color: var(--secondary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: 700;
+            color: white;
+        }
+        
+        .card-status {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        
+        .card-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 5px;
+        }
+        
+        .card-subtitle {
+            font-size: 15px;
+            color: var(--text-light);
+            margin-bottom: 15px;
+        }
+        
+        .card-info {
+            margin-bottom: 20px;
+        }
+        
+        .card-info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .card-info-item:last-child {
+            border-bottom: none;
+        }
+        
+        .card-info-label {
+            color: var(--text-light);
+        }
+        
+        .card-info-value {
+            font-weight: 500;
+        }
+        
+        .card-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        /* حلقات البطاقات */
+        .halaqat-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .halaqa-card {
+            background-color: white;
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+        
+        .halaqa-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .halaqa-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .halaqa-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+        }
+        
+        .halaqa-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 5px;
+        }
+        
+        .halaqa-teacher {
+            font-size: 15px;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .halaqa-info {
+            margin-bottom: 20px;
+        }
+        
+        .halaqa-info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .halaqa-info-item:last-child {
+            border-bottom: none;
+        }
+        
+        .halaqa-info-label {
+            color: var(--text-light);
+        }
+        
+        .halaqa-info-value {
+            font-weight: 500;
+        }
+        
+        .halaqa-progress {
+            margin-bottom: 20px;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background-color: var(--secondary-color);
+            border-radius: 4px;
+        }
+        
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: var(--text-light);
+        }
+        
+        .halaqa-students {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .student-avatars {
+            display: flex;
+        }
+        
+        .student-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background-color: #3498db;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+            color: white;
+            margin-right: -10px;
+            border: 2px solid white;
+        }
+        
+        .student-avatar.more {
+            background-color: var(--text-light);
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- الشريط الجانبي -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-book-quran logo-icon"></i>
+                    <div class="logo-text">حلقات القرآن</div>
+                </div>
+            </div>
+            
+            <ul class="menu">
+                <li class="menu-item">
+                    <a class="menu-link active" data-page="dashboard">
+                        <i class="fas fa-home menu-icon"></i>
+                        <span class="menu-text">لوحة التحكم</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" data-page="students">
+                        <i class="fas fa-users menu-icon"></i>
+                        <span class="menu-text">الطلاب</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" data-page="teachers">
+                        <i class="fas fa-chalkboard-teacher menu-icon"></i>
+                        <span class="menu-text">المعلمون</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" data-page="halaqat">
+                        <i class="fas fa-mosque menu-icon"></i>
+                        <span class="menu-text">الحلقات</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" data-page="attendance">
+                        <i class="fas fa-calendar-check menu-icon"></i>
+                        <span class="menu-text">الحضور</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" data-page="reports">
+                        <i class="fas fa-chart-line menu-icon"></i>
+                        <span class="menu-text">التقارير</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" data-page="subscriptions">
+                        <i class="fas fa-credit-card menu-icon"></i>
+                        <span class="menu-text">الاشتراكات</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" data-page="settings">
+                        <i class="fas fa-cog menu-icon"></i>
+                        <span class="menu-text">الإعدادات</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+        
+        <!-- المحتوى الرئيسي -->
+        <main class="main-content">
+            <!-- رأس الصفحة -->
+            <header class="header">
+                <h1 class="page-title">لوحة التحكم</h1>
+                
+                <div class="header-actions">
+                    <div class="notification">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </div>
+                    
+                    <div class="dropdown">
+                        <div class="user-profile">
+                            <div class="user-avatar">أ</div>
+                            <div class="user-info">
+                                <div class="user-name">أحمد محمد</div>
+                                <div class="user-role">مدير النظام</div>
+                            </div>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        
+                        <div class="dropdown-menu">
+                            <a href="#" class="dropdown-item">
+                                <i class="fas fa-user"></i> الملف الشخصي
+                            </a>
+                            <a href="#" class="dropdown-item">
+                                <i class="fas fa-cog"></i> الإعدادات
+                            </a>
+                            <a href="#" class="dropdown-item">
+                                <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- محتوى الصفحة -->
+            <div class="content">
+                <!-- لوحة التحكم -->
+                <div id="dashboard" class="page-section active">
+                    <!-- إحصائيات سريعة -->
+                    <div class="stats-cards">
+                        <div class="stat-card">
+                            <div class="stat-icon students">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-value">248</div>
+                                <div class="stat-label">عدد الطلاب</div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon teachers">
+                                <i class="fas fa-chalkboard-teacher"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-value">18</div>
+                                <div class="stat-label">عدد المعلمين</div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon halaqat">
+                                <i class="fas fa-mosque"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-value">24</div>
+                                <div class="stat-label">عدد الحلقات</div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon subscriptions">
+                                <i class="fas fa-credit-card"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-value">187</div>
+                                <div class="stat-label">اشتراك نشط</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- المخططات والتقارير -->
+                    <div class="charts-section">
+                        <div class="chart-container">
+                            <h3 class="chart-title">
+                                <i class="fas fa-chart-line"></i> تقدم الطلاب الأسبوعي
+                            </h3>
+                            <div id="progress-chart" class="chart"></div>
+                        </div>
+                        
+                        <div class="chart-container">
+                            <h3 class="chart-title">
+                                <i class="fas fa-chart-pie"></i> نسبة الحضور والغياب
+                            </h3>
+                            <div id="attendance-chart" class="chart"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- الجداول -->
+                    <div class="tables-section">
+                        <div class="table-container">
+                            <div class="table-header">
+                                <h3 class="table-title">آخر الطلاب المضافين</h3>
+                                <a href="#" class="view-all">عرض الكل</a>
+                            </div>
+                            
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>اسم الطالب</th>
+                                        <th>الحلقة</th>
+                                        <th>مستوى الحفظ</th>
+                                        <th>الحالة</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>محمد أحمد</td>
+                                        <td>حلقة الفجر</td>
+                                        <td>5 أجزاء</td>
+                                        <td><span class="status active">نشط</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>سارة عبدالله</td>
+                                        <td>حلقة المساء</td>
+                                        <td>3 أجزاء</td>
+                                        <td><span class="status active">نشط</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>يوسف خالد</td>
+                                        <td>حلقة المتوسطين</td>
+                                        <td>10 أجزاء</td>
+                                        <td><span class="status pending">متأخر</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>فاطمة سعيد</td>
+                                        <td>حلقة الحفظ الجديد</td>
+                                        <td>جزء واحد</td>
+                                        <td><span class="status active">نشط</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>عمر محمد</td>
+                                        <td>حلقة المراجعة</td>
+                                        <td>خاتم</td>
+                                        <td><span class="status inactive">موقوف</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="table-container">
+                            <div class="table-header">
+                                <h3 class="table-title">الاشتراكات المنتهية قريباً</h3>
+                                <a href="#" class="view-all">عرض الكل</a>
+                            </div>
+                            
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>اسم الطالب</th>
+                                        <th>نوع الاشتراك</th>
+                                        <th>تاريخ الانتهاء</th>
+                                        <th>الأيام المتبقية</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>خالد سليمان</td>
+                                        <td>شهري</td>
+                                        <td>15/08/2023</td>
+                                        <td>3 أيام</td>
+                                    </tr>
+                                    <tr>
+                                        <td>نورة عبدالعزيز</td>
+                                        <td>ربع سنوي</td>
+                                        <td>20/08/2023</td>
+                                        <td>8 أيام</td>
+                                    </tr>
+                                    <tr>
+                                        <td>زيد محمد</td>
+                                        <td>سنوي</td>
+                                        <td>25/08/2023</td>
+                                        <td>13 يوم</td>
+                                    </tr>
+                                    <tr>
+                                        <td>لينا أحمد</td>
+                                        <td>شهري</td>
+                                        <td>30/08/2023</td>
+                                        <td>18 يوم</td>
+                                    </tr>
+                                    <tr>
+                                        <td>سلمان علي</td>
+                                        <td>نصف سنوي</td>
+                                        <td>05/09/2023</td>
+                                        <td>24 يوم</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- باقات الاشتراك -->
+                    <div class="subscription-section">
+                        <h3 style="font-size: 22px; margin-bottom: 20px; color: var(--dark-color);">
+                            <i class="fas fa-crown" style="color: var(--primary-color); margin-left: 10px;"></i>
+                            باقات الاشتراك
+                        </h3>
+                        
+                        <div class="subscription-plans">
+                            <div class="plan-card">
+                                <h4 class="plan-name">الاشتراك الأساسي</h4>
+                                <div class="plan-price">50 ريال</div>
+                                <div class="plan-period">شهرياً</div>
+                                
+                                <ul class="plan-features">
+                                    <li><i class="fas fa-check"></i> حلقة واحدة أسبوعياً</li>
+                                    <li><i class="fas fa-check"></i> متابعة الحفظ والمراجعة</li>
+                                    <li><i class="fas fa-check"></i> تقارير شهرية</li>
+                                    <li><i class="fas fa-times"></i> جلسات إضافية</li>
+                                    <li><i class="fas fa-times"></i> متابعة متقدمة</li>
+                                </ul>
+                                
+                                <button class="btn btn-secondary">اختيار الباقة</button>
+                            </div>
+                            
+                            <div class="plan-card popular">
+                                <div class="popular-badge">الأكثر شعبية</div>
+                                <h4 class="plan-name">الاشتراك المتميز</h4>
+                                <div class="plan-price">120 ريال</div>
+                                <div class="plan-period">شهرياً</div>
+                                
+                                <ul class="plan-features">
+                                    <li><i class="fas fa-check"></i> 3 حلقات أسبوعياً</li>
+                                    <li><i class="fas fa-check"></i> متابعة الحفظ والمراجعة</li>
+                                    <li><i class="fas fa-check"></i> تقارير أسبوعية</li>
+                                    <li><i class="fas fa-check"></i> جلسات إضافية</li>
+                                    <li><i class="fas fa-check"></i> متابعة متقدمة</li>
+                                </ul>
+                                
+                                <button class="btn">اختيار الباقة</button>
+                            </div>
+                            
+                            <div class="plan-card">
+                                <h4 class="plan-name">الاشتراك السنوي</h4>
+                                <div class="plan-price">1000 ريال</div>
+                                <div class="plan-period">سنوياً (توفير 200 ريال)</div>
+                                
+                                <ul class="plan-features">
+                                    <li><i class="fas fa-check"></i> 3 حلقات أسبوعياً</li>
+                                    <li><i class="fas fa-check"></i> متابعة الحفظ والمراجعة</li>
+                                    <li><i class="fas fa-check"></i> تقارير أسبوعية</li>
+                                    <li><i class="fas fa-check"></i> جلسات إضافية</li>
+                                    <li><i class="fas fa-check"></i> متابعة متقدمة</li>
+                                </ul>
+                                
+                                <button class="btn btn-secondary">اختيار الباقة</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- صفحة الطلاب -->
+                <div id="students" class="page-section">
+                    <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                        <h2 style="font-size: 28px; font-weight: 700; color: var(--dark-color);">
+                            <i class="fas fa-users" style="color: var(--primary-color); margin-left: 10px;"></i>
+                            إدارة الطلاب
+                        </h2>
+                        <button class="btn btn-add" id="addStudentBtn">
+                            <i class="fas fa-plus"></i> إضافة طالب جديد
+                        </button>
+                    </div>
+                    
+                    <!-- فلاتر البحث -->
+                    <div class="filters">
+                        <div class="filter-row">
+                            <div class="filter-group">
+                                <label class="filter-label">البحث بالاسم</label>
+                                <input type="text" class="filter-input" placeholder="ابحث عن طالب...">
+                            </div>
+                            <div class="filter-group">
+                                <label class="filter-label">الحلقة</label>
+                                <select class="filter-select">
+                                    <option value="">جميع الحلقات</option>
+                                    <option value="1">حلقة الفجر</option>
+                                    <option value="2">حلقة المساء</option>
+                                    <option value="3">حلقة المتوسطين</option>
+                                    <option value="4">حلقة الحفظ الجديد</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label class="filter-label">الحالة</label>
+                                <select class="filter-select">
+                                    <option value="">جميع الحالات</option>
+                                    <option value="active">نشط</option>
+                                    <option value="inactive">موقوف</option>
+                                    <option value="pending">متأخر</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label class="filter-label">&nbsp;</label>
+                                <button class="btn" style="width: 100%;">
+                                    <i class="fas fa-search"></i> بحث
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- بطاقات الطلاب -->
+                    <div class="cards-grid" id="studentsGrid">
+                        <!-- سيتم إضافة البطاقات ديناميكياً -->
+                    </div>
+                </div>
+                
+                <!-- صفحة المعلمين -->
+                <div id="teachers" class="page-section">
+                    <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                        <h2 style="font-size: 28px; font-weight: 700; color: var(--dark-color);">
+                            <i class="fas fa-chalkboard-teacher" style="color: var(--primary-color); margin-left: 10px;"></i>
+                            إدارة المعلمين
+                        </h2>
+                        <button class="btn btn-add" id="addTeacherBtn">
+                            <i class="fas fa-plus"></i> إضافة معلم جديد
+                        </button>
+                    </div>
+                    
+                    <!-- فلاتر البحث -->
+                    <div class="filters">
+                        <div class="filter-row">
+                            <div class="filter-group">
+                                <label class="filter-label">البحث بالاسم</label>
+                                <input type="text" class="filter-input" placeholder="ابحث عن معلم...">
+                            </div>
+                            <div class="filter-group">
+                                <label class="filter-label">التخصص</label>
+                                <select class="filter-select">
+                                    <option value="">جميع التخصصات</option>
+                                    <option value="tajweed">التجويد</option>
+                                    <option value="hifz">الحفظ</option>
+                                    <option value="revision">المراجعة</option>
+                                    <option value="recitation">التلاوة</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label class="filter-label">الحالة</label>
+                                <select class="filter-select">
+                                    <option value="">جميع الحالات</option>
+                                    <option value="active">نشط</option>
+                                    <option value="inactive">غير نشط</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label class="filter-label">&nbsp;</label>
+                                <button class="btn" style="width: 100%;">
+                                    <i class="fas fa-search"></i> بحث
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- بطاقات المعلمين -->
+                    <div class="cards-grid" id="teachersGrid">
+                        <!-- سيتم إضافة البطاقات ديناميكياً -->
+                    </div>
+                </div>
+                
+                <!-- صفحة الحلقات -->
+                <div id="halaqat" class="page-section">
+                    <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                        <h2 style="font-size: 28px; font-weight: 700; color: var(--dark-color);">
+                            <i class="fas fa-mosque" style="color: var(--primary-color); margin-left: 10px;"></i>
+                            إدارة الحلقات
+                        </h2>
+                        <button class="btn btn-add" id="addHalaqaBtn">
+                            <i class="fas fa-plus"></i> إضافة حلقة جديدة
+                        </button>
+                    </div>
+                    
+                    <!-- فلاتر البحث -->
+                    <div class="filters">
+                        <div class="filter-row">
+                            <div class="filter-group">
+                                <label class="filter-label">البحث بالاسم</label>
+                                <input type="text" class="filter-input" placeholder="ابحث عن حلقة...">
+                            </div>
+                            <div class="filter-group">
+                                <label class="filter-label">المعلم</label>
+                                <select class="filter-select">
+                                    <option value="">جميع المعلمين</option>
+                                    <option value="1">أحمد محمد</option>
+                                    <option value="2">سعيد خالد</option>
+                                    <option value="3">محمد علي</option>
+                                    <option value="4">خالد سليمان</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label class="filter-label">المستوى</label>
+                                <select class="filter-select">
+                                    <option value="">جميع المستويات</option>
+                                    <option value="beginner">مبتدئ</option>
+                                    <option value="intermediate">متوسط</option>
+                                    <option value="advanced">متقدم</option>
+                                    <option value="review">مراجعة</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label class="filter-label">&nbsp;</label>
+                                <button class="btn" style="width: 100%;">
+                                    <i class="fas fa-search"></i> بحث
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- بطاقات الحلقات -->
+                    <div class="halaqat-cards" id="halaqatGrid">
+                        <!-- سيتم إضافة البطاقات ديناميكياً -->
+                    </div>
+                </div>
+                
+                <!-- صفحات أخرى (مخفي حالياً) -->
+                <div id="attendance" class="page-section">
+                    <h2>صفحة الحضور والغياب - قيد التطوير</h2>
+                    <p>سيتم تطوير هذه الصفحة في المرحلة القادمة</p>
+                </div>
+                
+                <div id="reports" class="page-section">
+                    <h2>صفحة التقارير - قيد التطوير</h2>
+                    <p>سيتم تطوير هذه الصفحة في المرحلة القادمة</p>
+                </div>
+                
+                <div id="subscriptions" class="page-section">
+                    <h2>صفحة الاشتراكات - قيد التطوير</h2>
+                    <p>سيتم تطوير هذه الصفحة في المرحلة القادمة</p>
+                </div>
+                
+                <div id="settings" class="page-section">
+                    <h2>صفحة الإعدادات - قيد التطوير</h2>
+                    <p>سيتم تطوير هذه الصفحة في المرحلة القادمة</p>
+                </div>
+            </div>
+            
+            <!-- التذييل -->
+            <footer class="footer">
+                <p>نظام إدارة حلقات القرآن &copy; 2023 - جميع الحقوق محفوظة</p>
+            </footer>
+        </main>
+    </div>
+
+    <!-- نموذج إضافة/تعديل طالب -->
+    <div class="modal" id="studentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="studentModalTitle">إضافة طالب جديد</h3>
+                <button class="modal-close" id="closeStudentModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="studentForm">
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">الاسم الأول</label>
+                                <input type="text" class="form-control" id="firstName" required>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">اسم الأب</label>
+                                <input type="text" class="form-control" id="fatherName" required>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">اسم الجد</label>
+                                <input type="text" class="form-control" id="grandfatherName" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">اسم العائلة</label>
+                                <input type="text" class="form-control" id="familyName" required>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">تاريخ الميلاد</label>
+                                <input type="date" class="form-control" id="birthDate" required>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">الجنس</label>
+                                <select class="form-control" id="gender" required>
+                                    <option value="">اختر الجنس</option>
+                                    <option value="male">ذكر</option>
+                                    <option value="female">أنثى</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">رقم الهاتف</label>
+                                <input type="tel" class="form-control" id="phone" required>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">البريد الإلكتروني</label>
+                                <input type="email" class="form-control" id="email">
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">العنوان</label>
+                                <input type="text" class="form-control" id="address">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">الحلقة</label>
+                                <select class="form-control" id="halaqaId" required>
+                                    <option value="">اختر الحلقة</option>
+                                    <option value="1">حلقة الفجر</option>
+                                    <option value="2">حلقة المساء</option>
+                                    <option value="3">حلقة المتوسطين</option>
+                                    <option value="4">حلقة الحفظ الجديد</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">مستوى الحفظ</label>
+                                <select class="form-control" id="memorizationLevel" required>
+                                    <option value="">اختر المستوى</option>
+                                    <option value="beginner">مبتدئ</option>
+                                    <option value="intermediate">متوسط</option>
+                                    <option value="advanced">متقدم</option>
+                                    <option value="review">مراجعة</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">الحالة</label>
+                                <select class="form-control" id="status" required>
+                                    <option value="active">نشط</option>
+                                    <option value="inactive">موقوف</option>
+                                    <option value="pending">متأخر</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">ملاحظات</label>
+                        <textarea class="form-control form-textarea" id="notes" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelStudentBtn">إلغاء</button>
+                        <button type="submit" class="btn" id="saveStudentBtn">حفظ الطالب</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- نموذج إضافة/تعديل معلم -->
+    <div class="modal" id="teacherModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="teacherModalTitle">إضافة معلم جديد</h3>
+                <button class="modal-close" id="closeTeacherModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="teacherForm">
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">الاسم الأول</label>
+                                <input type="text" class="form-control" id="teacherFirstName" required>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">اسم الأب</label>
+                                <input type="text" class="form-control" id="teacherFatherName" required>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">اسم العائلة</label>
+                                <input type="text" class="form-control" id="teacherFamilyName" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">رقم الهاتف</label>
+                                <input type="tel" class="form-control" id="teacherPhone" required>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">البريد الإلكتروني</label>
+                                <input type="email" class="form-control" id="teacherEmail">
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">التخصص</label>
+                                <select class="form-control" id="teacherSpecialization" required>
+                                    <option value="">اختر التخصص</option>
+                                    <option value="tajweed">التجويد</option>
+                                    <option value="hifz">الحفظ</option>
+                                    <option value="revision">المراجعة</option>
+                                    <option value="recitation">التلاوة</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">تاريخ التعيين</label>
+                                <input type="date" class="form-control" id="hireDate" required>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">عدد الحلقات المسؤول عنها</label>
+                                <input type="number" class="form-control" id="halaqaCount" min="0" value="1">
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">الحالة</label>
+                                <select class="form-control" id="teacherStatus" required>
+                                    <option value="active">نشط</option>
+                                    <option value="inactive">غير نشط</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">المؤهلات</label>
+                        <textarea class="form-control form-textarea" id="qualifications" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelTeacherBtn">إلغاء</button>
+                        <button type="submit" class="btn" id="saveTeacherBtn">حفظ المعلم</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- نموذج إضافة/تعديل حلقة -->
+    <div class="modal" id="halaqaModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="halaqaModalTitle">إضافة حلقة جديدة</h3>
+                <button class="modal-close" id="closeHalaqaModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="halaqaForm">
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">اسم الحلقة</label>
+                                <input type="text" class="form-control" id="halaqaName" required>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">المعلم المسؤول</label>
+                                <select class="form-control" id="teacherId" required>
+                                    <option value="">اختر المعلم</option>
+                                    <option value="1">أحمد محمد</option>
+                                    <option value="2">سعيد خالد</option>
+                                    <option value="3">محمد علي</option>
+                                    <option value="4">خالد سليمان</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">المستوى</label>
+                                <select class="form-control" id="halaqaLevel" required>
+                                    <option value="">اختر المستوى</option>
+                                    <option value="beginner">مبتدئ</option>
+                                    <option value="intermediate">متوسط</option>
+                                    <option value="advanced">متقدم</option>
+                                    <option value="review">مراجعة</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">الحد الأقصى للطلاب</label>
+                                <input type="number" class="form-control" id="maxStudents" min="1" max="30" value="15">
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">مكان الحلقة</label>
+                                <input type="text" class="form-control" id="location" required>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">الحالة</label>
+                                <select class="form-control" id="halaqaStatus" required>
+                                    <option value="active">نشطة</option>
+                                    <option value="inactive">غير نشطة</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">أيام الحلقة</label>
+                        <div style="display: flex; flex-wrap: wrap; gap: 15px; margin-top: 10px;">
+                            <label style="display: flex; align-items: center; gap: 5px;">
+                                <input type="checkbox" name="days" value="saturday"> السبت
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 5px;">
+                                <input type="checkbox" name="days" value="sunday"> الأحد
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 5px;">
+                                <input type="checkbox" name="days" value="monday"> الإثنين
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 5px;">
+                                <input type="checkbox" name="days" value="tuesday"> الثلاثاء
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 5px;">
+                                <input type="checkbox" name="days" value="wednesday"> الأربعاء
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 5px;">
+                                <input type="checkbox" name="days" value="thursday"> الخميس
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 5px;">
+                                <input type="checkbox" name="days" value="friday"> الجمعة
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">وقت البدء</label>
+                                <input type="time" class="form-control" id="startTime" required>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">وقت الانتهاء</label>
+                                <input type="time" class="form-control" id="endTime" required>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">مدة الجلسة (دقيقة)</label>
+                                <input type="number" class="form-control" id="sessionDuration" min="30" max="180" value="60">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">وصف الحلقة</label>
+                        <textarea class="form-control form-textarea" id="halaqaDescription" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelHalaqaBtn">إلغاء</button>
+                        <button type="submit" class="btn" id="saveHalaqaBtn">حفظ الحلقة</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.35.0/dist/apexcharts.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        // بيانات تجريبية
+        const studentsData = [
+            {
+                id: 1,
+                name: "محمد أحمد",
+                halaqa: "حلقة الفجر",
+                level: "5 أجزاء",
+                status: "active",
+                phone: "0551234567",
+                joinDate: "2023-01-15",
+                attendance: 95
+            },
+            {
+                id: 2,
+                name: "سارة عبدالله",
+                halaqa: "حلقة المساء",
+                level: "3 أجزاء",
+                status: "active",
+                phone: "0552345678",
+                joinDate: "2023-02-20",
+                attendance: 88
+            },
+            {
+                id: 3,
+                name: "يوسف خالد",
+                halaqa: "حلقة المتوسطين",
+                level: "10 أجزاء",
+                status: "pending",
+                phone: "0553456789",
+                joinDate: "2022-11-10",
+                attendance: 75
+            },
+            {
+                id: 4,
+                name: "فاطمة سعيد",
+                halaqa: "حلقة الحفظ الجديد",
+                level: "جزء واحد",
+                status: "active",
+                phone: "0554567890",
+                joinDate: "2023-03-05",
+                attendance: 92
+            },
+            {
+                id: 5,
+                name: "عمر محمد",
+                halaqa: "حلقة المراجعة",
+                level: "خاتم",
+                status: "inactive",
+                phone: "0555678901",
+                joinDate: "2022-09-12",
+                attendance: 60
+            },
+            {
+                id: 6,
+                name: "خالد سليمان",
+                halaqa: "حلقة الفجر",
+                level: "8 أجزاء",
+                status: "active",
+                phone: "0556789012",
+                joinDate: "2023-04-18",
+                attendance: 96
+            }
+        ];
+
+        const teachersData = [
+            {
+                id: 1,
+                name: "أحمد محمد",
+                specialization: "التجويد",
+                phone: "0501234567",
+                halaqatCount: 3,
+                status: "active",
+                hireDate: "2022-06-01"
+            },
+            {
+                id: 2,
+                name: "سعيد خالد",
+                specialization: "الحفظ",
+                phone: "0502345678",
+                halaqatCount: 2,
+                status: "active",
+                hireDate: "2023-01-15"
+            },
+            {
+                id: 3,
+                name: "محمد علي",
+                specialization: "المراجعة",
+                phone: "0503456789",
+                halaqatCount: 1,
+                status: "active",
+                hireDate: "2022-08-20"
+            },
+            {
+                id: 4,
+                name: "خالد سليمان",
+                specialization: "التلاوة",
+                phone: "0504567890",
+                halaqatCount: 2,
+                status: "inactive",
+                hireDate: "2023-02-10"
+            },
+            {
+                id: 5,
+                name: "عبدالله سعد",
+                specialization: "الحفظ",
+                phone: "0505678901",
+                halaqatCount: 3,
+                status: "active",
+                hireDate: "2022-11-05"
+            }
+        ];
+
+        const halaqatData = [
+            {
+                id: 1,
+                name: "حلقة الفجر",
+                teacher: "أحمد محمد",
+                level: "متوسط",
+                studentCount: 12,
+                maxStudents: 15,
+                attendanceRate: 95,
+                days: ["السبت", "الإثنين", "الأربعاء"],
+                time: "05:30 - 06:30",
+                status: "active"
+            },
+            {
+                id: 2,
+                name: "حلقة المساء",
+                teacher: "سعيد خالد",
+                level: "مبتدئ",
+                studentCount: 10,
+                maxStudents: 15,
+                attendanceRate: 88,
+                days: ["الأحد", "الثلاثاء", "الخميس"],
+                time: "18:00 - 19:00",
+                status: "active"
+            },
+            {
+                id: 3,
+                name: "حلقة المتوسطين",
+                teacher: "محمد علي",
+                level: "متقدم",
+                studentCount: 8,
+                maxStudents: 12,
+                attendanceRate: 92,
+                days: ["السبت", "الإثنين", "الأربعاء"],
+                time: "17:00 - 18:00",
+                status: "active"
+            },
+            {
+                id: 4,
+                name: "حلقة الحفظ الجديد",
+                teacher: "خالد سليمان",
+                level: "مبتدئ",
+                studentCount: 5,
+                maxStudents: 10,
+                attendanceRate: 85,
+                days: ["الأحد", "الثلاثاء"],
+                time: "19:30 - 20:30",
+                status: "active"
+            },
+            {
+                id: 5,
+                name: "حلقة المراجعة",
+                teacher: "عبدالله سعد",
+                level: "مراجعة",
+                studentCount: 15,
+                maxStudents: 20,
+                attendanceRate: 90,
+                days: ["السبت", "الأربعاء"],
+                time: "20:00 - 21:00",
+                status: "active"
+            }
+        ];
+
+        // متغيرات النظام
+        let currentStudentId = null;
+        let currentTeacherId = null;
+        let currentHalaqaId = null;
+
+        // تهيئة النظام
+        document.addEventListener('DOMContentLoaded', function() {
+            initNavigation();
+            initModals();
+            loadStudents();
+            loadTeachers();
+            loadHalaqat();
+            initCharts();
+            initDropdowns();
+        });
+
+        // تهيئة التنقل بين الصفحات
+        function initNavigation() {
+            document.querySelectorAll('.menu-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // إزالة النشاط من جميع الروابط
+                    document.querySelectorAll('.menu-link').forEach(item => item.classList.remove('active'));
+                    
+                    // إضافة النشاط للرابط المحدد
+                    this.classList.add('active');
+                    
+                    // إخفاء جميع الصفحات
+                    document.querySelectorAll('.page-section').forEach(page => page.classList.remove('active'));
+                    
+                    // عرض الصفحة المحددة
+                    const pageId = this.getAttribute('data-page');
+                    document.getElementById(pageId).classList.add('active');
+                    
+                    // تحديث عنوان الصفحة
+                    const pageTitle = this.querySelector('.menu-text').textContent;
+                    document.querySelector('.page-title').textContent = pageTitle;
+                });
+            });
+            
+            // إعداد القوائم المنسدلة
+            document.querySelector('.user-profile').addEventListener('click', function(e) {
+                e.stopPropagation();
+                document.querySelector('.dropdown-menu').classList.toggle('show');
+            });
+            
+            document.querySelector('.notification').addEventListener('click', function() {
+                alert('لديك 3 إشعارات غير مقروءة:\n1. اشتراك جديد\n2. طلب انضمام للحلقة\n3. اشتراك على وشك الانتهاء');
+            });
+            
+            // إغلاق القوائم المنسدلة عند النقر خارجها
+            document.addEventListener('click', function() {
+                document.querySelector('.dropdown-menu').classList.remove('show');
+            });
+        }
+
+        // تهيئة النماذج المنبثقة
+        function initModals() {
+            // نموذج الطلاب
+            document.getElementById('addStudentBtn').addEventListener('click', () => openStudentModal());
+            document.getElementById('closeStudentModal').addEventListener('click', () => closeStudentModal());
+            document.getElementById('cancelStudentBtn').addEventListener('click', () => closeStudentModal());
+            document.getElementById('studentForm').addEventListener('submit', (e) => saveStudent(e));
+            
+            // نموذج المعلمين
+            document.getElementById('addTeacherBtn').addEventListener('click', () => openTeacherModal());
+            document.getElementById('closeTeacherModal').addEventListener('click', () => closeTeacherModal());
+            document.getElementById('cancelTeacherBtn').addEventListener('click', () => closeTeacherModal());
+            document.getElementById('teacherForm').addEventListener('submit', (e) => saveTeacher(e));
+            
+            // نموذج الحلقات
+            document.getElementById('addHalaqaBtn').addEventListener('click', () => openHalaqaModal());
+            document.getElementById('closeHalaqaModal').addEventListener('click', () => closeHalaqaModal());
+            document.getElementById('cancelHalaqaBtn').addEventListener('click', () => closeHalaqaModal());
+            document.getElementById('halaqaForm').addEventListener('submit', (e) => saveHalaqa(e));
+            
+            // إغلاق النماذج عند النقر خارجها
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        this.classList.remove('active');
+                    }
+                });
+            });
+        }
+
+        // تحميل الطلاب
+        function loadStudents() {
+            const studentsGrid = document.getElementById('studentsGrid');
+            studentsGrid.innerHTML = '';
+            
+            studentsData.forEach(student => {
+                const card = createStudentCard(student);
+                studentsGrid.appendChild(card);
+            });
+        }
+
+        // إنشاء بطاقة طالب
+        function createStudentCard(student) {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <div class="card-header">
+                    <div class="card-avatar">${student.name.charAt(0)}</div>
+                    <span class="card-status ${student.status}">${getStatusText(student.status)}</span>
+                </div>
+                <h3 class="card-title">${student.name}</h3>
+                <p class="card-subtitle">${student.halaqa}</p>
+                <div class="card-info">
+                    <div class="card-info-item">
+                        <span class="card-info-label">مستوى الحفظ:</span>
+                        <span class="card-info-value">${student.level}</span>
+                    </div>
+                    <div class="card-info-item">
+                        <span class="card-info-label">رقم الهاتف:</span>
+                        <span class="card-info-value">${student.phone}</span>
+                    </div>
+                    <div class="card-info-item">
+                        <span class="card-info-label">تاريخ الانضمام:</span>
+                        <span class="card-info-value">${student.joinDate}</span>
+                    </div>
+                    <div class="card-info-item">
+                        <span class="card-info-label">نسبة الحضور:</span>
+                        <span class="card-info-value">${student.attendance}%</span>
+                    </div>
+                </div>
+                <div class="card-actions">
+                    <button class="btn btn-small btn-edit" onclick="editStudent(${student.id})">
+                        <i class="fas fa-edit"></i> تعديل
+                    </button>
+                    <button class="btn btn-small btn-delete" onclick="deleteStudent(${student.id})">
+                        <i class="fas fa-trash"></i> حذف
+                    </button>
+                    <button class="btn btn-small" onclick="viewStudentDetails(${student.id})">
+                        <i class="fas fa-eye"></i> تفاصيل
+                    </button>
+                </div>
+            `;
+            
+            return card;
+        }
+
+        // تحميل المعلمين
+        function loadTeachers() {
+            const teachersGrid = document.getElementById('teachersGrid');
+            teachersGrid.innerHTML = '';
+            
+            teachersData.forEach(teacher => {
+                const card = createTeacherCard(teacher);
+                teachersGrid.appendChild(card);
+            });
+        }
+
+        // إنشاء بطاقة معلم
+        function createTeacherCard(teacher) {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <div class="card-header">
+                    <div class="card-avatar">${teacher.name.charAt(0)}</div>
+                    <span class="card-status ${teacher.status}">${getStatusText(teacher.status)}</span>
+                </div>
+                <h3 class="card-title">${teacher.name}</h3>
+                <p class="card-subtitle">${teacher.specialization}</p>
+                <div class="card-info">
+                    <div class="card-info-item">
+                        <span class="card-info-label">رقم الهاتف:</span>
+                        <span class="card-info-value">${teacher.phone}</span>
+                    </div>
+                    <div class="card-info-item">
+                        <span class="card-info-label">عدد الحلقات:</span>
+                        <span class="card-info-value">${teacher.halaqatCount}</span>
+                    </div>
+                    <div class="card-info-item">
+                        <span class="card-info-label">تاريخ التعيين:</span>
+                        <span class="card-info-value">${teacher.hireDate}</span>
+                    </div>
+                </div>
+                <div class="card-actions">
+                    <button class="btn btn-small btn-edit" onclick="editTeacher(${teacher.id})">
+                        <i class="fas fa-edit"></i> تعديل
+                    </button>
+                    <button class="btn btn-small btn-delete" onclick="deleteTeacher(${teacher.id})">
+                        <i class="fas fa-trash"></i> حذف
+                    </button>
+                </div>
+            `;
+            
+            return card;
+        }
+
+        // تحميل الحلقات
+        function loadHalaqat() {
+            const halaqatGrid = document.getElementById('halaqatGrid');
+            halaqatGrid.innerHTML = '';
+            
+            halaqatData.forEach(halaqa => {
+                const card = createHalaqaCard(halaqa);
+                halaqatGrid.appendChild(card);
+            });
+        }
+
+        // إنشاء بطاقة حلقة
+        function createHalaqaCard(halaqa) {
+            // إنشاء رموز الطلاب
+            let studentsHtml = '';
+            const studentCount = Math.min(halaqa.studentCount, 5);
+            
+            for (let i = 0; i < studentCount; i++) {
+                studentsHtml += `<div class="student-avatar">${i+1}</div>`;
+            }
+            
+            if (halaqa.studentCount > 5) {
+                studentsHtml += `<div class="student-avatar more">+${halaqa.studentCount - 5}</div>`;
+            }
+            
+            const card = document.createElement('div');
+            card.className = 'halaqa-card';
+            card.innerHTML = `
+                <div class="halaqa-header">
+                    <div class="halaqa-icon">
+                        <i class="fas fa-mosque"></i>
+                    </div>
+                    <span class="card-status ${halaqa.status}">${getStatusText(halaqa.status)}</span>
+                </div>
+                <h3 class="halaqa-title">${halaqa.name}</h3>
+                <p class="halaqa-teacher">
+                    <i class="fas fa-chalkboard-teacher"></i> ${halaqa.teacher}
+                </p>
+                <div class="halaqa-info">
+                    <div class="halaqa-info-item">
+                        <span class="halaqa-info-label">المستوى:</span>
+                        <span class="halaqa-info-value">${halaqa.level}</span>
+                    </div>
+                    <div class="halaqa-info-item">
+                        <span class="halaqa-info-label">الأيام:</span>
+                        <span class="halaqa-info-value">${halaqa.days.join('، ')}</span>
+                    </div>
+                    <div class="halaqa-info-item">
+                        <span class="halaqa-info-label">الوقت:</span>
+                        <span class="halaqa-info-value">${halaqa.time}</span>
+                    </div>
+                </div>
+                <div class="halaqa-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${halaqa.attendanceRate}%"></div>
+                    </div>
+                    <div class="progress-text">
+                        <span>نسبة الحضور</span>
+                        <span>${halaqa.attendanceRate}%</span>
+                    </div>
+                </div>
+                <div class="halaqa-students">
+                    <div class="student-avatars">
+                        ${studentsHtml}
+                    </div>
+                    <span style="margin-right: 15px; color: var(--text-light); font-size: 14px;">
+                        ${halaqa.studentCount}/${halaqa.maxStudents} طالب
+                    </span>
+                </div>
+                <div class="card-actions">
+                    <button class="btn btn-small btn-edit" onclick="editHalaqa(${halaqa.id})">
+                        <i class="fas fa-edit"></i> تعديل
+                    </button>
+                    <button class="btn btn-small btn-delete" onclick="deleteHalaqa(${halaqa.id})">
+                        <i class="fas fa-trash"></i> حذف
+                    </button>
+                    <button class="btn btn-small" onclick="viewHalaqaDetails(${halaqa.id})">
+                        <i class="fas fa-eye"></i> تفاصيل
+                    </button>
+                </div>
+            `;
+            
+            return card;
+        }
+
+        // فتح نموذج إضافة/تعديل طالب
+        function openStudentModal(studentId = null) {
+            const modal = document.getElementById('studentModal');
+            const title = document.getElementById('studentModalTitle');
+            
+            if (studentId) {
+                // وضع التعديل
+                title.textContent = 'تعديل بيانات الطالب';
+                currentStudentId = studentId;
+                
+                // البحث عن بيانات الطالب
+                const student = studentsData.find(s => s.id === studentId);
+                if (student) {
+                    // تعبئة النموذج بالبيانات (في تطبيق حقيقي، هذه البيانات تأتي من قاعدة البيانات)
+                    document.getElementById('firstName').value = student.name.split(' ')[0] || '';
+                    // هنا يتم تعبئة باقي الحقول
+                }
+            } else {
+                // وضع الإضافة
+                title.textContent = 'إضافة طالب جديد';
+                currentStudentId = null;
+                document.getElementById('studentForm').reset();
+            }
+            
+            modal.classList.add('active');
+        }
+
+        // إغلاق نموذج الطالب
+        function closeStudentModal() {
+            document.getElementById('studentModal').classList.remove('active');
+            document.getElementById('studentForm').reset();
+            currentStudentId = null;
+        }
+
+        // حفظ بيانات الطالب
+        function saveStudent(e) {
+            e.preventDefault();
+            
+            // جمع البيانات من النموذج
+            const studentData = {
+                id: currentStudentId || studentsData.length + 1,
+                name: document.getElementById('firstName').value + ' ' + document.getElementById('fatherName').value,
+                halaqa: document.getElementById('halaqaId').selectedOptions[0].text,
+                level: document.getElementById('memorizationLevel').value,
+                status: document.getElementById('status').value,
+                phone: document.getElementById('phone').value,
+                joinDate: new Date().toISOString().split('T')[0],
+                attendance: Math.floor(Math.random() * 20) + 80 // قيمة عشوائية للتجريب
+            };
+            
+            if (currentStudentId) {
+                // تحديث الطالب الموجود
+                const index = studentsData.findIndex(s => s.id === currentStudentId);
+                if (index !== -1) {
+                    studentsData[index] = studentData;
+                    alert('تم تحديث بيانات الطالب بنجاح');
+                }
+            } else {
+                // إضافة طالب جديد
+                studentsData.push(studentData);
+                alert('تم إضافة الطالب بنجاح');
+            }
+            
+            // إعادة تحميل قائمة الطلاب
+            loadStudents();
+            
+            // إغلاق النموذج
+            closeStudentModal();
+        }
+
+        // فتح نموذج إضافة/تعديل معلم
+        function openTeacherModal(teacherId = null) {
+            const modal = document.getElementById('teacherModal');
+            const title = document.getElementById('teacherModalTitle');
+            
+            if (teacherId) {
+                // وضع التعديل
+                title.textContent = 'تعديل بيانات المعلم';
+                currentTeacherId = teacherId;
+                
+                // البحث عن بيانات المعلم
+                const teacher = teachersData.find(t => t.id === teacherId);
+                if (teacher) {
+                    // تعبئة النموذج بالبيانات
+                    const nameParts = teacher.name.split(' ');
+                    document.getElementById('teacherFirstName').value = nameParts[0] || '';
+                    document.getElementById('teacherFamilyName').value = nameParts[nameParts.length - 1] || '';
+                    // هنا يتم تعبئة باقي الحقول
+                }
+            } else {
+                // وضع الإضافة
+                title.textContent = 'إضافة معلم جديد';
+                currentTeacherId = null;
+                document.getElementById('teacherForm').reset();
+            }
+            
+            modal.classList.add('active');
+        }
+
+        // إغلاق نموذج المعلم
+        function closeTeacherModal() {
+            document.getElementById('teacherModal').classList.remove('active');
+            document.getElementById('teacherForm').reset();
+            currentTeacherId = null;
+        }
+
+        // حفظ بيانات المعلم
+        function saveTeacher(e) {
+            e.preventDefault();
+            
+            // جمع البيانات من النموذج
+            const teacherData = {
+                id: currentTeacherId || teachersData.length + 1,
+                name: document.getElementById('teacherFirstName').value + ' ' + document.getElementById('teacherFamilyName').value,
+                specialization: document.getElementById('teacherSpecialization').selectedOptions[0].text,
+                phone: document.getElementById('teacherPhone').value,
+                halaqatCount: parseInt(document.getElementById('halaqaCount').value),
+                status: document.getElementById('teacherStatus').value,
+                hireDate: document.getElementById('hireDate').value || new Date().toISOString().split('T')[0]
+            };
+            
+            if (currentTeacherId) {
+                // تحديث المعلم الموجود
+                const index = teachersData.findIndex(t => t.id === currentTeacherId);
+                if (index !== -1) {
+                    teachersData[index] = teacherData;
+                    alert('تم تحديث بيانات المعلم بنجاح');
+                }
+            } else {
+                // إضافة معلم جديد
+                teachersData.push(teacherData);
+                alert('تم إضافة المعلم بنجاح');
+            }
+            
+            // إعادة تحميل قائمة المعلمين
+            loadTeachers();
+            
+            // إغلاق النموذج
+            closeTeacherModal();
+        }
+
+        // فتح نموذج إضافة/تعديل حلقة
+        function openHalaqaModal(halaqaId = null) {
+            const modal = document.getElementById('halaqaModal');
+            const title = document.getElementById('halaqaModalTitle');
+            
+            if (halaqaId) {
+                // وضع التعديل
+                title.textContent = 'تعديل بيانات الحلقة';
+                currentHalaqaId = halaqaId;
+                
+                // البحث عن بيانات الحلقة
+                const halaqa = halaqatData.find(h => h.id === halaqaId);
+                if (halaqa) {
+                    // تعبئة النموذج بالبيانات
+                    document.getElementById('halaqaName').value = halaqa.name;
+                    // هنا يتم تعبئة باقي الحقول
+                }
+            } else {
+                // وضع الإضافة
+                title.textContent = 'إضافة حلقة جديدة';
+                currentHalaqaId = null;
+                document.getElementById('halaqaForm').reset();
+            }
+            
+            modal.classList.add('active');
+        }
+
+        // إغلاق نموذج الحلقة
+        function closeHalaqaModal() {
+            document.getElementById('halaqaModal').classList.remove('active');
+            document.getElementById('halaqaForm').reset();
+            currentHalaqaId = null;
+        }
+
+        // حفظ بيانات الحلقة
+        function saveHalaqa(e) {
+            e.preventDefault();
+            
+            // جمع البيانات من النموذج
+            const halaqaData = {
+                id: currentHalaqaId || halaqatData.length + 1,
+                name: document.getElementById('halaqaName').value,
+                teacher: document.getElementById('teacherId').selectedOptions[0].text,
+                level: document.getElementById('halaqaLevel').selectedOptions[0].text,
+                studentCount: Math.floor(Math.random() * 10) + 5, // قيمة عشوائية للتجريب
+                maxStudents: parseInt(document.getElementById('maxStudents').value),
+                attendanceRate: Math.floor(Math.random() * 20) + 80, // قيمة عشوائية للتجريب
+                days: ['السبت', 'الإثنين', 'الأربعاء'], // قيمة افتراضية
+                time: `${document.getElementById('startTime').value} - ${document.getElementById('endTime').value}`,
+                status: document.getElementById('halaqaStatus').value
+            };
+            
+            if (currentHalaqaId) {
+                // تحديث الحلقة الموجودة
+                const index = halaqatData.findIndex(h => h.id === currentHalaqaId);
+                if (index !== -1) {
+                    halaqatData[index] = halaqaData;
+                    alert('تم تحديث بيانات الحلقة بنجاح');
+                }
+            } else {
+                // إضافة حلقة جديدة
+                halaqatData.push(halaqaData);
+                alert('تم إضافة الحلقة بنجاح');
+            }
+            
+            // إعادة تحميل قائمة الحلقات
+            loadHalaqat();
+            
+            // إغلاق النموذج
+            closeHalaqaModal();
+        }
+
+        // تعديل طالب
+        window.editStudent = function(id) {
+            openStudentModal(id);
+        };
+
+        // حذف طالب
+        window.deleteStudent = function(id) {
+            if (confirm('هل أنت متأكد من حذف هذا الطالب؟')) {
+                const index = studentsData.findIndex(s => s.id === id);
+                if (index !== -1) {
+                    studentsData.splice(index, 1);
+                    loadStudents();
+                    alert('تم حذف الطالب بنجاح');
+                }
+            }
+        };
+
+        // عرض تفاصيل الطالب
+        window.viewStudentDetails = function(id) {
+            const student = studentsData.find(s => s.id === id);
+            if (student) {
+                alert(`تفاصيل الطالب:\nالاسم: ${student.name}\nالحلقة: ${student.halaqa}\nمستوى الحفظ: ${student.level}\nرقم الهاتف: ${student.phone}\nتاريخ الانضمام: ${student.joinDate}\nنسبة الحضور: ${student.attendance}%`);
+            }
+        };
+
+        // تعديل معلم
+        window.editTeacher = function(id) {
+            openTeacherModal(id);
+        };
+
+        // حذف معلم
+        window.deleteTeacher = function(id) {
+            if (confirm('هل أنت متأكد من حذف هذا المعلم؟')) {
+                const index = teachersData.findIndex(t => t.id === id);
+                if (index !== -1) {
+                    teachersData.splice(index, 1);
+                    loadTeachers();
+                    alert('تم حذف المعلم بنجاح');
+                }
+            }
+        };
+
+        // تعديل حلقة
+        window.editHalaqa = function(id) {
+            openHalaqaModal(id);
+        };
+
+        // حذف حلقة
+        window.deleteHalaqa = function(id) {
+            if (confirm('هل أنت متأكد من حذف هذه الحلقة؟')) {
+                const index = halaqatData.findIndex(h => h.id === id);
+                if (index !== -1) {
+                    halaqatData.splice(index, 1);
+                    loadHalaqat();
+                    alert('تم حذف الحلقة بنجاح');
+                }
+            }
+        };
+
+        // عرض تفاصيل الحلقة
+        window.viewHalaqaDetails = function(id) {
+            const halaqa = halaqatData.find(h => h.id === id);
+            if (halaqa) {
+                alert(`تفاصيل الحلقة:\nالاسم: ${halaqa.name}\nالمعلم: ${halaqa.teacher}\nالمستوى: ${halaqa.level}\nعدد الطلاب: ${halaqa.studentCount}/${halaqa.maxStudents}\nنسبة الحضور: ${halaqa.attendanceRate}%\nالأيام: ${halaqa.days.join('، ')}\nالوقت: ${halaqa.time}`);
+            }
+        };
+
+        // الحصول على نص الحالة
+        function getStatusText(status) {
+            const statusMap = {
+                'active': 'نشط',
+                'inactive': 'غير نشط',
+                'pending': 'متأخر'
+            };
+            return statusMap[status] || status;
+        }
+
+        // تهيئة المخططات
+        function initCharts() {
+            // إنشاء مخطط تقدم الطلاب
+            const progressOptions = {
+                series: [{
+                    name: 'عدد الآيات',
+                    data: [30, 40, 35, 50, 49, 60, 70]
+                }],
+                chart: {
+                    type: 'line',
+                    height: '100%',
+                    fontFamily: 'Cairo, sans-serif',
+                    toolbar: {
+                        show: false
+                    },
+                    zoom: {
+                        enabled: false
+                    }
+                },
+                colors: ['#2c5f2d'],
+                dataLabels: {
+                    enabled: false
+                },
+                stroke: {
+                    curve: 'smooth',
+                    width: 3
+                },
+                grid: {
+                    borderColor: '#e0e0e0',
+                    strokeDashArray: 5,
+                },
+                xaxis: {
+                    categories: ['السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة']
+                },
+                yaxis: {
+                    title: {
+                        text: 'عدد الآيات'
+                    }
+                },
+                tooltip: {
+                    y: {
+                        formatter: function (val) {
+                            return val + " آية"
+                        }
+                    }
+                }
+            };
+            
+            const progressChart = new ApexCharts(document.querySelector("#progress-chart"), progressOptions);
+            progressChart.render();
+            
+            // إنشاء مخطط نسبة الحضور
+            const attendanceOptions = {
+                series: [70, 20, 10],
+                chart: {
+                    type: 'donut',
+                    height: '100%',
+                    fontFamily: 'Cairo, sans-serif'
+                },
+                labels: ['حاضر', 'غائب', 'متأخر'],
+                colors: ['#2ecc71', '#e74c3c', '#f39c12'],
+                legend: {
+                    position: 'bottom',
+                    horizontalAlign: 'center'
+                },
+                dataLabels: {
+                    enabled: true,
+                    formatter: function (val) {
+                        return Math.round(val) + "%"
+                    }
+                },
+                plotOptions: {
+                    pie: {
+                        donut: {
+                            labels: {
+                                show: true,
+                                name: {
+                                    show: true,
+                                    fontSize: '16px'
+                                },
+                                value: {
+                                    show: true,
+                                    fontSize: '22px',
+                                    fontWeight: 'bold'
+                                },
+                                total: {
+                                    show: true,
+                                    label: 'نسبة الحضور',
+                                    color: '#333',
+                                    fontSize: '16px',
+                                    formatter: function (w) {
+                                        return '85%'
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+            
+            const attendanceChart = new ApexCharts(document.querySelector("#attendance-chart"), attendanceOptions);
+            attendanceChart.render();
+        }
+
+        // تهيئة عناصر Select2
+        function initDropdowns() {
+            // تهيئة عناصر Select2 للبحث المتقدم
+            $('.filter-select').select2({
+                placeholder: "اختر...",
+                allowClear: true,
+                width: '100%',
+                dir: 'rtl'
+            });
+            
+            $('.form-control').select2({
+                placeholder: "اختر...",
+                allowClear: true,
+                width: '100%',
+                dir: 'rtl'
+            });
+        }
+
+        // تفعيل أزرار اختيار الباقات
+        document.querySelectorAll('.btn').forEach(button => {
+            if (button.textContent.includes('اختيار الباقة')) {
+                button.addEventListener('click', function() {
+                    const planName = this.closest('.plan-card').querySelector('.plan-name').textContent;
+                    alert(`تم اختيار باقة ${planName}. في النسخة الكاملة سيتم توجيهك لصفحة الدفع.`);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
