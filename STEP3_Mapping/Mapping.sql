@@ -88,7 +88,18 @@ CREATE TABLE public.memorization_progress (
     pages_count NUMERIC(5, 1),
     updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
-
+CREATE TABLE public.discounts (
+    discount_id     UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    student_id      UUID NOT NULL REFERENCES public.students(student_id) ON DELETE CASCADE,
+    reason          TEXT, -- 'يتيم' | 'أسرة محتاجة' | 'متفوق' | 'أخرى'
+    discount_type   TEXT NOT NULL CHECK(discount_type IN ('نسبة', 'مبلغ_ثابت', 'إعفاء_كامل')),
+    value           NUMERIC(10,2),   -- النسبة أو المبلغ
+    start_date      DATE NOT NULL,
+    end_date        DATE,
+    approved_by     UUID REFERENCES public.profiles(id),
+    notes           TEXT,
+    created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
 -- ============================================================
 -- ✅ الخطوة 2: الكيانات الضعيفة (Weak Entities)
 -- ============================================================
@@ -201,3 +212,6 @@ CREATE TABLE public.student_guardian_phones (
     label             public.contact_label DEFAULT 'أساسي'
 );
 
+ALTER TABLE public.sessions ADD COLUMN substitute_teacher_id UUID REFERENCES public.teachers(teacher_id) ON DELETE SET NULL, ADD COLUMN cancellation_reason TEXT; -- لما تتلغى الجلسة
+
+CREATE TABLE public.memorization_history ( id UUID PRIMARY KEY DEFAULT gen_random_uuid(), student_id UUID NOT NULL REFERENCES public.students(student_id) ON DELETE CASCADE, teacher_id UUID REFERENCES public.teachers(teacher_id) ON DELETE SET NULL, session_id UUID REFERENCES public.sessions(session_id) ON DELETE SET NULL, surah TEXT NOT NULL, ayah_from INTEGER, ayah_to INTEGER, pages_count NUMERIC(5,1), quality TEXT CHECK(quality IN( 'ممتاز','جيد جداً','جيد','مقبول','ضعيف')), notes TEXT, recorded_at TIMESTAMPTZ NOT NULL DEFAULT NOW() )

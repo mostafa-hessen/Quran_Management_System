@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>React Architecture Guide — نظام تحفيظ القرآن</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary:    #1B4F72;
+    --secondary:  #2E86AB;
+    --accent:     #27AE60;
+    --warning:    #E67E22;
+    --danger:     #E74C3C;
+    --light-blue: #D6EAF8;
+    --light-green:#EAFAF1;
+    --light-or:   #FEF9E7;
+    --code-bg:    #0D1B2A;
+    --code-green: #2ECC71;
+    --code-blue:  #5DADE2;
+    --code-orange:#F39C12;
+    --code-pink:  #E91E8C;
+    --white:      #FFFFFF;
+    --gray:       #F4F6F9;
+    --dark:       #1A252F;
+    --mid:        #5D6D7E;
+    --border:     #D5DBDB;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Cairo', sans-serif;
+    background: #F0F4F8;
+    color: var(--dark);
+    line-height: 1.7;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, #0A2342 0%, #1B4F72 50%, #2E86AB 100%);
+    padding: 64px 40px 48px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+  .hero-icon { font-size: 56px; margin-bottom: 16px; display: block; }
+  .hero h1 {
+    font-size: 36px; font-weight: 900; color: white;
+    margin-bottom: 12px; letter-spacing: -0.5px;
+  }
+  .hero p {
+    font-size: 18px; color: #AED6F1; margin-bottom: 8px;
+  }
+  .hero .sub {
+    font-size: 13px; color: #7FB3D3; font-weight: 300;
+    letter-spacing: 1px;
+  }
+  .tags {
+    display: flex; gap: 10px; justify-content: center;
+    flex-wrap: wrap; margin-top: 24px;
+  }
+  .tag {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: white; padding: 6px 18px; border-radius: 999px;
+    font-size: 13px; font-weight: 600;
+    backdrop-filter: blur(4px);
+  }
+
+  /* ── LAYOUT ── */
+  .container { max-width: 960px; margin: 0 auto; padding: 40px 24px; }
+
+  /* ── SECTION ── */
+  .section {
+    background: white; border-radius: 16px;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.06);
+    margin-bottom: 32px; overflow: hidden;
+  }
+  .section-header {
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    padding: 20px 28px; display: flex; align-items: center; gap: 14px;
+  }
+  .section-header .num {
+    background: rgba(255,255,255,0.2); color: white;
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 900; flex-shrink: 0;
+  }
+  .section-header h2 {
+    color: white; font-size: 20px; font-weight: 700;
+  }
+  .section-body { padding: 28px; }
+
+  /* ── SUB HEADING ── */
+  .sub-heading {
+    font-size: 16px; font-weight: 700; color: var(--secondary);
+    margin: 24px 0 12px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--light-blue);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .sub-heading:first-child { margin-top: 0; }
+
+  /* ── TABLE ── */
+  .tbl-wrap { overflow-x: auto; margin: 12px 0; border-radius: 10px; border: 1px solid var(--border); }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  thead tr { background: var(--secondary); color: white; }
+  thead th { padding: 12px 16px; text-align: right; font-weight: 700; }
+  tbody tr:nth-child(even) { background: var(--light-blue); }
+  tbody tr:hover { background: #D0E8F5; transition: background .15s; }
+  tbody td { padding: 10px 16px; border-bottom: 1px solid #EAF2F8; vertical-align: top; }
+  .badge {
+    display: inline-block; padding: 2px 10px; border-radius: 999px;
+    font-size: 12px; font-weight: 700;
+  }
+  .badge-blue  { background: #D6EAF8; color: var(--primary); }
+  .badge-green { background: #D5F5E3; color: #1E8449; }
+  .badge-orange{ background: #FDEBD0; color: #A04000; }
+
+  /* ── CODE BLOCK ── */
+  .code-block {
+    background: var(--code-bg);
+    border-radius: 10px; padding: 20px 24px;
+    margin: 14px 0; overflow-x: auto;
+    border: 1px solid #1A3A5C;
+    position: relative;
+  }
+  .code-block::before {
+    content: attr(data-lang);
+    position: absolute; top: 10px; left: 16px;
+    font-size: 11px; color: #4A6A8A; font-family: 'JetBrains Mono', monospace;
+    text-transform: uppercase; letter-spacing: 1px;
+  }
+  .code-block pre {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px; line-height: 1.7;
+    color: #C8D8E8; direction: ltr; text-align: left;
+    white-space: pre; overflow-x: auto;
+  }
+  .kw   { color: #5DADE2; }   /* keyword */
+  .fn   { color: #F1C40F; }   /* function */
+  .str  { color: #2ECC71; }   /* string */
+  .cm   { color: #5D6D7E; font-style: italic; } /* comment */
+  .num  { color: #E67E22; }   /* number */
+  .type { color: #BB8FCE; }   /* type */
+
+  /* ── INFO BOX ── */
+  .info-box {
+    border-radius: 10px; padding: 14px 18px;
+    margin: 12px 0; display: flex; align-items: flex-start; gap: 12px;
+    font-size: 14px; font-weight: 600; line-height: 1.6;
+  }
+  .info-box .ico { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+  .info-green { background: var(--light-green); color: #1E8449; border-right: 4px solid var(--accent); }
+  .info-orange{ background: var(--light-or);   color: #A04000; border-right: 4px solid var(--warning); }
+  .info-blue  { background: var(--light-blue); color: var(--primary); border-right: 4px solid var(--secondary); }
+
+  /* ── WRONG/RIGHT LABELS ── */
+  .label {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 12px; border-radius: 6px;
+    font-size: 13px; font-weight: 700; margin-bottom: 8px;
+  }
+  .label-wrong { background: #FADBD8; color: var(--danger); }
+  .label-right { background: #D5F5E3; color: #1E8449; }
+
+  /* ── ROADMAP ── */
+  .roadmap { display: flex; flex-direction: column; gap: 12px; }
+  .week-card {
+    display: flex; align-items: flex-start; gap: 16px;
+    background: var(--gray); border-radius: 12px; padding: 16px 20px;
+    border-right: 4px solid var(--secondary);
+    transition: transform .2s, box-shadow .2s;
+  }
+  .week-card:hover { transform: translateX(-4px); box-shadow: 4px 0 12px rgba(46,134,171,0.15); }
+  .week-num {
+    background: var(--secondary); color: white;
+    min-width: 44px; height: 44px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: 15px; flex-shrink: 0;
+  }
+  .week-content h4 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .week-content p  { font-size: 13px; color: var(--mid); }
+
+  /* ── FILE TREE ── */
+  .tree {
+    background: #0D1B2A; border-radius: 10px;
+    padding: 20px 24px; direction: ltr; text-align: left;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px; line-height: 1.9;
+    border: 1px solid #1A3A5C; overflow-x: auto;
+  }
+  .tree .folder { color: #F1C40F; font-weight: 600; }
+  .tree .file   { color: #C8D8E8; }
+  .tree .comment{ color: #4A6A8A; font-style: italic; }
+  .tree .line   { color: #2E4A6A; }
+
+  /* ── SETUP STEPS ── */
+  .steps { display: flex; flex-direction: column; gap: 20px; }
+  .step { display: flex; gap: 16px; }
+  .step-num {
+    background: var(--primary); color: white;
+    min-width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: 14px; flex-shrink: 0; margin-top: 2px;
+  }
+  .step-body h4 { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center; padding: 32px;
+    color: var(--mid); font-size: 13px;
+    border-top: 1px solid var(--border);
+    background: white; margin-top: 0;
+  }
+
+  /* ── PRINT ── */
+  @media print {
+    body { background: white; }
+    .section { box-shadow: none; border: 1px solid #ddd; page-break-inside: avoid; }
+    .hero { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 24px; }
+    .section-body { padding: 18px; }
+    .tree { font-size: 11px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <span class="hero-icon">⚛️</span>
+  <h1>React Architecture Guide</h1>
+  <p>نظام إدارة مكتب تحفيظ القرآن الكريم</p>
+  <p class="sub">File Structure &nbsp;•&nbsp; Scalability &nbsp;•&nbsp; Clean Code &nbsp;•&nbsp; Tools</p>
+  <div class="tags">
+    <span class="tag">React + Vite</span>
+    <span class="tag">Supabase</span>
+    <span class="tag">TanStack Query</span>
+    <span class="tag">Zustand</span>
+    <span class="tag">Tailwind CSS</span>
+    <span class="tag">shadcn/ui</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- ══════════════════════════════════════════════
+       SECTION 1 — TOOLS
+  ══════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="num">1</div>
+      <h2>الـ Tools الموصى بها</h2>
+    </div>
+    <div class="section-body">
+      <div class="sub-heading">🧰 الأدوات الأساسية</div>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>الأداة</th>
+              <th>الغرض</th>
+              <th>ليه هي بالذات؟</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>React + Vite</strong></td>
+              <td><span class="badge badge-blue">Framework</span></td>
+              <td>أسرع من CRA — HMR فوري — setup بسيط</td>
+            </tr>
+            <tr>
+              <td><strong>React Router v6</strong></td>
+              <td><span class="badge badge-blue">Routing</span></td>
+              <td>Navigation بين الصفحات — Nested routes — Protected routes</td>
+            </tr>
+            <tr>
+              <td><strong>TanStack Query</strong></td>
+              <td><span class="badge badge-green">Server State</span></td>
+              <td>Cache تلقائي — refetch — loading/error states جاهزة</td>
+            </tr>
+            <tr>
+              <td><strong>Zustand</strong></td>
+              <td><span class="badge badge-green">Client State</span></td>
+              <td>أبسط من Redux — 5 سطور تكفي — لا boilerplate</td>
+            </tr>
+            <tr>
+              <td><strong>React Hook Form</strong></td>
+              <td><span class="badge badge-orange">Forms</span></td>
+              <td>Performance عالي — لا re-renders غير ضرورية</td>
+            </tr>
+            <tr>
+              <td><strong>Zod</strong></td>
+              <td><span class="badge badge-orange">Validation</span></td>
+              <td>Type-safe — يتكامل مع React Hook Form مباشرة</td>
+            </tr>
+            <tr>
+              <td><strong>Tailwind CSS</strong></td>
+              <td><span class="badge badge-blue">Styling</span></td>
+              <td>سريع — لا CSS ملفات — responsive سهل</td>
+            </tr>
+            <tr>
+              <td><strong>shadcn/ui</strong></td>
+              <td><span class="badge badge-blue">UI Components</span></td>
+              <td>Copy/Paste مش npm install — قابل للتخصيص 100%</td>
+            </tr>
+            <tr>
+              <td><strong>TanStack Table</strong></td>
+              <td><span class="badge badge-green">Tables</span></td>
+              <td>Sort, Filter, Pagination مدمج وقوي</td>
+            </tr>
+            <tr>
+              <td><strong>Lucide React</strong></td>
+              <td><span class="badge badge-orange">Icons</span></td>
+              <td>خفيف — متسق — SVG نظيف</td>
+            </tr>
+            <tr>
+              <td><strong>date-fns</strong></td>
+              <td><span class="badge badge-orange">Dates</span></td>
+              <td>خفيف — modular — Arabic locale</td>
+            </tr>
+            <tr>
+              <td><strong>Supabase JS</strong></td>
+              <td><span class="badge badge-blue">Backend</span></td>
+              <td>Auth + DB + Realtime في مكتبة واحدة</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SECTION 2 — FILE STRUCTURE
+  ══════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="num">2</div>
+      <h2>File Structure</h2>
+    </div>
+    <div class="section-body">
+      <div class="info-box info-green">
+        <span class="ico">💡</span>
+        <span>الفكرة الأساسية: <strong>Feature-based Architecture</strong> — كل وظيفة في مجلد مستقل. لما تضيف feature جديدة بتضيف مجلد جديد فقط، مش بتعدّل في الكود القديم.</span>
+      </div>
+
+      <div class="sub-heading">📁 هيكل المجلدات الكامل (Tree Structure)</div>
+      <div class="tree">
+        <pre><code>
+<span class="folder">src/</span>
+<span class="line">├── </span><span class="folder">api/</span>                   <span class="comment"># Supabase services & API logic</span>
+<span class="line">│   ├── </span><span class="file">auth.ts</span>
+<span class="line">│   ├── </span><span class="file">teachers.ts</span>
+<span class="line">│   └── </span><span class="file">students.ts</span>
+<span class="line">├── </span><span class="folder">assets/</span>                <span class="comment"># Static assets (images, svg, local fonts)</span>
+<span class="line">├── </span><span class="folder">components/</span>            <span class="comment"># UI Building Blocks</span>
+<span class="line">│   ├── </span><span class="folder">ui/</span>                <span class="comment"># Base Radix/shadcn components</span>
+<span class="line">│   ├── </span><span class="folder">layout/</span>            <span class="comment"># Sidebar, Navbar, Footer, AppShell</span>
+<span class="line">│   ├── </span><span class="folder">shared/</span>            <span class="comment"># Reusable global components (DataTable, Modal)</span>
+<span class="line">│   └── </span><span class="folder">features/</span>          <span class="comment"># Feature-specific components</span>
+<span class="line">│       ├── </span><span class="folder">teachers/</span>      <span class="comment"># TeacherList, TeacherForm, TeacherCard</span>
+<span class="line">│       ├── </span><span class="folder">students/</span>
+<span class="line">│       └── </span><span class="folder">halaqat/</span>
+<span class="line">├── </span><span class="folder">hooks/</span>                 <span class="comment"># Custom Hooks & TanStack Query logic</span>
+<span class="line">│   ├── </span><span class="file">useAuth.ts</span>
+<span class="line">│   ├── </span><span class="file">useTeachers.ts</span>
+<span class="line">│   └── </span><span class="file">useStudents.ts</span>
+<span class="line">├── </span><span class="folder">lib/</span>                   <span class="comment"># Third-party configs (supabase, utils)</span>
+<span class="line">│   ├── </span><span class="file">supabase.ts</span>
+<span class="line">│   └── </span><span class="file">utils.ts</span>           <span class="comment"># cn() helper, date formatters</span>
+<span class="line">├── </span><span class="folder">pages/</span>                 <span class="comment"># Route Views (Lazy loaded)</span>
+<span class="line">│   ├── </span><span class="folder">auth/</span>              <span class="comment"># Login, ResetPassword</span>
+<span class="line">│   ├── </span><span class="folder">dashboard/</span>         <span class="comment"># Stats & Overview</span>
+<span class="line">│   ├── </span><span class="folder">teachers/</span>         <span class="comment"># Listing & Details</span>
+<span class="line">│   └── </span><span class="folder">students/</span>
+<span class="line">├── </span><span class="folder">store/</span>                 <span class="comment"># Global state (Zustand)</span>
+<span class="line">│   └── </span><span class="file">authStore.ts</span>
+<span class="line">├── </span><span class="folder">types/</span>                 <span class="comment"># TS Interfaces (Database & Models)</span>
+<span class="line">├── </span><span class="folder">validations/</span>           <span class="comment"># Zod Schemas for Forms</span>
+<span class="line">├── </span><span class="file">App.tsx</span>                <span class="comment"># Main App Component</span>
+<span class="line">├── </span><span class="file">main.tsx</span>               <span class="comment"># Entry Point</span>
+<span class="line">└── </span><span class="file">router.tsx</span>             <span class="comment"># Routes Configuration</span>
+        </code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SECTION 3 — CLEAN CODE
+  ══════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="num">3</div>
+      <h2>Clean Code &amp; Reusability</h2>
+    </div>
+    <div class="section-body">
+
+      <div class="info-box info-blue">
+        <span class="ico">⚡</span>
+        <span><strong>القاعدة الذهبية: فصل المسؤوليات</strong> — الـ Page بتعرض فقط، الـ Hook بيجيب البيانات، الـ Component بيعرض فقط.</span>
+      </div>
+
+      <div class="sub-heading">مثال عملي — useTeachers Hook</div>
+
+      <span class="label label-wrong">❌ الطريقة الغلط</span>
+      <div class="code-block" data-lang="tsx">
+        <pre><span class="cm">// TeachersPage.tsx — كل حاجة في مكان واحد</span>
+<span class="kw">export default function</span> <span class="fn">TeachersPage</span>() {
+  <span class="kw">const</span> [teachers, setTeachers] = <span class="fn">useState</span>([])
+  <span class="kw">const</span> [loading, setLoading]   = <span class="fn">useState</span>(<span class="kw">false</span>)
+  <span class="kw">const</span> [error, setError]       = <span class="fn">useState</span>(<span class="kw">null</span>)
+
+  <span class="fn">useEffect</span>(() => {
+    setLoading(<span class="kw">true</span>)
+    supabase.<span class="fn">from</span>(<span class="str">"teachers"</span>).<span class="fn">select</span>(<span class="str">"*"</span>)
+      .<span class="fn">then</span>(({ data }) => <span class="fn">setTeachers</span>(data))
+      .<span class="fn">finally</span>(() => <span class="fn">setLoading</span>(<span class="kw">false</span>))
+  }, [])
+
+  <span class="cm">// 200 سطر هنا ...</span>
+}</pre>
+      </div>
+
+      <span class="label label-right">✅ الطريقة الصح</span>
+      <div class="code-block" data-lang="hooks/useTeachers.ts">
+        <pre><span class="cm">// hooks/useTeachers.ts — المسؤولية: جلب البيانات فقط</span>
+<span class="kw">export function</span> <span class="fn">useTeachers</span>() {
+  <span class="kw">return</span> <span class="fn">useQuery</span>({
+    queryKey: [<span class="str">"teachers"</span>],
+    queryFn: <span class="kw">async</span> () => {
+      <span class="kw">const</span> { data, error } = <span class="kw">await</span> supabase
+        .<span class="fn">from</span>(<span class="str">"teachers"</span>)
+        .<span class="fn">select</span>(<span class="str">"*, teacher_phones(*)"</span>)
+      <span class="kw">if</span> (error) <span class="kw">throw</span> error
+      <span class="kw">return</span> data
+    }
+  })
+}
+
+<span class="kw">export function</span> <span class="fn">useCreateTeacher</span>() {
+  <span class="kw">const</span> queryClient = <span class="fn">useQueryClient</span>()
+  <span class="kw">return</span> <span class="fn">useMutation</span>({
+    mutationFn: (data) => supabase.<span class="fn">from</span>(<span class="str">"teachers"</span>).<span class="fn">insert</span>(data),
+    onSuccess: () => queryClient.<span class="fn">invalidateQueries</span>([<span class="str">"teachers"</span>])
+  })
+}
+
+<span class="cm">// pages/TeachersPage.tsx — المسؤولية: عرض فقط ✅</span>
+<span class="kw">export default function</span> <span class="fn">TeachersPage</span>() {
+  <span class="kw">return</span> (
+    &lt;<span class="type">div</span>&gt;
+      &lt;<span class="type">PageHeader</span> title=<span class="str">"المعلمون"</span> /&gt;
+      &lt;<span class="type">TeacherList</span> /&gt;
+    &lt;/<span class="type">div</span>&gt;
+  )
+}</pre>
+      </div>
+
+      <div class="sub-heading">Zod للـ Validation</div>
+      <div class="code-block" data-lang="lib/validations/teacher.schema.ts">
+        <pre><span class="kw">import</span> { z } <span class="kw">from</span> <span class="str">"zod"</span>
+
+<span class="kw">export const</span> teacherSchema = z.<span class="fn">object</span>({
+  first_name:  z.<span class="fn">string</span>().<span class="fn">min</span>(<span class="num">2</span>, <span class="str">"الاسم مطلوب"</span>),
+  family_name: z.<span class="fn">string</span>().<span class="fn">min</span>(<span class="num">2</span>, <span class="str">"اسم العائلة مطلوب"</span>),
+  birth_date:  z.<span class="fn">date</span>().<span class="fn">optional</span>(),
+  hire_date:   z.<span class="fn">date</span>().<span class="fn">optional</span>(),
+  status:      z.<span class="fn">enum</span>([<span class="str">"active"</span>, <span class="str">"inactive"</span>]).<span class="fn">default</span>(<span class="str">"active"</span>),
+})
+
+<span class="kw">export type</span> <span class="type">TeacherFormData</span> = z.<span class="fn">infer</span>&lt;<span class="kw">typeof</span> teacherSchema&gt;</pre>
+      </div>
+
+      <div class="sub-heading">Reusable DataTable Component</div>
+      <div class="code-block" data-lang="components/common/DataTable.tsx">
+        <pre><span class="cm">// component واحد بيتستخدم في كل الصفحات</span>
+<span class="kw">interface</span> <span class="type">DataTableProps</span>&lt;T&gt; {
+  data:      T[]
+  columns:   <span class="type">ColumnDef</span>&lt;T&gt;[]
+  loading?:  <span class="kw">boolean</span>
+  onRowClick?: (row: T) => <span class="kw">void</span>
+}
+
+<span class="kw">export function</span> <span class="fn">DataTable</span>&lt;T&gt;({ data, columns, loading }: <span class="type">DataTableProps</span>&lt;T&gt;) {
+  <span class="kw">if</span> (loading) <span class="kw">return</span> &lt;<span class="type">LoadingSpinner</span> /&gt;
+  <span class="kw">return</span> &lt;<span class="type">table</span>&gt;...&lt;/<span class="type">table</span>&gt;
+}
+
+<span class="cm">// الاستخدام — نفس الـ component:</span>
+&lt;<span class="type">DataTable</span> data={teachers} columns={teacherColumns} loading={isLoading} /&gt;
+&lt;<span class="type">DataTable</span> data={students} columns={studentColumns} loading={isLoading} /&gt;
+&lt;<span class="type">DataTable</span> data={payments} columns={paymentColumns} loading={isLoading} /&gt;</pre>
+      </div>
+
+      <div class="sub-heading">Zustand Auth Store</div>
+      <div class="code-block" data-lang="stores/authStore.ts">
+        <pre><span class="kw">export const</span> useAuthStore = <span class="fn">create</span>&lt;<span class="type">AuthState</span>&gt;((set) => ({
+  user: <span class="kw">null</span>,
+  role: <span class="kw">null</span>,
+  setUser: (user) => <span class="fn">set</span>({
+    user,
+    role: user?.user_metadata?.role ?? <span class="kw">null</span>
+  }),
+}))
+
+<span class="cm">// الاستخدام في أي component:</span>
+<span class="kw">const</span> { user, role } = <span class="fn">useAuthStore</span>()
+if (role === <span class="str">"admin"</span>) { <span class="cm">/* admin only */</span> }</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SECTION 4 — SCALABILITY
+  ══════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="num">4</div>
+      <h2>Scalability — قابلية التوسع</h2>
+    </div>
+    <div class="section-body">
+      <div class="info-box info-orange">
+        <span class="ico">📈</span>
+        <span>المشروع صغير دلوقتي — لكن الطريقة الصح بتخليك تكبّره بدون ما تكسر حاجة.</span>
+      </div>
+
+      <div class="sub-heading">جدول التوسع المستقبلي</div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>الآن</th><th>المستقبل</th><th>التعديل المطلوب</th></tr></thead>
+          <tbody>
+            <tr><td>مكتب واحد</td><td>أكثر من مكتب (SaaS)</td><td>tenant_id في Supabase + RLS</td></tr>
+            <tr><td>Web فقط</td><td>Mobile App</td><td>نفس الـ hooks مع React Native</td></tr>
+            <tr><td>200 طالب</td><td>2000+ طالب</td><td>Pagination + Virtualization</td></tr>
+            <tr><td>بدون إشعارات</td><td>SMS / Push</td><td>Supabase Edge Functions</td></tr>
+            <tr><td>بدون دفع أونلاين</td><td>دفع إلكتروني</td><td>Stripe Integration</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="sub-heading">Protected Routes بالـ Role</div>
+      <div class="code-block" data-lang="router.tsx">
+        <pre><span class="kw">const</span> router = <span class="fn">createBrowserRouter</span>([
+  { path: <span class="str">"/login"</span>, element: &lt;<span class="type">LoginPage</span> /&gt; },
+  {
+    path: <span class="str">"/"</span>,
+    element: &lt;<span class="type">ProtectedRoute</span> /&gt;,   <span class="cm">// يتحقق من الـ auth</span>
+    children: [
+      { path: <span class="str">"dashboard"</span>, element: &lt;<span class="type">DashboardPage</span> /&gt; },
+      { path: <span class="str">"teachers"</span>,  element: &lt;<span class="type">TeachersPage</span> /&gt; },
+      {
+        path: <span class="str">"payments"</span>,
+        element: &lt;<span class="type">RoleGuard</span> roles={[<span class="str">"admin"</span>, <span class="str">"supervisor"</span>]} /&gt;,
+        children: [{ path: <span class="str">""</span>, element: &lt;<span class="type">PaymentsPage</span> /&gt; }]
+      },
+    ]
+  }
+])</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SECTION 5 — SETUP
+  ══════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="num">5</div>
+      <h2>خطوات الـ Setup</h2>
+    </div>
+    <div class="section-body">
+      <div class="steps">
+
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <h4>إنشاء المشروع</h4>
+            <div class="code-block" data-lang="terminal">
+              <pre>npm create vite@latest halaqa-app -- --template react-ts
+cd halaqa-app
+npm install</pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <h4>تثبيت الـ Libraries</h4>
+            <div class="code-block" data-lang="terminal">
+              <pre>npm install @supabase/supabase-js @tanstack/react-query \
+  @tanstack/react-table react-router-dom zustand \
+  react-hook-form zod @hookform/resolvers \
+  date-fns lucide-react clsx tailwind-merge
+
+npm install -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p</pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <h4>ملف .env</h4>
+            <div class="code-block" data-lang=".env">
+              <pre><span class="cm"># .env</span>
+VITE_SUPABASE_URL=https://xxxx.supabase.co
+VITE_SUPABASE_ANON_KEY=your_anon_key_here</pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <h4>Supabase Client</h4>
+            <div class="code-block" data-lang="lib/supabase.ts">
+              <pre><span class="kw">import</span> { createClient } <span class="kw">from</span> <span class="str">"@supabase/supabase-js"</span>
+
+<span class="kw">export const</span> supabase = <span class="fn">createClient</span>(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_ANON_KEY
+)</pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">5</div>
+          <div class="step-body">
+            <h4>TanStack Query Setup في main.tsx</h4>
+            <div class="code-block" data-lang="main.tsx">
+              <pre><span class="kw">const</span> queryClient = <span class="kw">new</span> <span class="fn">QueryClient</span>({
+  defaultOptions: {
+    queries: { staleTime: <span class="num">1000</span> * <span class="num">60</span> * <span class="num">5</span>, retry: <span class="num">1</span> }
+  }
+})
+
+ReactDOM.<span class="fn">createRoot</span>(document.<span class="fn">getElementById</span>(<span class="str">"root"</span>)!).<ctrl42>render(
+  &lt;<span class="type">QueryClientProvider</span> client={queryClient}&gt;
+    &lt;<span class="type">App</span> /&gt;
+  &lt;/<span class="type">QueryClientProvider</span>&gt;
+)</pre>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SECTION 6 — ROADMAP
+  ══════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="num">6</div>
+      <h2>خطة التطوير — 6 أسابيع</h2>
+    </div>
+    <div class="section-body">
+      <div class="roadmap">
+        <div class="week-card">
+          <div class="week-num">1</div>
+          <div class="week-content">
+            <h4>Setup + Auth + Layout + Sidebar</h4>
+            <p>تسجيل الدخول يشتغل — الـ Layout الرئيسي جاهز — Protected Routes</p>
+          </div>
+        </div>
+        <div class="week-card">
+          <div class="week-num">2</div>
+          <div class="week-content">
+            <h4>Teachers + Students — CRUD كامل</h4>
+            <p>إضافة وتعديل وحذف المعلمين والطلاب — Forms + Validation</p>
+          </div>
+        </div>
+        <div class="week-card">
+          <div class="week-num">3</div>
+          <div class="week-content">
+            <h4>Halaqat + Sessions + Schedules</h4>
+            <p>إنشاء الحلقات — الجداول الزمنية — ربط الطلاب بالحلقات</p>
+          </div>
+        </div>
+        <div class="week-card">
+          <div class="week-num">4</div>
+          <div class="week-content">
+            <h4>Attendance + Homework + Submissions</h4>
+            <p>تسجيل الحضور يدوياً — الواجبات — الدرجات والتقييمات</p>
+          </div>
+        </div>
+        <div class="week-card">
+          <div class="week-num">5</div>
+          <div class="week-content">
+            <h4>Payments + Subscriptions + Reports</h4>
+            <p>إدارة مالية كاملة — تقارير الأداء — تتبع الحفظ</p>
+          </div>
+        </div>
+        <div class="week-card">
+          <div class="week-num">6</div>
+          <div class="week-content">
+            <h4>Polish + Testing + Deploy</h4>
+            <p>تجميل الواجهة — اختبار كل الـ flows — النشر على Vercel أو Netlify</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  ⚛️ React Architecture Guide — نظام إدارة مكتب تحفيظ القرآن الكريم &nbsp;|&nbsp; 2025
+</footer>
+
+</body>
+</html>
