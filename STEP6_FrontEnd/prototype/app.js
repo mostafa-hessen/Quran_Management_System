@@ -760,14 +760,6 @@ const Pages = {
       
       <!-- أدوات الفلترة المتقدمة -->
       <div class="bg-white p-5 rounded-3xl border border-stone-100 shadow-sm flex flex-wrap gap-4 items-end relative overflow-hidden">
-        <div class="absolute right-0 top-0 bottom-0 w-2 bg-blue-500"></div>
-        <div class="fg flex-1 min-w-[200px] font-bold">
-          <label class="fl text-blue-800">تصفية حسب الحلقة</label>
-          <select id="rep-circle" class="fi" onchange="Reports.filter()">
-            <option value="">جميع الحلقات</option>
-            ${DB.halaqat.map(h => `<option value="${h.id}">${h.name} (${teacherFullName(DB.teachers.find(t=>t.id===h.teacherId))})</option>`).join('')}
-          </select>
-        </div>
         <div class="fg flex-1 min-w-[200px] font-bold">
           <label class="fl text-blue-800">الشهر (للإيرادات)</label>
           <input type="month" id="rep-month" class="fi" value="${new Date().toISOString().slice(0, 7)}" onchange="Reports.filter()"/>
@@ -2024,13 +2016,13 @@ const AuditLog = {
 // ── REPORTS ──────────────────────────────────────────────────────
 const Reports = {
   resetFilters() {
-    if($('rep-circle')) $('rep-circle').value = '';
+
     if($('rep-month')) $('rep-month').value = new Date().toISOString().slice(0, 7);
     this.filter();
   },
   
   filter() {
-    const circleId = $('rep-circle')?.value || '';
+    const circleId = '';
     const month = $('rep-month')?.value || new Date().toISOString().slice(0, 7);
     
     // Filter students
@@ -2081,7 +2073,7 @@ const Reports = {
       <!-- القسم المالي -->
       <div class="bg-white rounded-3xl border border-stone-100 shadow-sm overflow-hidden">
         <div class="bg-emerald-50 px-5 py-3 border-b border-emerald-100 text-emerald-800 font-bold flex items-center gap-2">
-          <span>💰</span> الملخص المالي للنتائج المحددة
+          <span>💰</span> الملخص المالي العام (شامل كل الحلقات)
         </div>
         <div class="p-5 grid grid-cols-1 md:grid-cols-3 gap-6">
           <div class="text-center p-4 rounded-xl border border-stone-100 hover:shadow-md transition">
@@ -2103,7 +2095,7 @@ const Reports = {
       <!-- القسم الأكاديمي -->
       <div class="bg-white rounded-3xl border border-stone-100 shadow-sm overflow-hidden">
         <div class="bg-blue-50 px-5 py-3 border-b border-blue-100 text-blue-800 font-bold flex items-center gap-2">
-          <span>📖</span> الملخص الأكاديمي للنتائج المحددة
+          <span>📖</span> الملخص الأكاديمي العام (شامل كل الحلقات)
         </div>
         <div class="p-5 grid grid-cols-2 lg:grid-cols-4 gap-4">
           ${[
@@ -2122,7 +2114,7 @@ const Reports = {
       <div class="bg-white rounded-3xl border border-stone-100 p-5 shadow-sm relative">
         <div class="absolute right-0 top-0 bottom-0 w-2 bg-red-500 rounded-r-3xl"></div>
         <div class="font-black text-stone-800 mb-5 ml-4 flex items-center justify-between border-b pb-3 border-stone-100">
-          <div class="flex items-center gap-2 pr-4"><span class="text-red-500 text-xl font-bold">⚠</span> الطلاب المتأخرون (للنطاق المحدد)</div>
+          <div class="flex items-center gap-2 pr-4"><span class="text-red-500 text-xl font-bold">⚠</span> مديونيات الطلاب ومتأخرات الاشتراكات</div>
           <div class="text-sm bg-red-100 text-red-700 px-3 py-1 rounded-lg font-bold flex items-center gap-2"><span>عدد المتأخرين:</span> <span class="text-lg">${delayedSubs.length}</span></div>
         </div>
         
