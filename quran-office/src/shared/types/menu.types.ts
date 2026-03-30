@@ -7,10 +7,12 @@ export enum MenuItemText {
   CLASSES = 'الحلقات',
   ATTENDANCE = 'الحضور',
   HOMEWORK = 'الواجبات',
-  SETTINGS = 'الإعدادات',
   SESSIONS = 'جلسات اليوم',
   PAYMENTS = 'الاشتراكات والمدفوعات',
+  REPORTS = 'التقارير',
+  SETTINGS = 'الإعدادات',
   LOGOUT = 'تسجيل الخروج',
+  ENROLLMENTS = 'تسجيل الحلقات',
 }
 export interface MenuItem {
   text: MenuItemText;

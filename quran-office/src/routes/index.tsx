@@ -1,9 +1,12 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
-import MainLayout from '../shared/layout/MainLayout';
-import DashboardPage from '../pages/DashboardPage';
-import LoginPage from '../pages/LoginPage';
-import TeachersPage from '../pages/TeachersPage';
-import ProtectedRoute from '../features/auth/components/ProtectedRoute';
+import MainLayout   from '@/shared/layout/MainLayout';
+import DashboardPage from '@/pages/DashboardPage';
+import LoginPage from '@/pages/LoginPage';
+import TeachersPage from '@/pages/TeachersPage';
+import StudentsPage from '@/pages/StudentsPage';
+import EnrollmentsPage from '@/pages/EnrollmentsPage';
+import ProtectedRoute from '@/features/auth/components/ProtectedRoute';
+
 
 // سنقوم بإنشاء هذه الصفحات لاحقاً، حالياً سنضيف Placeholder
 const Placeholder = ({ title }: { title: string }) => (
@@ -33,11 +36,15 @@ export const router = createBrowserRouter([
       },
       {
         path: 'students',
-        element: <Placeholder title="الطلاب" />
+        element: <StudentsPage />
       },
       {
         path: 'halaqat',
         element: <Placeholder title="الحلقات" />
+      },
+      {
+        path: 'enrollments',
+        element: <EnrollmentsPage />
       },
       {
         path: 'sessions',

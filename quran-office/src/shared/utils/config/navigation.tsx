@@ -16,6 +16,7 @@ export const menuItems: MenuItem[] = [
   { text:MenuItemText.TEACHERS, icon: <PeopleRounded />, path: '/teachers', roles: ['admin', 'supervisor'] },
   { text: MenuItemText.STUDENTS, icon: <SchoolRounded />, path: '/students', roles: ['admin', 'supervisor', 'teacher'] },
   { text: MenuItemText.CLASSES, icon: <AutoStoriesRounded />, path: '/halaqat', roles: ['admin', 'supervisor', 'teacher'] },
+  { text: MenuItemText.ENROLLMENTS, icon: <NotificationsRounded />, path: '/enrollments', roles: ['admin', 'supervisor'] },
   { text: MenuItemText.SESSIONS, icon: <NotificationsRounded />, path: '/sessions', roles: ['admin', 'supervisor', 'teacher'] },
   { text: MenuItemText.ATTENDANCE, icon: <AssignmentTurnedInRounded />, path: '/attendance', roles: ['admin', 'supervisor', 'teacher'] },
   { text: MenuItemText.PAYMENTS, icon: <PaymentsRounded />, path: '/payments', roles: ['admin', 'supervisor'] },

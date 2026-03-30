@@ -9,8 +9,17 @@ import {
   ListItemText,
   Typography,
   Divider,
+  useTheme,
+  useMediaQuery,
+  IconButton,
+  Tooltip,
 } from "@mui/material";
-import { SettingsRounded, LogoutRounded } from "@mui/icons-material";
+import { 
+  SettingsRounded, 
+  LogoutRounded, 
+  ChevronRight, 
+  Close 
+} from "@mui/icons-material";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../features/auth/store";
 import { usePermissions } from "../../features/auth/hooks";
@@ -18,7 +27,14 @@ import { menuItems } from "../../shared/utils/config/navigation";
 
 const DRAWER_WIDTH = 280;
 
-const Sidebar: React.FC = () => {
+interface SidebarProps {
+  mobileOpen?: boolean;
+  handleDrawerToggle?: () => void;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, handleDrawerToggle }) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const { signOut } = useAuthStore();
   const { role } = usePermissions();
   const userRole = role || "teacher";
@@ -33,86 +49,112 @@ const Sidebar: React.FC = () => {
     item.roles.includes(userRole),
   );
 
-  return (
-    <Drawer
-      variant="permanent"
-      anchor="right"
-      sx={{
-        width: DRAWER_WIDTH,
-        flexShrink: 0,
-        "& .MuiDrawer-paper": {
-          width: DRAWER_WIDTH,
-          boxSizing: "border-box",
-          backgroundColor: "#064e3b", // Deep Emerald
-          color: "#ecfdf5",
-          borderRight: "none",
-          boxShadow: "-4px 0 10px rgba(0,0,0,0.1)",
-        },
+  const drawerContent = (
+    <Box 
+      sx={{ 
+        height: "100%", 
+        display: "flex", 
+        flexDirection: "column",
+        background: "linear-gradient(180deg, #064e3b 0%, #065f46 100%)",
+        color: "white",
+        boxShadow: "-4px 0 30px rgba(0,0,0,0.15)",
+        overflowX: "hidden"
       }}
     >
-      {/* Logo Section */}
-      <Box sx={{ p: 4, textAlign: "center" }}>
+      {/* Mobile Close Button */}
+      {isMobile && (
+        <IconButton 
+          onClick={handleDrawerToggle}
+          sx={{ position: "absolute", top: 10, left: 10, color: "rgba(255,255,255,0.6)" }}
+        >
+          <Close />
+        </IconButton>
+      )}
+
+      {/* Header / Logo */}
+      <Box sx={{ p: 4, display: "flex", flexDirection: "column", alignItems: "center" }}>
+        <Box 
+          sx={{ 
+            width: 60, 
+            height: 60, 
+            borderRadius: 3, 
+            background: "linear-gradient(135deg, #fbbf24 0%, #d97706 100%)",
+            display: "flex", 
+            alignItems: "center", 
+            justifyContent: "center",
+            boxShadow: "0 8px 16px rgba(217, 119, 6, 0.3)",
+            mb: 2
+          }}
+        >
+          <Typography variant="h3" sx={{ color: "white", fontSize: "2rem" }}>☽</Typography>
+        </Box>
         <Typography
-          variant="h5"
+          variant="h6"
           sx={{
             fontFamily: "Tajawal, sans-serif",
             fontWeight: 800,
-            color: "#fbbf24", // Golden
-            mb: 1,
+            letterSpacing: 1,
+            color: "#fbbf24",
+            textShadow: "0 2px 4px rgba(0,0,0,0.2)"
           }}
         >
-          ☽ مكتب التحفيظ
+          مكتب التحفيظ
         </Typography>
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 1,
+        <Typography 
+          variant="caption" 
+          sx={{ 
+            opacity: 0.6, 
+            mt: 0.5, 
+            bgcolor: "rgba(255,255,255,0.08)", 
+            px: 1.5, 
+            borderRadius: 10,
+            textTransform: "uppercase",
+            letterSpacing: 1
           }}
         >
-          <Typography
-            variant="caption"
-            sx={{
-              opacity: 0.8,
-              bgcolor: "rgba(255,255,255,0.1)",
-              px: 1,
-              borderRadius: 1,
-            }}
-          >
-            {userRole === "admin"
-              ? "مدير"
-              : userRole === "supervisor"
-                ? "سكرتارية"
-                : "معلم"}
-          </Typography>
-        </Box>
+          نظام الإدارة المتكامل
+        </Typography>
       </Box>
 
-      <Divider
-        sx={{ backgroundColor: "rgba(255,255,255,0.1)", mx: 2, mb: 2 }}
-      />
+      <Divider sx={{ borderColor: "rgba(255,255,255,0.06)", mx: 3, mb: 2 }} />
 
-      <List sx={{ px: 2, flex: 1 }}>
+      {/* Navigation Items */}
+      <List sx={{ px: 2, flex: 1, "& .MuiListItem-root": { mb: 0.5 } }}>
         {filteredItems.map((item) => (
-          <ListItem key={item.text} disablePadding sx={{ mb: 1 }}>
+          <ListItem key={item.text} disablePadding>
             <ListItemButton
               component={NavLink}
               to={item.path}
+              onClick={isMobile ? handleDrawerToggle : undefined}
               sx={{
-                borderRadius: "12px",
+                borderRadius: "14px",
                 py: 1.5,
+                px: 2,
+                transition: "all 0.2s ease-in-out",
                 "&.active": {
-                  backgroundColor: "rgba(251, 191, 36, 0.15)",
+                  background: "rgba(255, 255, 255, 0.12)",
                   color: "#fbbf24",
-                  "& .MuiListItemIcon-root": { color: "#fbbf24" },
+                  "& .MuiListItemIcon-root": { 
+                    color: "#fbbf24",
+                    transform: "scale(1.1)"
+                  },
+                  "&::before": {
+                    content: '""',
+                    position: "absolute",
+                    right: -16,
+                    height: "60%",
+                    width: 4,
+                    bgcolor: "#fbbf24",
+                    borderRadius: "4px 0 0 4px"
+                  }
                 },
                 "&:hover": {
-                  backgroundColor: "rgba(255,255,255,0.05)",
+                  background: "rgba(255, 255, 255, 0.05)",
+                  transform: "translateX(-4px)"
                 },
               }}
             >
-              <ListItemIcon sx={{ color: "#ecfdf5", minWidth: 40 }}>
+              <ListItemIcon sx={{ color: "rgba(255,255,255,0.7)", minWidth: 44, transition: "0.2s" }}>
                 {item.icon}
               </ListItemIcon>
               <ListItemText
@@ -123,45 +165,110 @@ const Sidebar: React.FC = () => {
                   fontFamily: "Tajawal, sans-serif",
                 }}
               />
+              <ChevronRight sx={{ fontSize: "1rem", opacity: 0.3 }} />
             </ListItemButton>
           </ListItem>
         ))}
       </List>
 
-      {/* Footer Section */}
-      <Box sx={{ p: 2, display: "flex", flexDirection: "column", gap: 1 }}>
-        <ListItemButton
-          sx={{ borderRadius: "12px", color: "rgba(255,255,255,0.5)" }}
-        >
-          <ListItemIcon sx={{ color: "inherit", minWidth: 40 }}>
-            <SettingsRounded />
-          </ListItemIcon>
-          <ListItemText
-            primary="الإعدادات العامة"
-            primaryTypographyProps={{ fontSize: "0.85rem" }}
-          />
-        </ListItemButton>
-
-        <Divider sx={{ backgroundColor: "rgba(255,255,255,0.1)", my: 1 }} />
-
-        <ListItemButton
-          onClick={handleSignOut}
-          sx={{
-            borderRadius: "12px",
-            color: "#fca5a5",
-            "&:hover": { bgcolor: "rgba(239, 68, 68, 0.1)" },
+      {/* footer Section */}
+      <Box sx={{ p: 2, mt: "auto" }}>
+        <Box 
+          sx={{ 
+            p: 2, 
+            borderRadius: 4, 
+            bgcolor: "rgba(0,0,0,0.15)",
+            border: "1px solid rgba(255,255,255,0.05)"
           }}
         >
-          <ListItemIcon sx={{ color: "inherit", minWidth: 40 }}>
-            <LogoutRounded />
-          </ListItemIcon>
-          <ListItemText
-            primary="تسجيل الخروج"
-            primaryTypographyProps={{ fontSize: "0.85rem", fontWeight: "bold" }}
-          />
-        </ListItemButton>
+          <ListItemButton
+            sx={{ 
+              borderRadius: 3, 
+              color: "rgba(255,255,255,0.4)",
+              mb: 1,
+              "&:hover": { color: "white" }
+            }}
+          >
+            <ListItemIcon sx={{ color: "inherit", minWidth: 36 }}>
+              <SettingsRounded fontSize="small" />
+            </ListItemIcon>
+            <ListItemText
+              primary="الإعدادات"
+              primaryTypographyProps={{ fontSize: "0.8rem", fontWeight: 600 }}
+            />
+          </ListItemButton>
+
+          <ListItemButton
+            onClick={handleSignOut}
+            sx={{
+              borderRadius: 3,
+              color: "#fca5a5",
+              "&:hover": { 
+                bgcolor: "rgba(239, 68, 68, 0.15)",
+                color: "#f87171"
+              },
+            }}
+          >
+            <ListItemIcon sx={{ color: "inherit", minWidth: 36 }}>
+              <LogoutRounded fontSize="small" />
+            </ListItemIcon>
+            <ListItemText
+              primary="تسجيل الخروج"
+              primaryTypographyProps={{ fontSize: "0.8rem", fontWeight: "bold" }}
+            />
+          </ListItemButton>
+        </Box>
       </Box>
-    </Drawer>
+    </Box>
+  );
+
+  return (
+    <Box
+      component="nav"
+      sx={{ 
+        width: { md: DRAWER_WIDTH }, 
+        flexShrink: { md: 0 },
+        position: 'relative',
+        zIndex: 1200 // Higher than content but same as AppBar standard
+      }}
+    >
+      {/* Mobile Drawer */}
+      <Drawer
+        variant="temporary"
+        anchor="right"
+        open={mobileOpen}
+        onClose={handleDrawerToggle}
+        ModalProps={{ keepMounted: true }}
+        sx={{
+          display: { xs: "block", md: "none" },
+          "& .MuiDrawer-paper": {
+            width: DRAWER_WIDTH,
+            boxSizing: "border-box",
+            border: "none",
+          },
+        }}
+      >
+        {drawerContent}
+      </Drawer>
+
+      {/* Desktop Drawer */}
+      <Drawer
+        variant="permanent"
+        anchor="right"
+        sx={{
+          display: { xs: "none", md: "block" },
+          "& .MuiDrawer-paper": {
+            width: DRAWER_WIDTH,
+            boxSizing: "border-box",
+            border: "none",
+            backgroundColor: "transparent",
+          },
+        }}
+        open
+      >
+        {drawerContent}
+      </Drawer>
+    </Box>
   );
 };
 

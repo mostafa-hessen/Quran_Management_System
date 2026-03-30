@@ -1,72 +1,102 @@
-import React from 'react';
-import { AppBar, Toolbar, Box, IconButton, Avatar, Typography, Badge, Tooltip } from '@mui/material';
-import { 
-  NotificationsNoneRounded, 
-  SearchRounded, 
-} from '@mui/icons-material';
+import React from "react";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  IconButton,
+  Avatar,
+  Box,
+  Badge,
+  useTheme,
+  useMediaQuery,
+  Tooltip,
+} from "@mui/material";
+import {
+  MenuRounded,
+  NotificationsRounded,
+} from "@mui/icons-material";
+import { useAuthStore } from "../../features/auth/store";
 
-const Topbar: React.FC = () => {
+interface TopbarProps {
+  onMenuClick?: () => void;
+}
+
+const Topbar: React.FC<TopbarProps> = ({ onMenuClick }) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const { user } = useAuthStore();
+
+  // Get current date in Arabic
+  const currentDate = new Intl.DateTimeFormat('ar-EG', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  }).format(new Date());
+
   return (
-    <AppBar 
-      position="sticky" 
-      elevation={0}
-      sx={{ 
-        backgroundColor: 'rgba(255, 255, 255, 0.8)', 
-        backdropFilter: 'blur(8px)',
-        borderBottom: '1px solid #f1f5f9',
-        color: '#1e293b',
-        zIndex: (theme) => theme.zIndex.drawer + 1
+    <AppBar
+      position="sticky"
+      sx={{
+        backgroundColor: "white",
+        color: "text.primary",
+        boxShadow: "none",
+        borderBottom: "1px solid #f1f1f1",
+        zIndex: 1100,
+        height: 64,
+        justifyContent: "center"
       }}
     >
-      <Toolbar sx={{ justifyContent: 'space-between', minHeight: 70 }}>
-        {/* Left Side: Right-Aligned Search & Info for RTL context */}
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <Tooltip title="البحث">
-            <IconButton sx={{ backgroundColor: '#f8fafc' }}>
-              <SearchRounded fontSize="small" />
+      <Toolbar sx={{ justifyContent: "space-between", px: { xs: 2, md: 3 } }}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+          {isMobile && (
+            <IconButton onClick={onMenuClick} sx={{ color: "#a8a29e" }}>
+              <MenuRounded />
             </IconButton>
-          </Tooltip>
+          )}
+          <Typography variant="h6" fontWeight="800" color="#292524" sx={{ fontSize: "1.1rem" }}>
+            الطلاب
+          </Typography>
         </Box>
 
-        {/* Right Side: Notification & User Profile */}
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <IconButton sx={{ backgroundColor: '#f8fafc' }}>
-            <Badge badgeContent={4} color="warning" overlap="circular">
-              <NotificationsNoneRounded fontSize="small" />
-            </Badge>
-          </IconButton>
-
-          <Box 
+        <Box sx={{ display: "flex", alignItems: "center", gap: { xs: 1.5, md: 3 } }}>
+          <Typography 
+            variant="caption" 
             sx={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: 1.5, 
-              backgroundColor: '#f8fafc', 
-              py: 0.5, 
-              px: 1.5, 
-              borderRadius: '20px',
-              border: '1px solid #f1f5f9'
+              color: "#a8a29e", 
+              display: { xs: "none", sm: "block" },
+              fontWeight: 500
             }}
           >
-            <Box sx={{ textAlign: 'left', display: { xs: 'none', sm: 'block' } }}>
-              <Typography variant="body2" sx={{ fontWeight: 800, fontFamily: 'Tajawal', lineHeight: 1 }}>
-                أحمد محمد
-              </Typography>
-              <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.7rem' }}>
-                مدير النظام
-              </Typography>
-            </Box>
-            <Avatar 
-              sx={{ 
-                width: 38, 
-                height: 38, 
-                bgcolor: '#064e3b',
-                boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
-              }}
-            >
-              أ
-            </Avatar>
-          </Box>
+            {currentDate}
+          </Typography>
+
+          <Tooltip title="التنبيهات">
+            <IconButton sx={{ color: "#a8a29e", p: 1 }}>
+              <Badge 
+                badgeContent={0} 
+                color="error" 
+                sx={{ "& .MuiBadge-badge": { fontSize: 10, height: 16, minWidth: 16 } }}
+              >
+                <NotificationsRounded sx={{ fontSize: 22 }} />
+              </Badge>
+            </IconButton>
+          </Tooltip>
+
+          <Avatar
+            sx={{
+              width: 34,
+              height: 34,
+              bgcolor: "#f5f5f4",
+              color: "#57534e",
+              fontSize: "0.9rem",
+              fontWeight: "bold",
+              border: "1px solid #e7e5e4",
+              borderRadius: "10px"
+            }}
+          >
+            {user?.email?.[0].toUpperCase() || "م"}
+          </Avatar>
         </Box>
       </Toolbar>
     </AppBar>

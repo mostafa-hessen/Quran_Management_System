@@ -1,41 +1,60 @@
 import React from 'react';
-import { Box, CssBaseline, ThemeProvider, createTheme } from '@mui/material';
+import { Box, CssBaseline, useMediaQuery, useTheme } from '@mui/material';
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Topbar from './Topbar';
 
-// إعداد الـ RTL لـ MUI
-
-
-
 const MainLayout: React.FC = () => {
-  return (
-   
-        <Box sx={{ display: 'flex', minHeight: '100vh' }}>
-          <CssBaseline />
-          
-          {/* Sidebar */}
-          <Sidebar />
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const [mobileOpen, setMobileOpen] = React.useState(false);
 
-          {/* Main Content Area */}
-          <Box 
-            component="main" 
-            sx={{ 
-              flexGrow: 1, 
-              display: 'flex',
-              flexDirection: 'column',
-              width: { sm: `calc(100% - 280px)` }
-            }}
-          >
-            <Topbar />
-            
-            <Box sx={{ p: { xs: 2, md: 4 }, flexGrow: 1 }}>
-              {/* هنا هتظهر محتويات الصفحات */}
-              <Outlet />
-            </Box>
-          </Box>
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
+
+  return (
+    <Box 
+      sx={{ 
+        display: 'flex', 
+        minHeight: '100vh',
+        bgcolor: '#fafaf9', // stone-50
+        position: 'relative',
+        overflow: 'hidden'
+      }}
+    >
+      <CssBaseline />
+
+      {/* Sidebar - Handles its own mobile/desktop logic */}
+      <Sidebar mobileOpen={mobileOpen} handleDrawerToggle={handleDrawerToggle} />
+
+      {/* Main Content Area */}
+      <Box 
+        component="main" 
+        sx={{ 
+          flexGrow: 1, 
+          display: 'flex',
+          flexDirection: 'column',
+          width: { md: `calc(100% - 280px)` },
+          minWidth: 0,
+          position: 'relative',
+          zIndex: 1
+        }}
+      >
+        <Topbar onMenuClick={handleDrawerToggle} />
+        
+        <Box 
+          sx={{ 
+            p: { xs: 2, sm: 3, md: 4 }, 
+            flexGrow: 1,
+            overflowY: 'auto',
+            maxHeight: 'calc(100vh - 72px)', // height of topbar
+          }}
+        >
+          <Outlet />
         </Box>
-    
+      </Box>
+    </Box>
   );
 };
 
