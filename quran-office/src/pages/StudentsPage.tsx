@@ -15,7 +15,9 @@ import {
 import { Add } from "@mui/icons-material";
 import StudentsList from "@/features/students/components/StudentsList";
 import AddStudentModal from "@/features/students/components/AddStudentModal";
-import { useStudentUIStore } from "@/features/students/store/useStudendUiStore";
+import EditStudentModal from "@/features/students/components/EditStudentModal";
+import StudentProfileModal from "@/features/students/components/StudentProfileModal";
+import { useStudentUIStore } from "@/features/students/store/useStudentUIStore";
 
 const StudentsPage: React.FC = () => {
   const openAdd = useStudentUIStore(state => state.openAdd);
@@ -148,8 +150,12 @@ const StudentsPage: React.FC = () => {
       </Box>
 
       <AddStudentModal />
+      <EditStudentModal />
+      <StudentProfileModal />
     </Box>
   );
 };
+
+
 
 export default StudentsPage;

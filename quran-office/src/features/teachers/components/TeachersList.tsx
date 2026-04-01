@@ -86,9 +86,9 @@ const TeachersList: React.FC = () => {
         </Typography>
         <Button 
           variant="contained" 
+          color="primary"
           onClick={() => handleOpenForm()}
           startIcon={<AddRounded sx={{ ml: 1, mr: -1 }} />}
-          sx={{ bgcolor: '#064e3b', '&:hover': { bgcolor: '#047857' } }}
         >
           إضافة معلم
         </Button>
@@ -97,15 +97,15 @@ const TeachersList: React.FC = () => {
       {/* Main Table */}
       <TableContainer component={Paper} elevation={0} sx={{ border: '1px solid #f1f5f9', borderRadius: 4 }}>
         <Table sx={{ minWidth: 650 }}>
-          <TableHead sx={{ bgcolor: '#f8fafc' }}>
+          <TableHead>
             <TableRow>
-              <TableCell sx={{ fontWeight: 'bold' }}>رقم الملف</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>الاسم</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>رقم الجوال</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>المؤهل</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>القسم</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>حالة العمل</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', px: 3 }}>إجراءات</TableCell>
+              <TableCell>رقم الملف</TableCell>
+              <TableCell>الاسم</TableCell>
+              <TableCell>رقم الجوال</TableCell>
+              <TableCell>المؤهل</TableCell>
+              <TableCell>القسم</TableCell>
+              <TableCell>حالة العمل</TableCell>
+              <TableCell sx={{ px: 3 }}>إجراءات</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

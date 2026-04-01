@@ -15,23 +15,31 @@ import {
   Divider,
   Alert,
 } from "@mui/material";
-import { Close, PersonAdd } from "@mui/icons-material";
+import { Close, Edit } from "@mui/icons-material";
 import { useStudentUIStore } from "../store/useStudentUIStore";
 import { GENDER_OPTIONS } from "../types";
-import { useAddStudentForm } from "../hooks/useAddStudentForm";
-import { useSubmitStudent } from "../hooks/useSubmitStudent";
+import { useEditStudentForm } from "../hooks/useEditStudentForm";
+import { useSubmitUpdateStudent } from "../hooks/useSubmitUpdateStudent";
 import { PhoneFieldList } from "./PhoneFieldList";
 
-const AddStudentModal: React.FC = () => {
-  const isOpen = useStudentUIStore((state) => state.isAddOpen);
-  // Separation of concerns: state vs mutation
-  const { form, fields, append, remove } = useAddStudentForm();
-  const { onSubmit, isPending, handleClose, error } = useSubmitStudent(form);
+/**
+ * Premium Student Edit Modal.
+ * Reuses PhoneFieldList and follows standard branding.
+ */
+const EditStudentModal: React.FC = () => {
+  const isOpen = useStudentUIStore((state) => state.isEditOpen);
+  const selectedStudent = useStudentUIStore((state) => state.selectedStudent);
+
+  const { form, fields, append, remove } = useEditStudentForm(selectedStudent);
+  const { onSubmit, isPending, handleClose, error } = useSubmitUpdateStudent(form as any, selectedStudent);
+
 
   const {
     register,
     formState: { errors },
   } = form;
+
+  if (!selectedStudent) return null;
 
   return (
     <Dialog
@@ -39,8 +47,8 @@ const AddStudentModal: React.FC = () => {
       onClose={handleClose}
       maxWidth="sm"
       fullWidth
-      aria-labelledby="add-student-title"
-      aria-describedby="add-student-description"
+      aria-labelledby="edit-student-title"
+      aria-describedby="edit-student-description"
       PaperProps={{
         sx: {
           borderRadius: "20px",
@@ -51,7 +59,7 @@ const AddStudentModal: React.FC = () => {
       }}
     >
       <DialogTitle
-        id="add-student-title"
+        id="edit-student-title"
         sx={{ p: 3, borderBottom: "1px solid", borderColor: "stone.200" }}
       >
         <Stack
@@ -65,16 +73,16 @@ const AddStudentModal: React.FC = () => {
                 width: 44,
                 height: 44,
                 borderRadius: "12px",
-                bgcolor: "emerald.50",
+                bgcolor: "sky.50",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                color: "emerald.600",
+                color: "sky.600",
                 border: "1px solid",
-                borderColor: "emerald.100",
+                borderColor: "sky.100",
               }}
             >
-              <PersonAdd />
+              <Edit />
             </Box>
             <Box>
               <Typography
@@ -83,14 +91,14 @@ const AddStudentModal: React.FC = () => {
                 color="stone.800"
                 lineHeight={1.2}
               >
-                إضافة طالب جديد
+                تعديل بيانات {selectedStudent.first_name}
               </Typography>
               <Typography
                 variant="caption"
                 color="stone.500"
-                id="add-student-description"
+                id="edit-student-description"
               >
-                أدخل بيانات الطالب لبدء التسجيل
+                قم بتعديل بيانات الطالب ورقم هاتف ولي أمره
               </Typography>
             </Box>
           </Stack>
@@ -167,6 +175,7 @@ const AddStudentModal: React.FC = () => {
                   fullWidth
                   type="date"
                   label="تاريخ الميلاد"
+                  placeholder="YYYY-MM-DD"
                   InputLabelProps={{ shrink: true }}
                   {...register("birth_date")}
                 />
@@ -239,13 +248,13 @@ const AddStudentModal: React.FC = () => {
             sx={{
               py: 1.2,
               borderRadius: "10px",
-              bgcolor: "emerald.600",
+              bgcolor: "sky.600",
               boxShadow: "0 4px 6px -1px rgb(16 185 129 / 0.2)",
               flex: 2,
-              "&:hover": { bgcolor: "emerald.700" },
+              "&:hover": { bgcolor: "sky.700" },
             }}
           >
-            {isPending ? "جاري الحفظ..." : "حفظ الطالب"}
+            {isPending ? "جاري الحفظ..." : "حفظ التعديلات"}
           </Button>
         </DialogActions>
       </form>
@@ -253,4 +262,4 @@ const AddStudentModal: React.FC = () => {
   );
 };
 
-export default AddStudentModal;
+export default EditStudentModal;

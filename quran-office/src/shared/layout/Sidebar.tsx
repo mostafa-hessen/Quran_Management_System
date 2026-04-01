@@ -55,8 +55,8 @@ const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, handleDrawerToggle }) => 
         height: "100%", 
         display: "flex", 
         flexDirection: "column",
-        background: "linear-gradient(180deg, #064e3b 0%, #065f46 100%)",
-        color: "white",
+        background: (theme) => `linear-gradient(180deg, ${theme.palette.primary.main} 0%, ${theme.palette.success.dark} 100%)`,
+        color: "primary.contrastText",
         boxShadow: "-4px 0 30px rgba(0,0,0,0.15)",
         overflowX: "hidden"
       }}
@@ -74,27 +74,23 @@ const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, handleDrawerToggle }) => 
       {/* Header / Logo */}
       <Box sx={{ p: 4, display: "flex", flexDirection: "column", alignItems: "center" }}>
         <Box 
+          component="img"
+          src="/logo.png"
+          alt="مكتب التحفيظ"
           sx={{ 
-            width: 60, 
-            height: 60, 
-            borderRadius: 3, 
-            background: "linear-gradient(135deg, #fbbf24 0%, #d97706 100%)",
-            display: "flex", 
-            alignItems: "center", 
-            justifyContent: "center",
-            boxShadow: "0 8px 16px rgba(217, 119, 6, 0.3)",
+            width: 80, 
+            height: 'auto', 
+            objectFit: "contain",
             mb: 2
           }}
-        >
-          <Typography variant="h3" sx={{ color: "white", fontSize: "2rem" }}>☽</Typography>
-        </Box>
+        />
         <Typography
           variant="h6"
           sx={{
             fontFamily: "Tajawal, sans-serif",
             fontWeight: 800,
             letterSpacing: 1,
-            color: "#fbbf24",
+            color: "secondary.main",
             textShadow: "0 2px 4px rgba(0,0,0,0.2)"
           }}
         >
@@ -133,9 +129,9 @@ const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, handleDrawerToggle }) => 
                 transition: "all 0.2s ease-in-out",
                 "&.active": {
                   background: "rgba(255, 255, 255, 0.12)",
-                  color: "#fbbf24",
+                  color: "secondary.main",
                   "& .MuiListItemIcon-root": { 
-                    color: "#fbbf24",
+                    color: "secondary.main",
                     transform: "scale(1.1)"
                   },
                   "&::before": {
@@ -144,7 +140,7 @@ const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, handleDrawerToggle }) => 
                     right: -16,
                     height: "60%",
                     width: 4,
-                    bgcolor: "#fbbf24",
+                    bgcolor: "secondary.main",
                     borderRadius: "4px 0 0 4px"
                   }
                 },
@@ -235,7 +231,6 @@ const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, handleDrawerToggle }) => 
       {/* Mobile Drawer */}
       <Drawer
         variant="temporary"
-        anchor="right"
         open={mobileOpen}
         onClose={handleDrawerToggle}
         ModalProps={{ keepMounted: true }}
@@ -254,7 +249,6 @@ const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, handleDrawerToggle }) => 
       {/* Desktop Drawer */}
       <Drawer
         variant="permanent"
-        anchor="right"
         sx={{
           display: { xs: "none", md: "block" },
           "& .MuiDrawer-paper": {

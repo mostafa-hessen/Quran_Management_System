@@ -1,6 +1,7 @@
 import QueryProvider from "./query_provider";
 import ThemeProvider from "./theme_provider";   
 import AuthProvider from "./auth_provider";
+import GlobalNotification from "@/shared/ui/GlobalNotification";
 
 export default function AppProviders({ children  }  : { children: React.ReactNode }) {
   return (
@@ -8,8 +9,9 @@ export default function AppProviders({ children  }  : { children: React.ReactNod
       <ThemeProvider>
         <AuthProvider>
           {children}
+          <GlobalNotification />
         </AuthProvider>
       </ThemeProvider>
     </QueryProvider>
   );
-}
+}

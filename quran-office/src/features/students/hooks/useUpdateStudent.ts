@@ -1,0 +1,40 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { updateStudentFull } from "../api/studentsApi";
+import type { FullStudentData, Student, StudentGuardianPhone } from "../types";
+import { useStudentUIStore } from "../store/useStudentUIStore";
+import { useNotification } from "@/shared/hooks/useNotification";
+
+/**
+ * Hook for updating student data with notification feedback.
+ */
+export const useUpdateStudent = () => {
+  const queryClient = useQueryClient();
+  const { closeEdit } = useStudentUIStore();
+  const { notify } = useNotification();
+
+  return useMutation({
+    mutationFn: async ({
+      studentId,
+      updates,
+      phones,
+      previousData,
+    }: {
+      studentId: string;
+      updates: Partial<Student>;
+      phones: (Partial<StudentGuardianPhone> & { action?: "add" | "update" | "delete" })[];
+      previousData: FullStudentData;
+    }) => {
+      const updatedStudent = await updateStudentFull(studentId, updates, phones);
+      return updatedStudent;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["students"] });
+      closeEdit();
+      notify("تم تحديث بيانات الطالب بنجاح ✓", "success");
+    },
+    onError: () => {
+      notify("حدث خطأ أثناء تحديث البيانات، يرجى المحاولة مجدداً", "error");
+    },
+  });
+};
+

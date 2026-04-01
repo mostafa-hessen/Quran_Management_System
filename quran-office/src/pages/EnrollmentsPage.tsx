@@ -139,24 +139,8 @@ const EnrollmentsPage: React.FC = () => {
                 startIcon={isEnrolling ? <CircularProgress size={20} color="inherit" /> : <PersonAddRounded />}
                 onClick={handleEnroll}
                 disabled={!selectedStudent || !selectedHalaqa || isEnrolling}
-                sx={{
-                  bgcolor: "#059669",
-                  borderRadius: "12px",
-                  py: 1.5,
-                  fontWeight: "bold",
-                  fontSize: "1rem",
-                  boxShadow: "none",
-                  "&:hover": { 
-                    bgcolor: "#047857",
-                    boxShadow: "0 4px 12px rgba(5, 150, 105, 0.2)",
-                  },
-                  "&:disabled": {
-                    bgcolor: "#d6d3d1",
-                    color: "#78716c"
-                  },
-                  textTransform: "none",
-                  mt: 2
-                }}
+                color="primary"
+                sx={{ mt: 2 }}
               >
                 تأكيد الانضمام
               </Button>
@@ -185,11 +169,11 @@ const EnrollmentsPage: React.FC = () => {
               <Table stickyHeader>
                 <TableHead>
                   <TableRow>
-                    <TableCell sx={{ fontWeight: 'bold', color: '#57534e', bgcolor: '#fafafa' }}>الطالب</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold', color: '#57534e', bgcolor: '#fafafa' }}>الحلقة</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold', color: '#57534e', bgcolor: '#fafafa' }}>تاريخ الانضمام</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold', color: '#57534e', bgcolor: '#fafafa' }}>الحالة</TableCell>
-                    <TableCell align="center" sx={{ fontWeight: 'bold', color: '#57534e', bgcolor: '#fafafa' }}>إجراءات</TableCell>
+                    <TableCell>الطالب</TableCell>
+                    <TableCell>الحلقة</TableCell>
+                    <TableCell>تاريخ الانضمام</TableCell>
+                    <TableCell>الحالة</TableCell>
+                    <TableCell align="center">إجراءات</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>

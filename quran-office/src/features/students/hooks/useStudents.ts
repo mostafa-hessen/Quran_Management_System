@@ -1,7 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import * as studentsApi from "../api/studentsApi";
-import type { Student } from "../types";
+import type { Student, StudentGuardianPhone } from "../types";
+import { useNotification } from "@/shared/hooks/useNotification";
 
+/**
+ * Fetch all students
+ */
 export const useStudents = () => {
   return useQuery({
     queryKey: ["students"],
@@ -9,35 +13,43 @@ export const useStudents = () => {
   });
 };
 
+/**
+ * Hook for adding a new student with notification feedback.
+ */
 export const useAddStudent = () => {
   const queryClient = useQueryClient();
+  const { notify } = useNotification();
+
   return useMutation({
-    mutationFn: ({ student, phones }: { student: any; phones?: any[] }) =>
-      studentsApi.addStudent(student, phones),
+    mutationFn: async ({ 
+      student, 
+      phones 
+    }: { 
+      student: Omit<Student, "student_id" | "created_at" | "updated_at">; 
+      phones?: Omit<StudentGuardianPhone, "phone_id" | "student_id">[]; 
+    }) => {
+      const studentData = await studentsApi.addStudent(student, phones);
+      return studentData;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["students"] });
+      notify("تم إضافة الطالب بنجاح ✓", "success");
+    },
+    onError: () => {
+      notify("حدث خطأ أثناء إضافة الطالب، يرجى المحاولة مجدداً", "error");
     },
   });
 };
 
-export const useUpdateStudent = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: ({ id, updates }: { id: string; updates: Partial<Student> }) =>
-      studentsApi.updateStudent(id, updates),
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["students"] });
-      queryClient.invalidateQueries({ queryKey: ["student", data.student_id] });
-    },
+
+/**
+ * Hook for fetching comprehensive student data (including phones).
+ */
+export const useStudentDetails = (studentId: string | null) => {
+  return useQuery({
+    queryKey: ["student-details", studentId],
+    queryFn: () => (studentId ? studentsApi.fetchStudentDetails(studentId) : null),
+    enabled: !!studentId,
   });
 };
 
-export const useDeleteStudent = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: studentsApi.deleteStudent,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["students"] });
-    },
-  });
-};
