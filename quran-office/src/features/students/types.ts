@@ -71,7 +71,31 @@ export interface StudentFormData {
   gender: Gender;
   birth_date: string;
   address: string;
+  status: StudentStatus;
   phones: PhoneFormEntry[];
+}
+
+export type StudentFilterState = {
+  searchTerm: string;
+  phoneTerm: string;
+  status: StudentStatus | 'all';
+  gender: Gender | 'all';
+  halaqaId: string | 'all';
+  teacherId: string | 'all';
+};
+
+export interface EnrolledHalaqa {
+  halaqa_id: string;
+  name: string;
+  teacher_name?: string;
+}
+
+export interface ExtendedStudent extends Student {
+  halaqa_name?: string;
+  teacher_name?: string;
+  enrolled_halaqat?: EnrolledHalaqa[];
+  age?: number;
+  phones?: StudentGuardianPhone[];
 }
 
 export interface StudentsState {

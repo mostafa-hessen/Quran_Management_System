@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { Add, Delete } from "@mui/icons-material";
 import { RELATION_OPTIONS, PHONE_LABEL_OPTIONS } from "../types";
-import type { Control, UseFormRegister, FieldErrors } from "react-hook-form";
+import type { UseFormRegister, FieldErrors } from "react-hook-form";
 
 interface PhoneFieldListProps {
   fields: any[];
@@ -41,8 +41,8 @@ export const PhoneFieldList: React.FC<PhoneFieldListProps> = ({
           <Typography variant="subtitle2" fontWeight="700" color="stone.700">
             بيانات الاتصال
           </Typography>
-          <Typography variant="caption" color="stone.500">
-            أضف أرقام هواتف أولياء الأمور (يجب أن يبدأ بـ 05 ويتكون من 10 أرقام)
+          <Typography variant="caption" color="stone.500" sx={{ fontWeight: 500 }}>
+            أضف أرقام هواتف أولياء الأمور (يجب أن يبدأ بـ 01 ويتكون من 11 رقمًا)
           </Typography>
         </Box>
         <Button
@@ -75,8 +75,9 @@ export const PhoneFieldList: React.FC<PhoneFieldListProps> = ({
             spacing={1}
             alignItems="flex-start"
           >
+            <input type="hidden" {...register(`phones.${index}.phone_id`)} />
             <TextField
-              placeholder="05XXXXXXXX"
+              placeholder="01XXXXXXXXX"
               sx={{ flex: 1 }}
               {...register(`phones.${index}.phone`)}
               error={!!phoneErrors?.[index]?.phone}

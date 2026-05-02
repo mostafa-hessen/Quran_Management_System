@@ -21,6 +21,8 @@ import { GENDER_OPTIONS } from "../types";
 import { useAddStudentForm } from "../hooks/useAddStudentForm";
 import { useSubmitStudent } from "../hooks/useSubmitStudent";
 import { PhoneFieldList } from "./PhoneFieldList";
+import { Controller } from "react-hook-form";
+import AgeDisplay from "./AgeDisplay";
 
 const AddStudentModal: React.FC = () => {
   const isOpen = useStudentUIStore((state) => state.isAddOpen);
@@ -30,8 +32,12 @@ const AddStudentModal: React.FC = () => {
 
   const {
     register,
+    control,
+    watch,
     formState: { errors },
   } = form;
+
+  const birthDate = watch("birth_date");
 
   return (
     <Dialog
@@ -169,22 +175,35 @@ const AddStudentModal: React.FC = () => {
                   label="تاريخ الميلاد"
                   InputLabelProps={{ shrink: true }}
                   {...register("birth_date")}
+                  error={!!errors.birth_date}
+                  helperText={errors.birth_date?.message}
                 />
+                <Box sx={{ mt: 1 }}>
+                   <AgeDisplay birthDate={birthDate} />
+                </Box>
               </Grid>
               <Grid size={{ xs: 12, sm: 6 }}>
-                <TextField
-                  fullWidth
-                  select
-                  label="الجنس"
+                <Controller
+                  name="gender"
+                  control={control}
                   defaultValue="ذكر"
-                  {...register("gender")}
-                >
-                  {GENDER_OPTIONS.map((opt) => (
-                    <MenuItem key={opt} value={opt}>
-                      {opt}
-                    </MenuItem>
-                  ))}
-                </TextField>
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      select
+                      label="الجنس"
+                      error={!!errors.gender}
+                      helperText={errors.gender?.message}
+                    >
+                      {GENDER_OPTIONS.map((opt) => (
+                        <MenuItem key={opt} value={opt}>
+                          {opt}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  )}
+                />
               </Grid>
             </Grid>
 

@@ -24,6 +24,7 @@ import {
 } from "@mui/icons-material";
 import { useStudentUIStore } from "../store/useStudentUIStore";
 import { useStudentDetails } from "../hooks/useStudents";
+import AgeDisplay from "./AgeDisplay";
 
 /**
  * Modal component for viewing comprehensive student profile details.
@@ -126,9 +127,12 @@ const StudentProfileModal: React.FC = () => {
                   <Cake sx={{ color: "#a8a29e", fontSize: "1.2rem" }} />
                   <Box>
                     <Typography variant="caption" color="#78716c" display="block">تاريخ الميلاد</Typography>
-                    <Typography fontWeight="500">
-                      {selectedStudent.birth_date ? new Date(selectedStudent.birth_date).toLocaleDateString("ar-EG") : "غير مسجل"}
-                    </Typography>
+                    <Stack direction="row" spacing={1} alignItems="center">
+                      <Typography fontWeight="500">
+                        {selectedStudent.birth_date ? new Date(selectedStudent.birth_date).toLocaleDateString("ar-EG") : "غير مسجل"}
+                      </Typography>
+                      <AgeDisplay birthDate={selectedStudent.birth_date} isChip />
+                    </Stack>
                   </Box>
                 </Stack>
               </Grid>

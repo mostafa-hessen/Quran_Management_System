@@ -21,6 +21,9 @@ import { GENDER_OPTIONS } from "../types";
 import { useEditStudentForm } from "../hooks/useEditStudentForm";
 import { useSubmitUpdateStudent } from "../hooks/useSubmitUpdateStudent";
 import { PhoneFieldList } from "./PhoneFieldList";
+import { Controller } from "react-hook-form";
+import AgeDisplay from "./AgeDisplay";
+import { StudentStatus } from "../types";
 
 /**
  * Premium Student Edit Modal.
@@ -36,8 +39,12 @@ const EditStudentModal: React.FC = () => {
 
   const {
     register,
+    control,
+    watch,
     formState: { errors },
   } = form;
+
+  const birthDate = watch("birth_date");
 
   if (!selectedStudent) return null;
 
@@ -170,30 +177,61 @@ const EditStudentModal: React.FC = () => {
             </Grid>
 
             <Grid container spacing={2}>
-              <Grid size={{ xs: 12, sm: 6 }}>
+              <Grid size={{ xs: 12, sm: 4 }}>
                 <TextField
                   fullWidth
                   type="date"
                   label="تاريخ الميلاد"
-                  placeholder="YYYY-MM-DD"
                   InputLabelProps={{ shrink: true }}
                   {...register("birth_date")}
+                  error={!!errors.birth_date}
+                  helperText={errors.birth_date?.message}
+                />
+                <Box sx={{ mt: 1 }}>
+                   <AgeDisplay birthDate={birthDate} />
+                </Box>
+              </Grid>
+              <Grid size={{ xs: 12, sm: 4 }}>
+                <Controller
+                  name="gender"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      select
+                      label="الجنس"
+                      error={!!errors.gender}
+                      helperText={errors.gender?.message}
+                    >
+                      {GENDER_OPTIONS.map((opt) => (
+                        <MenuItem key={opt} value={opt}>
+                          {opt}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  )}
                 />
               </Grid>
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <TextField
-                  fullWidth
-                  select
-                  label="الجنس"
-                  defaultValue="ذكر"
-                  {...register("gender")}
-                >
-                  {GENDER_OPTIONS.map((opt) => (
-                    <MenuItem key={opt} value={opt}>
-                      {opt}
-                    </MenuItem>
-                  ))}
-                </TextField>
+              <Grid size={{ xs: 12, sm: 4 }}>
+                <Controller
+                  name="status"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      select
+                      label="الحالة"
+                      error={!!errors.status}
+                      helperText={errors.status?.message}
+                    >
+                      <MenuItem value={StudentStatus.ACTIVE}>نشط</MenuItem>
+                      <MenuItem value={StudentStatus.INACTIVE}>غير نشط</MenuItem>
+                      <MenuItem value={StudentStatus.SUSPENDED}>موقوف</MenuItem>
+                    </TextField>
+                  )}
+                />
               </Grid>
             </Grid>
 

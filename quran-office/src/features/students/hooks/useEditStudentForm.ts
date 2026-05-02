@@ -22,6 +22,7 @@ export const useEditStudentForm = (student: FullStudentData | null) => {
         gender: "ذكر",
         birth_date: "",
         address: "",
+        status: "active",
         phones: [],
       };
     }
@@ -34,6 +35,7 @@ export const useEditStudentForm = (student: FullStudentData | null) => {
       gender: student.gender || "ذكر",
       birth_date: student.birth_date || "",
       address: student.address || "",
+      status: student.status || "active",
       phones: student.phones?.map(p => ({
         phone_id: p.phone_id,
         phone: p.phone,

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>علمه البيان - نظام الإدارة</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Amiri+Quran&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<!-- ══════════════ LOGIN ══════════════ -->
+<div id="screen-login">
+  <div class="login-bg min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-sm">
+      <div class="text-center mb-10">
+        <div class="logo-mark mx-auto mb-6">
+          <img src="https://i.ibb.co/5XyYfxsB/allamahu-al-bayan-logo-1774389601459.jpg" alt="Logo" class="w-full h-full object-cover rounded-2xl"/>
+        </div>
+        <h1 class="text-4xl text-white mb-2" style="font-family:'Amiri Quran',serif">علمه البيان</h1>
+        <p class="text-emerald-200 text-sm opacity-80">نظام الإدارة المتكامل</p>
+      </div>
+      <div class="login-card p-8">
+        <p class="text-center text-sm text-stone-400 mb-6">اختر دورك للدخول</p>
+        <div class="space-y-3">
+          <button onclick="App.login('admin')" class="role-btn w-full">
+            <span class="role-icon">👑</span>
+            <div class="text-right flex-1">
+              <div class="font-bold text-stone-800">مدير النظام</div>
+              <div class="text-xs text-stone-400">صلاحيات كاملة</div>
+            </div>
+            <span class="text-stone-300">←</span>
+          </button>
+          <button onclick="App.login('teacher')" class="role-btn w-full">
+            <span class="role-icon" style="background:#dbeafe;color:#1e40af">📖</span>
+            <div class="text-right flex-1">
+              <div class="font-bold text-stone-800">معلم الحلقة</div>
+              <div class="text-xs text-stone-400">إدارة حلقته فقط</div>
+            </div>
+            <span class="text-stone-300">←</span>
+          </button>
+          <button onclick="App.login('secretary')" class="role-btn w-full">
+            <span class="role-icon" style="background:#fef3c7;color:#92400e">📋</span>
+            <div class="text-right flex-1">
+              <div class="font-bold text-stone-800">السكرتيرة</div>
+              <div class="text-xs text-stone-400">الطلاب والمدفوعات</div>
+            </div>
+            <span class="text-stone-300">←</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ APP ══════════════ -->
+<div id="screen-app" class="hidden h-screen flex overflow-hidden">
+
+  <!-- Sidebar -->
+  <aside id="sidebar" class="sidebar">
+    <div class="p-5 border-b border-emerald-800/50">
+      <div class="flex items-center gap-3">
+        <div class="sidebar-logo"><img src="https://i.ibb.co/5XyYfxsB/allamahu-al-bayan-logo-1774389601459.jpg" alt="Logo" class="w-full h-full object-cover rounded-lg"/></div>
+        <div>
+          <div class="text-white font-bold text-sm">علمه البيان</div>
+          <div class="text-emerald-400 text-xs" id="role-display">—</div>
+        </div>
+      </div>
+    </div>
+    <nav class="flex-1 overflow-y-auto p-3 space-y-0.5" id="sidebar-nav"></nav>
+    <div class="p-4 border-t border-emerald-800/50 space-y-1">
+      <button onclick="App.logout()" class="sidebar-footer-btn w-full">
+        <span>⎋</span><span>تسجيل الخروج</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="flex-1 flex flex-col overflow-hidden min-w-0">
+    <!-- Topbar -->
+    <header class="topbar">
+      <button class="md:hidden text-stone-400 hover:text-stone-700 p-1" onclick="App.toggleSidebar()">☰</button>
+      <h2 class="font-bold text-stone-800 text-base" id="page-title">لوحة التحكم</h2>
+      <div class="flex items-center gap-3 mr-auto">
+        <div class="text-xs text-stone-400 hidden sm:block" id="current-date"></div>
+        <!-- Notification Bell -->
+        <div class="relative" id="notif-wrap">
+          <button class="notif-bell" onclick="Notifications.toggle()" id="notif-btn">
+            🔔
+            <span class="notif-badge hidden" id="notif-badge">0</span>
+          </button>
+          <div class="notif-dropdown hidden" id="notif-dropdown"></div>
+        </div>
+        <div class="user-chip" id="user-chip">م</div>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <main class="flex-1 overflow-y-auto bg-stone-50 p-4 md:p-6" id="page-content"></main>
+  </div>
+</div>
+
+<!-- ══════════════ MODAL ══════════════ -->
+<div id="modal-overlay" class="modal-overlay hidden" onclick="Modal.closeOnBg(event)">
+  <div id="modal-box" class="modal-box">
+    <div class="modal-header">
+      <h3 class="font-bold text-stone-800 text-base" id="modal-title">عنوان</h3>
+      <button onclick="Modal.close()" class="modal-close-btn">✕</button>
+    </div>
+    <div id="modal-body" class="p-5 overflow-y-auto" style="max-height:70vh"></div>
+  </div>
+</div>
+
+<!-- ══════════════ TOAST ══════════════ -->
+<div id="toast-container" class="fixed bottom-5 left-5 z-50 space-y-2"></div>
+
+<script src="app.js"></script>
+</body>
+</html>

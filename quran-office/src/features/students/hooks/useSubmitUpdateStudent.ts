@@ -29,7 +29,15 @@ export const useSubmitUpdateStudent = (
     if (!currentStudent) return;
 
     // 1. Prepare student updates
-    const { phones: formPhones, ...studentUpdates } = data;
+    const { phones: formPhones, ...rawUpdates } = data;
+    
+    const studentUpdates = {
+      ...rawUpdates,
+      birth_date: rawUpdates.birth_date || null,
+      father_name: rawUpdates.father_name?.trim() || null,
+      grandfather_name: rawUpdates.grandfather_name?.trim() || null,
+      address: rawUpdates.address?.trim() || null,
+    };
 
     // 2. Diff phones
     const phoneActions: (Partial<StudentGuardianPhone> & { action: "add" | "update" | "delete" })[] = [];
@@ -67,7 +75,6 @@ export const useSubmitUpdateStudent = (
       studentId: currentStudent.student_id,
       updates: studentUpdates as any,
       phones: phoneActions,
-      previousData: currentStudent,
     }, {
       onSuccess: () => {
         handleClose();

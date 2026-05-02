@@ -1,73 +1,277 @@
-# React + TypeScript + Vite
+# مكتبة تحفيظ القرآن (Quran Memorization Office)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 📖 وصف المشروع
 
-Currently, two official plugins are available:
+تطبيق ويب متكامل لإدارة مدارس تحفيظ القرآن الكريم، يوفر نظامًا شاملاً لإدارة الطلاب، المعلمين، الحلقات، الدفعات، والتقارير. تم بناء التطبيق باستخدام React + TypeScript + Vite مع Supabase كقاعدة بيانات.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🚀 المميزات الرئيسية
 
-## React Compiler
+### 1. نظام المصادقة والتراخيص
+- تسجيل الدخول والتسجيل
+- حماية الصفحات
+- تراخيص متعددة (Admin, Teacher, Staff)
+- إدارة المستخدمين
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 2. إدارة الطلاب
+- إضافة، تعديل، وحذف الطلاب
+- ملفات تعريف الطلاب الشاملة
+- إدارة التواريخ والهواتف المتعددة
+- متابعة الحالة (نشط، متوقف، متخرج)
+- إحصائيات الطلاب
 
-## Expanding the ESLint configuration
+### 3. إدارة المعلمين
+- إدارة بيانات المعلمين
+- حجوزات المعلمين
+- إدارة الجدول الزمني
+- إحصائيات الحضور والغياب
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### 4. إدارة الحلقات
+- إنشاء وإدارة الحلقات القرآنية
+- توزيع الطلاب على الحلقات
+- متابعة تقدم كل حلةقة
+- التقارير الأكاديمية والمالية
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### 5. نظام الجلسات
+- جدول الجلسات الأسبوعي
+- حجز الجلسات
+- تسجيل الحضور والغياب
+- إدارة المعلمين البدلاء
+- سجلات الجلسات
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### 6. نظام الدفعات
+- إدارة الاشتراكات والدفعات
+- متابعة المدفوعات
+- التقارير المالية
+- إشعارات الدفعات المتأخرة
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### 7. الواجبات والتقييمات
+- إنشاء الواجبات (حفظ، مراجعة، تجويد، قراءة)
+- متابعة ت递交 الواجبات
+- تقييم أداء الطلاب
+- سجل التقدم
+
+### 8. النظام التعليمي
+- متابعة تقدم الحفظ
+- جودة الحفظ
+- سجل التاريخ التعليمي
+- كشوفات التقدير الدورية
+
+### 9. التقارير والإحصائيات
+- تقارير مالية
+- تقارير أكاديمية
+- تقارير الحضور
+- تصدير التقارير
+
+### 10. الإشعارات
+- إشعارات نظامية
+- إشعارات الدفعات
+- إشعارات الواجبات
+- إشعارات الحضور والغياب
+
+## 🛠️ التقنيات المستخدمة
+
+### Frontend
+- **React 19.2.4** - مكتبة الواجهات
+- **TypeScript** - لغة البرمجة
+- **Vite 8.0.1** - أداة البناء
+- **Material-UI 7.3.9** - مكتبة الواجهات
+- **React Router DOM 7.13.1** - توجيه الصفحات
+- **React Hook Form 7.71.2** - إدارة النماذج
+- **Zod 4.3.6** - التحقق من البيانات
+- **Zustand 5.0.12** - إدارة الحالة
+
+### Backend
+- **Supabase 2.99.3** - قاعدة البيانات وAPI
+- **PostgreSQL** - قاعدة البيانات
+- **RLS (Row Level Security)** - الأمان
+- **Realtime** - التحديثات المباشرة
+
+### الأدوات
+- **ESLint** - جودة الكود
+- **Prettier** - تنسيق الكود
+- **npm** - مدير الحزم
+
+## 📦 التثبيت والبدء
+
+### المتطلبات
+- Node.js 18.x أو أحدث
+- npm أو yarn
+
+### الخطوات
+
+1. **نسخ المستودع**
+```bash
+git clone <repository-url>
+cd quran-office
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+2. **تثبيت الحزم**
+```bash
+npm install
 ```
+
+3. **إعداد المتغيرات البيئية**
+```bash
+cp .env.example .env
+```
+
+ثم املأ المتغيرات البيئية في ملف `.env`:
+```env
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+4. **تشغيل المشروع**
+```bash
+npm run dev
+```
+
+المشروع سيكون متاح على: `http://localhost:5173`
+
+### الإنتاج
+
+1. **بناء المشروع**
+```bash
+npm run build
+```
+
+2. **معاينة الإنتاج**
+```bash
+npm run preview
+```
+
+## 📁 هيكل المشروع
+
+```
+src/
+├── app/                 # تطبيق React الرئيسي
+│   ├── provider/       #Providers (Theme, Auth)
+│   └── router/         #إعدادات التوجيه
+├── features/           #الميزات
+│   ├── auth/          #المصادقة والتراخيص
+│   ├── students/      #إدارة الطلاب
+│   ├── teachers/      #إدارة المعلمين
+│   ├── halaqat/       #إدارة الحلقات
+│   ├── enrollments/   #إدارة التسجيلات
+│   ├── payments/      #إدارة الدفعات
+│   ├── homework/      #الواجبات
+│   └── reports/       #التقارير
+├── shared/            #المشاركة
+│   ├── components/    #المكونات المشتركة
+│   ├── hooks/         #Hooks المخصص
+│   ├── layout/        #تخطيط الصفحات
+│   ├── lib/           #المكتبات المساعدة
+│   ├── types/         #أنواع TypeScript
+│   └── utils/         #أدوات مساعدة
+└── pages/             #الصفحات الرئيسية
+```
+
+## 🔑 قاعدة البيانات
+
+### الجداول الرئيسية
+- `profiles` - ملفات المستخدمين
+- `students` - بيانات الطلاب
+- `teachers` - بيانات المعلمين
+- `halaqat` - الحلقات القرآنية
+- `sessions` - الجلسات
+- `enrollments` - التسجيلات
+- `payments` - الدفعات
+- `subscriptions` - الاشتراكات
+- `homework` - الواجبات
+- `memorization_progress` - تقدم الحفظ
+- `report_cards` - كشوفات التقدير
+
+### الهيكل الأمني
+- يستخدم RLS (Row Level Security) لحماية البيانات
+- كل مستخدم يرى بياناته فقط
+- Admin لديه صلاحيات كاملة
+
+## 🔄 API endpoints
+
+### المصادقة
+- `POST /api/auth/login` - تسجيل الدخول
+- `POST /api/auth/register` - التسجيل
+- `GET /api/auth/me` - بيانات المستخدم
+
+### الطلاب
+- `GET /api/students` - الحصول على قائمة الطلاب
+- `POST /api/students` - إضافة طالب
+- `PUT /api/students/:id` - تعديل طالب
+- `DELETE /api/students/:id` - حذف طالب
+
+### المعلمين
+- `GET /api/teachers` - الحصول على قائمة المعلمين
+- `POST /api/teachers` - إضافة معلم
+- `PUT /api/teachers/:id` - تعديل معلم
+- `DELETE /api/teachers/:id` - حذف معلم
+
+### الحلقات
+- `GET /api/halaqat` - الحصول على قائمة الحلقات
+- `POST /api/halaqat` - إنشاء حلةقة
+- `PUT /api/halaqat/:id` - تعديل حلةقة
+- `DELETE /api/halaqat/:id` - حذف حلةقة
+
+## 🎨 تصميم الواجهة
+
+- يستخدم Material-UI للمكونات
+- دعم RTL (من اليمين لليسار)
+- تصميم متجاوب
+- ألوان مخصصة للثيم
+
+## 📊 الإحصائيات والتقارير
+
+- تقارير مالية شهرية
+- تقارير أكاديمية
+- إحصائيات الحضور
+- متوسط تقدم الطلاب
+- تقارير عن المعلمين
+
+## 🚀 النشر
+
+### Supabase Hosting
+```bash
+npx supabase login
+npx supabase link
+npx supabase db push
+npx supabase functions deploy
+npx supabase static deploy
+```
+
+### Vercel
+```bash
+npm run build
+vercel --prod
+```
+
+## 🤝 المساهمة
+
+1. Fork المستودع
+2. إنشاء فرع جديد (`git checkout -b feature/amazing-feature`)
+3. الالتزام بالتغييرات (`git commit -m 'Add amazing feature'`)
+4. دفع الفرع (`git push origin feature/amazing-feature`)
+5. إنشاء Pull Request
+
+## 📄 الرخصة
+
+هذا المشروع مرخص تحت رخصة MIT - راجع ملف LICENSE للمزيد من التفاصيل
+
+## 🆘 الدعم
+
+للحصول على المساعدة:
+1. راجع الوثائق
+2. افتح issue
+3. تواصل مع المطورين
+
+## 🔄 الترقيات
+
+للترقية إلى أحدث إصدار:
+```bash
+npm update
+```
+
+## 📝 الملاحظات
+
+- المشروع يستخدم TypeScript لضمان جودة الكود
+- جميع الطلابات تخضع لـ ESLint
+- يستخدم Git Hooks لضمان جودة الكود قبل الرفع
+- قاعدة البيانات تستخدم migrations لإدارة الهيكل

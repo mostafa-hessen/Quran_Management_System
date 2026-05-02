@@ -13,7 +13,10 @@ export enum MenuItemText {
   SETTINGS = 'الإعدادات',
   LOGOUT = 'تسجيل الخروج',
   ENROLLMENTS = 'تسجيل الحلقات',
+  STAFF = 'إدارة الموظفين',
+  AUDIT_LOGS = 'سجل العمليات',
 }
+
 export interface MenuItem {
   text: MenuItemText;
   icon: React.ReactNode;

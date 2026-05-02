@@ -1,12 +1,10 @@
 import React from 'react';
-import { Box, CssBaseline, useMediaQuery, useTheme } from '@mui/material';
+import { Box, CssBaseline } from '@mui/material';
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Topbar from './Topbar';
 
 const MainLayout: React.FC = () => {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
   const handleDrawerToggle = () => {
@@ -18,7 +16,7 @@ const MainLayout: React.FC = () => {
       sx={{ 
         display: 'flex', 
         minHeight: '100vh',
-        bgcolor: '#fafaf9', // stone-50
+        bgcolor: 'background.default', // Use theme token
         position: 'relative',
         overflow: 'hidden'
       }}

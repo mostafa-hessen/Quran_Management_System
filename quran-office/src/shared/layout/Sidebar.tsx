@@ -8,17 +8,15 @@ import {
   ListItemIcon,
   ListItemText,
   Typography,
-  Divider,
   useTheme,
   useMediaQuery,
-  IconButton,
-  Tooltip,
+  alpha,
+  Divider,
 } from "@mui/material";
-import { 
-  SettingsRounded, 
-  LogoutRounded, 
-  ChevronRight, 
-  Close 
+import {
+  SettingsRounded,
+  LogoutRounded,
+  AutoStoriesRounded,
 } from "@mui/icons-material";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../features/auth/store";
@@ -32,7 +30,10 @@ interface SidebarProps {
   handleDrawerToggle?: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, handleDrawerToggle }) => {
+const Sidebar: React.FC<SidebarProps> = ({
+  mobileOpen,
+  handleDrawerToggle,
+}) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const { signOut } = useAuthStore();
@@ -50,72 +51,76 @@ const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, handleDrawerToggle }) => 
   );
 
   const drawerContent = (
-    <Box 
-      sx={{ 
-        height: "100%", 
-        display: "flex", 
+    <Box
+      sx={{
+        height: "100%",
+        display: "flex",
         flexDirection: "column",
-        background: (theme) => `linear-gradient(180deg, ${theme.palette.primary.main} 0%, ${theme.palette.success.dark} 100%)`,
-        color: "primary.contrastText",
-        boxShadow: "-4px 0 30px rgba(0,0,0,0.15)",
-        overflowX: "hidden"
+        bgcolor: 'background.paper',
+        borderLeft: isMobile ? "none" : `1px solid ${theme.palette.stone[200]}`,
+        overflowX: "hidden",
       }}
     >
-      {/* Mobile Close Button */}
-      {isMobile && (
-        <IconButton 
-          onClick={handleDrawerToggle}
-          sx={{ position: "absolute", top: 10, left: 10, color: "rgba(255,255,255,0.6)" }}
-        >
-          <Close />
-        </IconButton>
-      )}
-
       {/* Header / Logo */}
-      <Box sx={{ p: 4, display: "flex", flexDirection: "column", alignItems: "center" }}>
-        <Box 
-          component="img"
-          src="/logo.png"
-          alt="مكتب التحفيظ"
-          sx={{ 
-            width: 80, 
-            height: 'auto', 
-            objectFit: "contain",
-            mb: 2
-          }}
-        />
-        <Typography
-          variant="h6"
+      <Box sx={{ p: 3, pt: 4, display: "flex", alignItems: "center", gap: 2 }}>
+        <Box
           sx={{
-            fontFamily: "Tajawal, sans-serif",
-            fontWeight: 800,
-            letterSpacing: 1,
-            color: "secondary.main",
-            textShadow: "0 2px 4px rgba(0,0,0,0.2)"
+            width: 40,
+            height: 40,
+            borderRadius: "12px",
+            background: `linear-gradient(135deg, ${theme.palette.emerald[600]} 0%, ${theme.palette.emerald[400]} 100%)`,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "white",
+            boxShadow: `0 8px 16px ${alpha(theme.palette.emerald.main, 0.2)}`,
           }}
         >
-          مكتب التحفيظ
-        </Typography>
-        <Typography 
-          variant="caption" 
-          sx={{ 
-            opacity: 0.6, 
-            mt: 0.5, 
-            bgcolor: "rgba(255,255,255,0.08)", 
-            px: 1.5, 
-            borderRadius: 10,
-            textTransform: "uppercase",
-            letterSpacing: 1
-          }}
-        >
-          نظام الإدارة المتكامل
-        </Typography>
+          <AutoStoriesRounded fontSize="small" />
+        </Box>
+        <Box>
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: 800,
+              fontSize: "1.15rem",
+              color: 'stone.900',
+              lineHeight: 1.2,
+              letterSpacing: '-0.02em'
+            }}
+          >
+            علمه البيان
+          </Typography>
+          <Typography
+            variant="caption"
+            sx={{
+              color: 'stone.500',
+              fontWeight: 600,
+              fontSize: '0.7rem'
+            }}
+          >
+            نظام الإدارة الشامل
+          </Typography>
+        </Box>
       </Box>
 
-      <Divider sx={{ borderColor: "rgba(255,255,255,0.06)", mx: 3, mb: 2 }} />
-
       {/* Navigation Items */}
-      <List sx={{ px: 2, flex: 1, "& .MuiListItem-root": { mb: 0.5 } }}>
+      <List sx={{ px: 2, mt: 3, flex: 1, "& .MuiListItem-root": { mb: 0.5 } }}>
+        <Typography
+          variant="caption"
+          sx={{
+            px: 2,
+            mb: 1.5,
+            display: "block",
+            color: 'stone.400',
+            fontWeight: 800,
+            textTransform: "uppercase",
+            letterSpacing: "0.08em",
+            fontSize: '0.65rem'
+          }}
+        >
+          القائمة الرئيسية
+        </Typography>
         {filteredItems.map((item) => (
           <ListItem key={item.text} disablePadding>
             <ListItemButton
@@ -123,96 +128,152 @@ const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, handleDrawerToggle }) => 
               to={item.path}
               onClick={isMobile ? handleDrawerToggle : undefined}
               sx={{
-                borderRadius: "14px",
-                py: 1.5,
+                borderRadius: "12px",
+                py: 1.25,
                 px: 2,
-                transition: "all 0.2s ease-in-out",
+                color: 'stone.600',
+                transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
                 "&.active": {
-                  background: "rgba(255, 255, 255, 0.12)",
-                  color: "secondary.main",
-                  "& .MuiListItemIcon-root": { 
-                    color: "secondary.main",
-                    transform: "scale(1.1)"
+                  background: alpha(theme.palette.emerald.main, 0.08),
+                  color: 'emerald.700',
+                  "& .MuiListItemIcon-root": {
+                    color: 'emerald.600',
                   },
-                  "&::before": {
-                    content: '""',
-                    position: "absolute",
-                    right: -16,
-                    height: "60%",
-                    width: 4,
-                    bgcolor: "secondary.main",
-                    borderRadius: "4px 0 0 4px"
-                  }
                 },
-                "&:hover": {
-                  background: "rgba(255, 255, 255, 0.05)",
-                  transform: "translateX(-4px)"
+                "&:hover:not(.active)": {
+                  background: 'stone.50',
+                  color: 'stone.900',
+                  "& .MuiListItemIcon-root": {
+                    color: 'stone.900',
+                  },
                 },
               }}
             >
-              <ListItemIcon sx={{ color: "rgba(255,255,255,0.7)", minWidth: 44, transition: "0.2s" }}>
-                {item.icon}
+              <ListItemIcon
+                sx={{ color: "inherit", minWidth: 38, transition: "0.2s" }}
+              >
+                {React.isValidElement(item.icon)
+                  ? React.cloneElement(item.icon as any, { fontSize: "small" })
+                  : item.icon}
               </ListItemIcon>
               <ListItemText
                 primary={item.text}
                 primaryTypographyProps={{
-                  fontWeight: 600,
-                  fontSize: "0.95rem",
-                  fontFamily: "Tajawal, sans-serif",
+                  fontWeight: 700,
+                  fontSize: "0.875rem",
                 }}
               />
-              <ChevronRight sx={{ fontSize: "1rem", opacity: 0.3 }} />
             </ListItemButton>
           </ListItem>
         ))}
       </List>
 
-      {/* footer Section */}
-      <Box sx={{ p: 2, mt: "auto" }}>
-        <Box 
-          sx={{ 
-            p: 2, 
-            borderRadius: 4, 
-            bgcolor: "rgba(0,0,0,0.15)",
-            border: "1px solid rgba(255,255,255,0.05)"
-          }}
-        >
+      {/* Footer Section */}
+      <Box sx={{ p: 2, borderTop: `1px solid ${theme.palette.stone[100]}` }}>
+        <ListItem disablePadding>
           <ListItemButton
-            sx={{ 
-              borderRadius: 3, 
-              color: "rgba(255,255,255,0.4)",
-              mb: 1,
-              "&:hover": { color: "white" }
+            onClick={() => navigate("/settings")}
+            sx={{
+              borderRadius: "10px",
+              py: 1,
+              color: 'stone.500',
+              "&:hover": { color: 'stone.900', bgcolor: 'stone.50' },
             }}
           >
-            <ListItemIcon sx={{ color: "inherit", minWidth: 36 }}>
-              <SettingsRounded fontSize="small" />
+            <ListItemIcon sx={{ color: "inherit", minWidth: 38 }}>
+              <SettingsRounded sx={{ fontSize: 20 }} />
             </ListItemIcon>
             <ListItemText
               primary="الإعدادات"
-              primaryTypographyProps={{ fontSize: "0.8rem", fontWeight: 600 }}
+              primaryTypographyProps={{
+                fontSize: "0.8125rem",
+                fontWeight: 700,
+              }}
             />
           </ListItemButton>
+        </ListItem>
 
+        <ListItem disablePadding>
           <ListItemButton
             onClick={handleSignOut}
             sx={{
-              borderRadius: 3,
-              color: "#fca5a5",
-              "&:hover": { 
-                bgcolor: "rgba(239, 68, 68, 0.15)",
-                color: "#f87171"
+              borderRadius: "10px",
+              py: 1,
+              color: 'stone.500',
+              "&:hover": {
+                bgcolor: alpha(theme.palette.error.main, 0.08),
+                color: 'error.main',
               },
             }}
           >
-            <ListItemIcon sx={{ color: "inherit", minWidth: 36 }}>
-              <LogoutRounded fontSize="small" />
+            <ListItemIcon sx={{ color: "inherit", minWidth: 38 }}>
+              <LogoutRounded sx={{ fontSize: 20 }} />
             </ListItemIcon>
             <ListItemText
               primary="تسجيل الخروج"
-              primaryTypographyProps={{ fontSize: "0.8rem", fontWeight: "bold" }}
+              primaryTypographyProps={{
+                fontSize: "0.8125rem",
+                fontWeight: 700,
+              }}
             />
           </ListItemButton>
+        </ListItem>
+
+        <Box
+          sx={{
+            mt: 2,
+            p: 1.5,
+            bgcolor: 'stone.50',
+            borderRadius: "14px",
+            display: "flex",
+            alignItems: "center",
+            gap: 1.5,
+            border: `1px solid ${theme.palette.stone[100]}`
+          }}
+        >
+          <Box
+            sx={{
+              width: 36,
+              height: 36,
+              borderRadius: "10px",
+              background: `linear-gradient(45deg, ${theme.palette.stone[200]}, ${theme.palette.stone[100]})`,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              overflow: "hidden",
+            }}
+          >
+            <Typography
+              sx={{
+                textAlign: "center",
+                fontSize: "12px",
+                fontWeight: 800,
+                color: 'stone.600'
+              }}
+            >
+              {userRole[0].toUpperCase()}
+            </Typography>
+          </Box>
+          <Box sx={{ flex: 1 }}>
+            <Typography
+              variant="caption"
+              sx={{
+                display: "block",
+                fontWeight: 800,
+                lineHeight: 1.2,
+                color: 'stone.900',
+                fontSize: '0.8rem'
+              }}
+            >
+              {userRole === "admin" ? "مدير النظام" : "معلم"}
+            </Typography>
+            <Typography
+              variant="caption"
+              sx={{ display: "block", color: 'stone.500', fontSize: "10px", fontWeight: 600 }}
+            >
+              {userRole.toUpperCase()}
+            </Typography>
+          </Box>
         </Box>
       </Box>
     </Box>
@@ -221,11 +282,9 @@ const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, handleDrawerToggle }) => 
   return (
     <Box
       component="nav"
-      sx={{ 
-        width: { md: DRAWER_WIDTH }, 
+      sx={{
+        width: { md: DRAWER_WIDTH },
         flexShrink: { md: 0 },
-        position: 'relative',
-        zIndex: 1200 // Higher than content but same as AppBar standard
       }}
     >
       {/* Mobile Drawer */}
@@ -239,7 +298,7 @@ const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, handleDrawerToggle }) => 
           "& .MuiDrawer-paper": {
             width: DRAWER_WIDTH,
             boxSizing: "border-box",
-            border: "none",
+            borderLeft: "none",
           },
         }}
       >
@@ -254,8 +313,8 @@ const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, handleDrawerToggle }) => 
           "& .MuiDrawer-paper": {
             width: DRAWER_WIDTH,
             boxSizing: "border-box",
-            border: "none",
-            backgroundColor: "transparent",
+            borderRight: "none",
+            borderLeft: `1px solid ${theme.palette.stone[200]}`,
           },
         }}
         open
@@ -267,3 +326,4 @@ const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, handleDrawerToggle }) => 
 };
 
 export default Sidebar;
+

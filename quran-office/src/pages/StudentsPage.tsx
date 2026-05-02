@@ -4,28 +4,21 @@ import {
   Typography,
   Button,
   Stack,
-  Container,
-  Card,
-  TextField,
-  MenuItem,
-  InputLabel,
-  FormControl,
-  Select,
 } from "@mui/material";
 import { Add } from "@mui/icons-material";
-import StudentsList from "@/features/students/components/StudentsList";
-import AddStudentModal from "@/features/students/components/AddStudentModal";
-import EditStudentModal from "@/features/students/components/EditStudentModal";
-import StudentProfileModal from "@/features/students/components/StudentProfileModal";
-import { useStudentUIStore } from "@/features/students/store/useStudentUIStore";
+import StudentsList from "../features/students/components/StudentsList";
+import AddStudentModal from "../features/students/components/AddStudentModal";
+import EditStudentModal from "../features/students/components/EditStudentModal";
+import StudentProfileModal from "../features/students/components/StudentProfileModal";
+import { useStudentUIStore } from "../features/students/store/useStudentUIStore";
+import StudentFiltersComponent from "../features/students/components/StudentFilters";
+import { useStudentFilters } from "../features/students/hooks/useStudentFilters";
+import { useHalaqat } from "../features/halaqat/hooks/useHalaqat";
 
 const StudentsPage: React.FC = () => {
   const openAdd = useStudentUIStore(state => state.openAdd);
-  const [filters, setFilters] = React.useState({
-    search: "",
-    circle: "",
-    status: "",
-  });
+  const { filters, updateFilter, resetFilters } = useStudentFilters();
+  const { data: halaqat } = useHalaqat();
 
   return (
     <Box sx={{ p: { xs: 2, md: 4 }, maxWidth: "1600px", mx: "auto" }}>
@@ -62,91 +55,15 @@ const StudentsPage: React.FC = () => {
         </Button>
       </Stack>
 
-      {/* Filters Card */}
-      <Card 
-        sx={{ 
-          p: 2.5, 
-          mb: 3, 
-          borderRadius: "16px", 
-          border: "1px solid #f5f5f4", 
-          boxShadow: "0 1px 2px rgba(0,0,0,0.02)",
-          display: "flex",
-          gap: 2,
-          flexWrap: "wrap",
-          alignItems: "flex-end"
-        }}
-      >
-        <Box sx={{ flex: 1, minWidth: 200 }}>
-          <Typography variant="caption" sx={{ color: "#78716c", fontWeight: "bold", mb: 0.5, display: "block" }}>
-            بحث بالاسم
-          </Typography>
-          <TextField
-            fullWidth
-            placeholder="ابحث..."
-            size="small"
-            value={filters.search}
-            onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-            sx={{
-              "& .MuiOutlinedInput-root": { 
-                bgcolor: "#fafafa", 
-                borderRadius: "10px",
-                "& fieldset": { borderColor: "#e7e5e4" }
-              }
-            }}
-          />
-        </Box>
-
-        <Box sx={{ minWidth: 150 }}>
-          <Typography variant="caption" sx={{ color: "#78716c", fontWeight: "bold", mb: 0.5, display: "block" }}>
-            الحلقة
-          </Typography>
-          <TextField
-            select
-            fullWidth
-            size="small"
-            value={filters.circle}
-            onChange={(e) => setFilters({ ...filters, circle: e.target.value })}
-            sx={{
-              "& .MuiOutlinedInput-root": { 
-                bgcolor: "#fafafa", 
-                borderRadius: "10px",
-                "& fieldset": { borderColor: "#e7e5e4" }
-              }
-            }}
-          >
-            <MenuItem value="">كل الحلقات</MenuItem>
-            <MenuItem value="h1">حلقة الفجر</MenuItem>
-            <MenuItem value="h2">حلقة النور</MenuItem>
-          </TextField>
-        </Box>
-
-        <Box sx={{ minWidth: 120 }}>
-          <Typography variant="caption" sx={{ color: "#78716c", fontWeight: "bold", mb: 0.5, display: "block" }}>
-            الحالة
-          </Typography>
-          <TextField
-            select
-            fullWidth
-            size="small"
-            value={filters.status}
-            onChange={(e) => setFilters({ ...filters, status: e.target.value })}
-            sx={{
-              "& .MuiOutlinedInput-root": { 
-                bgcolor: "#fafafa", 
-                borderRadius: "10px",
-                "& fieldset": { borderColor: "#e7e5e4" }
-              }
-            }}
-          >
-            <MenuItem value="">الكل</MenuItem>
-            <MenuItem value="active">نشط</MenuItem>
-            <MenuItem value="inactive">غير نشط</MenuItem>
-          </TextField>
-        </Box>
-      </Card>
+      <StudentFiltersComponent 
+        filters={filters}
+        onFilterChange={updateFilter}
+        onReset={resetFilters}
+        halaqat={halaqat?.map(h => ({ id: h.halaqa_id, name: h.name }))}
+      />
 
       <Box>
-        <StudentsList searchTerm={filters.search} />
+        <StudentsList filters={filters} />
       </Box>
 
       <AddStudentModal />
@@ -155,7 +72,5 @@ const StudentsPage: React.FC = () => {
     </Box>
   );
 };
-
-
 
 export default StudentsPage;

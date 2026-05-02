@@ -67,11 +67,11 @@ BEGIN
 END;
 $$;
 
-SELECT cron.schedule(
-  'generate-daily-sessions',
-  '0 21 * * *',
-  'SELECT public.generate_daily_sessions()'
-);
+-- SELECT cron.schedule(
+--   'generate-daily-sessions',
+--   '0 21 * * *',
+--   'SELECT public.generate_daily_sessions()'
+-- );
 
 -- ── ٣. Trigger: غياب المعلم → إشعار ─────────────────────────────
 -- الإصلاح: فصل المتغيرات بدل INTO مزدوج
@@ -241,11 +241,11 @@ BEGIN
     END IF;
   END LOOP;
 
-  IF EXISTS (SELECT 1 FROM cron.job WHERE jobname = 'generate-daily-sessions') THEN
-    RAISE NOTICE '✓ pg_cron: generate-daily-sessions';
-  ELSE
-    RAISE WARNING '✗ pg_cron job لم يُنشأ';
-  END IF;
+  -- IF EXISTS (SELECT 1 FROM cron.job WHERE jobname = 'generate-daily-sessions') THEN
+  --   RAISE NOTICE '✓ pg_cron: generate-daily-sessions';
+  -- ELSE
+  --   RAISE WARNING '✗ pg_cron job لم يُنشأ';
+  -- END IF;
 
   RAISE NOTICE '══ Session Automation جاهز ══';
 END $$;
