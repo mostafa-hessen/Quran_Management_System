@@ -32,6 +32,8 @@ export const useEnrollment = (studentId?: string) => {
       queryClient.invalidateQueries({ queryKey: ["all_enrollments"] });
       queryClient.invalidateQueries({ queryKey: ["students"] });
       queryClient.invalidateQueries({ queryKey: ["halaqa_enrollments"] });
+      queryClient.invalidateQueries({ queryKey: ["halaqat"] });
+      queryClient.invalidateQueries({ queryKey: ["audit_logs"] });
     },
   });
 
@@ -43,6 +45,8 @@ export const useEnrollment = (studentId?: string) => {
       queryClient.invalidateQueries({ queryKey: ["all_enrollments"] });
       queryClient.invalidateQueries({ queryKey: ["students"] });
       queryClient.invalidateQueries({ queryKey: ["halaqa_enrollments"] });
+      queryClient.invalidateQueries({ queryKey: ["halaqat"] });
+      queryClient.invalidateQueries({ queryKey: ["audit_logs"] });
     },
   });
 
@@ -55,6 +59,8 @@ export const useEnrollment = (studentId?: string) => {
       queryClient.invalidateQueries({ queryKey: ["all_enrollments"] });
       queryClient.invalidateQueries({ queryKey: ["students"] });
       queryClient.invalidateQueries({ queryKey: ["halaqa_enrollments"] });
+      queryClient.invalidateQueries({ queryKey: ["halaqat"] });
+      queryClient.invalidateQueries({ queryKey: ["audit_logs"] });
     },
   });
 
@@ -88,6 +94,8 @@ export const useUnenrollStudent = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["halaqa_enrollments"] });
       queryClient.invalidateQueries({ queryKey: ["all_enrollments"] });
+      queryClient.invalidateQueries({ queryKey: ["halaqat"] });
+      queryClient.invalidateQueries({ queryKey: ["audit_logs"] });
       toast.success("تم إلغاء التسجيل بنجاح");
     },
     onError: (error: any) => {
@@ -105,6 +113,8 @@ export const useMoveStudent = () => {
       queryClient.invalidateQueries({ queryKey: ["halaqa_enrollments"] });
       queryClient.invalidateQueries({ queryKey: ["all_enrollments"] });
       queryClient.invalidateQueries({ queryKey: ["student_enrollments"] });
+      queryClient.invalidateQueries({ queryKey: ["halaqat"] });
+      queryClient.invalidateQueries({ queryKey: ["audit_logs"] });
     },
   });
 };
@@ -117,6 +127,8 @@ export const useEnrollMultipleStudents = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["halaqa_enrollments"] });
       queryClient.invalidateQueries({ queryKey: ["all_enrollments"] });
+      queryClient.invalidateQueries({ queryKey: ["halaqat"] });
+      queryClient.invalidateQueries({ queryKey: ["audit_logs"] });
       toast.success("تم تسجيل الطلاب بنجاح");
     },
   });

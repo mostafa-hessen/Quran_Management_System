@@ -7,7 +7,8 @@ export const getTeachers = async (): Promise<Teacher[]> => {
     .select(`
       *,
       profiles:profile_id (
-        full_name
+        full_name,
+        email
       ),
       phones:teacher_phones (phone, label),
       specializations:teacher_specializations (specialization),
@@ -20,6 +21,7 @@ export const getTeachers = async (): Promise<Teacher[]> => {
   return (data || []).map((t: any) => ({
     ...t,
     full_name: t.profiles?.full_name || [t.first_name, t.father_name, t.family_name].filter(Boolean).join(' '),
+    email: t.profiles?.email,
     phones: t.phones || [],
     specializations: t.specializations?.map((s: any) => s.specialization) || [],
     halaqat: t.halaqat || []

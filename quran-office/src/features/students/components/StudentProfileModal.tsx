@@ -25,11 +25,8 @@ import {
 import { useStudentUIStore } from "../store/useStudentUIStore";
 import { useStudentDetails } from "../hooks/useStudents";
 import AgeDisplay from "./AgeDisplay";
+import { StatusChip } from "@/shared/components/ui/StatusChip";
 
-/**
- * Modal component for viewing comprehensive student profile details.
- * Features: RTL-layout, guardian phones, and status.
- */
 const StudentProfileModal: React.FC = () => {
   const { isProfileOpen, closeProfile, selectedStudent } = useStudentUIStore();
   const { data: details, isLoading } = useStudentDetails(selectedStudent?.student_id || null);
@@ -65,7 +62,6 @@ const StudentProfileModal: React.FC = () => {
         }
       }}
     >
-      {/* Header with Title and Close Button */}
       <DialogTitle sx={{ 
         bgcolor: "#fafaf9", 
         borderBottom: "1px solid #f5f5f4",
@@ -90,19 +86,17 @@ const StudentProfileModal: React.FC = () => {
           <Box sx={{ display: "flex", justifyContent: "center", py: 8 }}>
             <CircularProgress size={40} sx={{ color: "#059669" }} />
           </Box>
-        ) : selectedStudent && (
+        ) : selectedStudent ? (
           <Stack spacing={3}>
-            {/* Status & Name Header */}
             <Box>
-              <Chip 
+              <StatusChip 
                 label={getStatusLabel(selectedStudent.status)} 
-                size="small"
-                sx={{ 
-                  bgcolor: getStatusColor(selectedStudent.status), 
-                  color: "white", 
-                  fontWeight: "bold",
-                  mb: 1
-                }} 
+                color={
+                  selectedStudent.status === "active" ? "emerald" : 
+                  selectedStudent.status === "inactive" ? "stone" : 
+                  "amber"
+                }
+                sx={{ mb: 1 }}
               />
               <Typography variant="h5" fontWeight="bold" color="#1c1917">
                 {`${selectedStudent.first_name} ${selectedStudent.father_name || ""} ${selectedStudent.grandfather_name || ""} ${selectedStudent.family_name}`}
@@ -111,14 +105,13 @@ const StudentProfileModal: React.FC = () => {
 
             <Divider />
 
-            {/* Basic Info Grid */}
             <Grid container spacing={3}>
               <Grid size={{ xs: 6 }}>
                 <Stack direction="row" spacing={1.5} alignItems="center">
                   <Wc sx={{ color: "#a8a29e", fontSize: "1.2rem" }} />
                   <Box>
                     <Typography variant="caption" color="#78716c" display="block">الجنس</Typography>
-                    <Typography fontWeight="500">{selectedStudent.gender || "غير محدد"}</Typography>
+                    <Typography fontWeight="700" color="stone.800">{selectedStudent.gender || "غير محدد"}</Typography>
                   </Box>
                 </Stack>
               </Grid>
@@ -128,7 +121,7 @@ const StudentProfileModal: React.FC = () => {
                   <Box>
                     <Typography variant="caption" color="#78716c" display="block">تاريخ الميلاد</Typography>
                     <Stack direction="row" spacing={1} alignItems="center">
-                      <Typography fontWeight="500">
+                      <Typography fontWeight="700" color="stone.800">
                         {selectedStudent.birth_date ? new Date(selectedStudent.birth_date).toLocaleDateString("ar-EG") : "غير مسجل"}
                       </Typography>
                       <AgeDisplay birthDate={selectedStudent.birth_date} isChip />
@@ -141,7 +134,9 @@ const StudentProfileModal: React.FC = () => {
                   <LocationOn sx={{ color: "#a8a29e", fontSize: "1.2rem" }} />
                   <Box>
                     <Typography variant="caption" color="#78716c" display="block">العنوان</Typography>
-                    <Typography fontWeight="500">{selectedStudent.address || "لا يوجد عنوان مسجل"}</Typography>
+                    <Typography fontWeight="700" color={selectedStudent.address ? "stone.800" : "stone.400"} sx={{ fontStyle: selectedStudent.address ? "normal" : "italic" }}>
+                      {selectedStudent.address || "بدون عنوان"}
+                    </Typography>
                   </Box>
                 </Stack>
               </Grid>
@@ -150,7 +145,7 @@ const StudentProfileModal: React.FC = () => {
                   <CalendarMonth sx={{ color: "#a8a29e", fontSize: "1.2rem" }} />
                   <Box>
                     <Typography variant="caption" color="#78716c" display="block">تاريخ التسجيل</Typography>
-                    <Typography fontWeight="500">
+                    <Typography fontWeight="700" color="stone.800">
                       {new Date(selectedStudent.created_at).toLocaleDateString("ar-EG")}
                     </Typography>
                   </Box>
@@ -158,8 +153,38 @@ const StudentProfileModal: React.FC = () => {
               </Grid>
             </Grid>
 
+            <Box>
+              <Typography variant="subtitle2" fontWeight="bold" color="#1c1917" gutterBottom>
+                الحلقات المسجل بها
+              </Typography>
+              <Stack direction="row" spacing={1} flexWrap="wrap" sx={{ gap: 1 }}>
+                {details?.enrolled_halaqat && details.enrolled_halaqat.length > 0 ? (
+                  details.enrolled_halaqat.map((h: any) => (
+                    <StatusChip 
+                      key={h.halaqa_id}
+                      label={h.name} 
+                      color="indigo"
+                      showDot={false}
+                      sx={{ 
+                        borderRadius: '8px',
+                        px: 0.5
+                      }} 
+                    />
+                  ))
+                ) : (
+                  <StatusChip 
+                    label="غير ملتحق بأي حلقة حالياً" 
+                    color="stone"
+                    variant="outlined"
+                    showDot={false}
+                    sx={{ borderStyle: 'dashed' }}
+                  />
+                )}
+              </Stack>
+            </Box>
 
-            {/* Guardian Phones Section */}
+            <Divider />
+
             <Box>
               <Typography variant="subtitle2" fontWeight="bold" color="#1c1917" gutterBottom sx={{ mt: 1 }}>
                 بيانات التواصل (أولياء الأمور)
@@ -179,17 +204,7 @@ const StudentProfileModal: React.FC = () => {
                     >
                       <Stack direction="row" justifyContent="space-between" alignItems="center">
                         <Stack direction="row" spacing={1} alignItems="center">
-                          <Box 
-                            sx={{ 
-                              width: 32, 
-                              height: 32, 
-                              borderRadius: "8px", 
-                              bgcolor: "#0596691a", 
-                              display: "flex", 
-                              alignItems: "center", 
-                              justifyContent: "center" 
-                            }}
-                          >
+                          <Box sx={{ width: 32, height: 32, borderRadius: "8px", bgcolor: "#0596691a", display: "flex", alignItems: "center", justifyContent: "center" }}>
                             <Phone sx={{ fontSize: "1.1rem", color: "#059669" }} />
                           </Box>
                           <Box>
@@ -210,7 +225,7 @@ const StudentProfileModal: React.FC = () => {
               </Stack>
             </Box>
           </Stack>
-        )}
+        ) : null}
       </DialogContent>
     </Dialog>
   );

@@ -43,3 +43,13 @@ export const useDeactivateStaff = () => {
     },
   });
 };
+
+export const useActivateStaff = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => activateStaffMember(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: STAFF_QUERY_KEY });
+    },
+  });
+};

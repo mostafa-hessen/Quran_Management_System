@@ -32,15 +32,29 @@ export const router = createBrowserRouter([
     ),
     children: [
       { index: true, element: <DashboardPage /> },
-      { path: 'teachers', element: <TeachersPage /> },
+      { 
+        path: 'teachers', 
+        element: (
+          <AdminRoute>
+            <TeachersPage />
+          </AdminRoute>
+        ) 
+      },
       { path: 'students', element: <StudentsPage /> },
       { path: 'halaqat', element: <HalaqatPage /> },
       { path: 'halaqat/:id', element: <HalaqaDetailsPage /> },
-      { path: 'enrollments', element: <EnrollmentsPage /> },
+      // { path: 'enrollments', element: <EnrollmentsPage /> },
       { path: 'sessions', element: <Placeholder title="الجلسات والحضور" /> },
       { path: 'attendance', element: <Placeholder title="الحضور والغياب" /> },
-      { path: 'payments', element: <PaymentsPage /> },
-      { path: 'reports', element: <ReportsPage /> },
+      { 
+        path: 'payments', 
+        element: (
+          <AdminRoute>
+            <PaymentsPage />
+          </AdminRoute>
+        ) 
+      },
+      // { path: 'reports', element: <ReportsPage /> },
       {
         // Staff management — admin only
         path: 'staff',

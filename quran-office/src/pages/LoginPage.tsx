@@ -19,6 +19,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useSignIn } from "../features/auth/hooks";
 import { useAuthStore } from "../features/auth/store";
+import toast from "react-hot-toast";
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -26,17 +27,16 @@ const LoginPage: React.FC = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const user = useAuthStore((state) => state.user);
-  const initialized = useAuthStore((state) => state.initialized);
+  const { user, profile, initialized } = useAuthStore();
 
   const signInMutation = useSignIn();
 
-  // Redirect if already logged in
+  // Redirect if already logged in and active
   useEffect(() => {
-    if (initialized && user) {
+    if (initialized && user && profile?.status === 'active') {
       navigate("/", { replace: true });
     }
-  }, [user, initialized, navigate]);
+  }, [user, initialized, profile, navigate]);
 
   const loading = signInMutation.isPending;
   const errorMsg = signInMutation.error?.message || "";
@@ -45,7 +45,14 @@ const LoginPage: React.FC = () => {
     e.preventDefault();
     signInMutation.mutate(
       { email, password },
-      { onSuccess: () => navigate("/") },
+      { 
+        onSuccess: () => navigate("/"),
+        onError: (error: any) => {
+          if (error.message.includes("موقوف")) {
+            toast.error(error.message, { duration: 6000 });
+          }
+        }
+      },
     );
   };
 
@@ -94,23 +101,22 @@ const LoginPage: React.FC = () => {
         <Box sx={{ textAlign: "center", mb: 5 }}>
           <Box
             sx={{
-              width: 80,
-              height: 80,
-              bgcolor: "rgba(255,255,255,0.12)",
-              borderRadius: "24px",
+              width: 100,
+              height: 100,
+              bgcolor: "white",
+              borderRadius: "50%",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               mx: "auto",
               mb: 3,
               backdropFilter: "blur(10px)",
-              border: "1px solid rgba(255,255,255,0.15)",
+              border: "4px solid rgba(255,255,255,0.2)",
               boxShadow: "0 8px 32px rgba(0,0,0,0.15)",
+              overflow: "hidden"
             }}
           >
-            <Typography variant="h3" sx={{ color: "#fbbf24", lineHeight: 1 }}>
-              ☽
-            </Typography>
+            <Box component="img" src="/logo.png" sx={{ width: "90%", height: "90%", objectFit: "contain", borderRadius: "50%" }} />
           </Box>
           <Typography
             variant="h4"
@@ -121,7 +127,7 @@ const LoginPage: React.FC = () => {
               textShadow: "0 2px 8px rgba(0,0,0,0.2)",
             }}
           >
-            مكتب التحفيظ
+            مكتب علمه البيان
           </Typography>
           <Typography
             variant="subtitle2"

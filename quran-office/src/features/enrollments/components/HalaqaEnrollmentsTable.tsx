@@ -139,13 +139,13 @@ const HalaqaEnrollmentsTable: React.FC<HalaqaEnrollmentsTableProps> = ({ halaqaI
                   </TableCell>
                   <TableCell align="center">
                     <Box sx={{ display: "flex", justifyContent: "center", gap: 0.5 }}>
-                      <Tooltip title="نقل لحلقة أخرى">
+                      {/* <Tooltip title="نقل لحلقة أخرى">
                         <IconButton size="small" sx={{ color: "stone.400" }} onClick={() => setTransferEnrollmentId(enrollment.enrollment_id)}>
                           <SwapHoriz fontSize="small" />
                         </IconButton>
                       </Tooltip>
-                      <Tooltip title={isActive ? "إيقاف مؤقت" : "تنشيط الطالب"}>
-                        <IconButton 
+                      <Tooltip title={isActive ? "إيقاف مؤقت" : "تنشيط الطالب"}> */}
+                        {/* <IconButton 
                           size="small" 
                           sx={{ color: isActive ? "stone.400" : "success.main" }}
                           onClick={() => {
@@ -159,7 +159,7 @@ const HalaqaEnrollmentsTable: React.FC<HalaqaEnrollmentsTableProps> = ({ halaqaI
                         >
                           {isActive ? <Block fontSize="small" /> : <PlayArrow fontSize="small" />}
                         </IconButton>
-                      </Tooltip>
+                      </Tooltip> */}
                       <Tooltip title="حذف من الحلقة">
                         <IconButton 
                           size="small" 

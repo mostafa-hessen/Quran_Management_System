@@ -23,6 +23,7 @@ export const useCreateHalaqa = () => {
     mutationFn: (halaqa: CreateHalaqaInput) => halaqatApi.createHalaqa(halaqa),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["halaqat"] });
+      queryClient.invalidateQueries({ queryKey: ["audit_logs"] });
     },
   });
 };
@@ -40,6 +41,7 @@ export const useUpdateHalaqa = () => {
     onSuccess: (_, { halaqaId }) => {
       queryClient.invalidateQueries({ queryKey: ["halaqat"] });
       queryClient.invalidateQueries({ queryKey: ["halaqat", halaqaId] });
+      queryClient.invalidateQueries({ queryKey: ["audit_logs"] });
     },
   });
 };
@@ -50,6 +52,7 @@ export const useDeleteHalaqa = () => {
     mutationFn: (halaqaId: string) => halaqatApi.deleteHalaqa(halaqaId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["halaqat"] });
+      queryClient.invalidateQueries({ queryKey: ["audit_logs"] });
     },
   });
 };

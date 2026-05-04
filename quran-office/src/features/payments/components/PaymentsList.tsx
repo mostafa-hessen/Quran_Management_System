@@ -4,8 +4,9 @@ import {
   AddRounded,
   ReceiptLongRounded,
   HistoryRounded,
-  AssessmentRounded,
+  PriorityHighRounded,
 } from "@mui/icons-material";
+
 import { PageContainer, PageHeader } from "@/shared/components/ui";
 import { usePaymentStore } from "../store/usePaymentStore";
 
@@ -72,11 +73,12 @@ const PaymentsList: React.FC = () => {
             label="سجل المدفوعات"
           />
           <Tab
-            icon={<AssessmentRounded sx={{ fontSize: 20 }} />}
+            icon={<PriorityHighRounded sx={{ fontSize: 20 }} />}
             iconPosition="start"
-            label="التقارير المالية"
+            label="المتأخرين في السداد"
           />
         </Tabs>
+
       </Box>
 
       {/* Tab Panels */}

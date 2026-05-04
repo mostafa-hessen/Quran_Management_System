@@ -1,112 +1,173 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { 
   Box, 
   Grid, 
   Typography, 
   Stack, 
-  useTheme 
+  useTheme, 
+  TextField, 
+  InputAdornment, 
+  MenuItem, 
+  Button,
+  IconButton,
+  Tooltip
 } from '@mui/material';
 import { 
-  WarningAmberRounded, 
-  TrendingUpRounded, 
-  PeopleAltRounded, 
-  AccountBalanceWalletRounded 
+  SearchRounded, 
+  FilterListRounded, 
+  AddCardRounded, 
+  AccountBalanceWalletRounded, 
+  AssignmentTurnedInRounded, 
+  PriorityHighRounded,
+  HistoryRounded,
+  PaymentRounded
 } from '@mui/icons-material';
-import { useOverdueStudents, useDashboardStats } from '../hooks/usePayments';
+import { useSubscriptions } from '../hooks/usePayments';
 import { DataTable, StatsCard, LoadingSkeleton, StatusChip } from '@/shared/components/ui';
+import { usePaymentStore } from '../store/usePaymentStore';
 
 const ReportsTab: React.FC = () => {
   const theme = useTheme();
-  const { data: overdue, isLoading: loadingOverdue } = useOverdueStudents();
-  const { data: stats, isLoading: loadingStats } = useDashboardStats();
+  const { data: subscriptions, isLoading } = useSubscriptions();
+  const { setAddPaymentModal, setHistoryModal } = usePaymentStore();
+  
+  const [searchTerm, setSearchTerm] = useState('');
 
-  if (loadingOverdue || loadingStats) return <LoadingSkeleton type="table" />;
+  const today = new Date().toISOString().split('T')[0];
 
-  const overdueColumns = [
+  const filteredData = useMemo(() => {
+    if (!subscriptions) return [];
+    return subscriptions.filter(s => {
+      const remaining = Number(s.total_amount) - Number(s.paid_amount || 0);
+      const isOverdue = s.status !== 'cancelled' && s.end_date < today && remaining > 0;
+      if (!isOverdue) return false;
+
+      const nameMatch = s.student?.full_name?.toLowerCase().includes(searchTerm.toLowerCase());
+      return nameMatch;
+    });
+  }, [subscriptions, searchTerm, today]);
+
+  if (isLoading) return <LoadingSkeleton type="table" />;
+
+  const columns = [
     {
-      id: 'full_name',
+      id: 'student_name',
       label: 'الطالب',
-      render: (val: string) => <Typography variant="body2" fontWeight={700}>{val}</Typography>
+      render: (_: any, row: any) => (
+        <Typography variant="body2" fontWeight={700}>
+          {row.student?.full_name}
+        </Typography>
+      )
     },
     {
       id: 'type',
-      label: 'الاشتراك',
+      label: 'النوع',
       render: (val: string) => <StatusChip label={val} color="neutral" />
     },
     {
       id: 'total_amount',
-      label: 'المبلغ الإجمالي',
+      label: 'الإجمالي',
       render: (val: number) => `${val} ج.م`
+    },
+    {
+      id: 'paid_amount',
+      label: 'المدفوع',
+      render: (val: number) => (
+        <Typography variant="body2" color="success.main" fontWeight={700}>
+          {val} ج.م
+        </Typography>
+      )
     },
     {
       id: 'remaining',
       label: 'المتبقي',
-      render: (val: number) => (
-        <Typography variant="body2" color="error.main" fontWeight={800}>
-          {val} ج.م
+      render: (_: any, row: any) => {
+        const remaining = Number(row.total_amount) - Number(row.paid_amount);
+        return (
+          <Typography variant="body2" color="error.main" fontWeight={800}>
+            {remaining} ج.م
+          </Typography>
+        );
+      }
+    },
+    {
+      id: 'end_date',
+      label: 'تاريخ الاستحقاق',
+      render: (val: string) => (
+        <Typography variant="body2" color="error.main" fontWeight={700}>
+          {val}
         </Typography>
       )
     },
     {
       id: 'days_overdue',
       label: 'مدة التأخير',
-      render: (val: number) => (
-        <Typography variant="body2" color="error.main">
-          {val} يوم
-        </Typography>
+      render: (_: any, row: any) => {
+        const diff = new Date(today).getTime() - new Date(row.end_date).getTime();
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        return (
+          <Typography variant="body2" color="error.main" fontWeight={800}>
+            {days} يوم
+          </Typography>
+        );
+      }
+    },
+
+    {
+      id: 'actions',
+      label: 'إجراء',
+      align: 'center' as const,
+      render: (_: any, row: any) => (
+        <Stack direction="row" spacing={1} justifyContent="center">
+          <Tooltip title="دفع">
+            <IconButton 
+              size="small" 
+              color="primary" 
+              onClick={() => setAddPaymentModal(true, row)}
+            >
+              <PaymentRounded fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        </Stack>
       )
     }
+
   ];
 
   return (
     <Box>
-      <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <StatsCard 
-            title="إجمالي الطلاب النشطين"
-            value={stats?.total_students || 0}
-            icon={<PeopleAltRounded />}
-            color={theme.palette.primary.main}
-          />
-        </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <StatsCard 
-            title="متأخرات السداد"
-            value={overdue?.length || 0}
-            icon={<WarningAmberRounded />}
-            color={theme.palette.error.main}
-          />
-        </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <StatsCard 
-            title="الحلقات النشطة"
-            value={stats?.total_halaqat || 0}
-            icon={<TrendingUpRounded />}
-            color={theme.palette.sky.main}
-          />
-        </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <StatsCard 
-            title="المدرسين"
-            value={stats?.total_teachers || 0}
-            icon={<AccountBalanceWalletRounded />}
-            color={theme.palette.emerald.main}
-          />
-        </Grid>
-      </Grid>
+      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
+        <Typography variant="h6" fontWeight={800} color="error.main">
+          قائمة المتأخرين في السداد
+        </Typography>
+        <TextField
+          placeholder="بحث عن طالب..."
+          size="small"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchRounded fontSize="small" />
+                </InputAdornment>
+              ),
+            }
+          }}
+          sx={{ width: 300 }}
+        />
+      </Stack>
 
-      <Typography variant="h6" sx={{ mb: 2, fontWeight: 800 }}>
-        تقرير المتأخرات
-      </Typography>
-      
       <DataTable 
-        columns={overdueColumns} 
-        data={overdue || []}
+        columns={columns} 
+        data={filteredData}
         emptyTitle="لا يوجد متأخرات"
-        emptyDescription="جميع الطلاب قاموا بسداد اشتراكاتهم الحالية."
+        emptyDescription="جميع الطلاب قاموا بسداد اشتراكاتهم الحالية أو لا توجد اشتراكات منتهية."
       />
     </Box>
   );
 };
 
+
 export default ReportsTab;
+

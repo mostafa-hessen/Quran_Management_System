@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   getSubscriptions, createSubscription, updateSubscriptionStatus,
-  createPayment, getOverdueStudents, getPaymentStats,
+  createPayment, getOverdueStudents, getDashboardStats,
 } from './paymentsApi';
 import type { CreateSubscriptionInput, CreatePaymentInput } from '../types';
 
@@ -15,8 +15,9 @@ export const useSubscriptions = () =>
 export const useOverdueStudents = () =>
   useQuery({ queryKey: OVERDUE_KEY, queryFn: getOverdueStudents });
 
-export const useDashboardStats = () =>
-  useQuery({ queryKey: STATS_KEY, queryFn: getPaymentStats });
+export const useDashboardStats = (teacherId?: string) =>
+  useQuery({ queryKey: [...STATS_KEY, teacherId], queryFn: () => getDashboardStats(teacherId) });
+
 
 export const useCreateSubscription = () => {
   const qc = useQueryClient();

@@ -43,6 +43,7 @@ export const useAddStudent = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["students"] });
+      queryClient.invalidateQueries({ queryKey: ["audit_logs"] });
       notify("تم إضافة الطالب بنجاح ✓", "success");
     },
     onError: (error: any) => {
@@ -73,6 +74,7 @@ export const useUpdateStudent = () => {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["students"] });
       queryClient.invalidateQueries({ queryKey: ["student-details", data.student_id] });
+      queryClient.invalidateQueries({ queryKey: ["audit_logs"] });
       notify("تم تحديث بيانات الطالب بنجاح ✓", "success");
     },
     onError: (error: any) => {
@@ -92,6 +94,7 @@ export const useDeleteStudent = () => {
     mutationFn: studentsApi.deleteStudent,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["students"] });
+      queryClient.invalidateQueries({ queryKey: ["audit_logs"] });
       notify("تم حذف الطالب بنجاح ✓", "success");
     },
     onError: (error: any) => {

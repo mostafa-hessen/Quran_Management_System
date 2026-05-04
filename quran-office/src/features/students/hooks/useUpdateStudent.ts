@@ -25,8 +25,10 @@ export const useUpdateStudent = () => {
       const updatedStudent = await updateStudentFull(studentId, updates, phones);
       return updatedStudent;
     },
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["students"] });
+      queryClient.invalidateQueries({ queryKey: ["student-details", variables.studentId] });
+      queryClient.invalidateQueries({ queryKey: ["audit_logs"] });
       closeEdit();
       notify("تم تحديث بيانات الطالب بنجاح ✓", "success");
     },

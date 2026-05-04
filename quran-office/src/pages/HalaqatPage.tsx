@@ -29,6 +29,7 @@ import { HalaqaFormModal } from "@/features/halaqat/components/HalaqaFormModal";
 import { HalaqaDeleteConfirmModal } from "@/features/halaqat/components/HalaqaDeleteConfirmModal";
 import { HalaqaDrawerStudents } from "@/features/halaqat/components/HalaqaDrawerStudents";
 import { useHalaqatStore } from "@/features/halaqat/store";
+import { useAuthStore } from "@/features/auth/store";
 
 const HalaqatPage: React.FC = () => {
   const theme = useTheme();
@@ -37,6 +38,15 @@ const HalaqatPage: React.FC = () => {
   const { data: halaqat, isLoading } = useHalaqat();
   const { data: teachers } = useTeachers();
   const { openCreateForm } = useHalaqatStore();
+  const profile = useAuthStore((state) => state.profile);
+  const isTeacher = profile?.role === "teacher";
+
+  // If teacher, force filter to their own ID
+  React.useEffect(() => {
+    if (isTeacher && profile?.teacher_id) {
+      setSelectedTeacherId(profile.teacher_id);
+    }
+  }, [isTeacher, profile]);
 
   const filteredHalaqat = halaqat?.filter((h) => {
     const matchesSearch =
@@ -46,6 +56,11 @@ const HalaqatPage: React.FC = () => {
 
     const matchesTeacher =
       selectedTeacherId === "all" || h.teacher_id === selectedTeacherId;
+
+    // Strict teacher isolation: If teacher role, ONLY show their halaqat
+    if (isTeacher) {
+      return matchesSearch && h.teacher_id === profile?.teacher_id;
+    }
 
     return matchesSearch && matchesTeacher;
   });
@@ -99,20 +114,22 @@ const HalaqatPage: React.FC = () => {
             </Typography>
           </Box>
 
-          <Button
-            variant="contained"
-            size="large"
-            startIcon={<AddIcon />}
-            onClick={openCreateForm}
-            sx={{
-              borderRadius: "14px",
-              px: 4,
-              py: 1.5,
-              fontSize: "1rem",
-            }}
-          >
-            إنشاء حلقة جديدة
-          </Button>
+          {!isTeacher && (
+            <Button
+              variant="contained"
+              size="large"
+              startIcon={<AddIcon />}
+              onClick={openCreateForm}
+              sx={{
+                borderRadius: "14px",
+                px: 4,
+                py: 1.5,
+                fontSize: "1rem",
+              }}
+            >
+              إنشاء حلقة جديدة
+            </Button>
+          )}
         </Box>
 
         {/* Filters Bar */}
@@ -152,40 +169,42 @@ const HalaqatPage: React.FC = () => {
             }}
           />
 
-          <FormControl sx={{ minWidth: 200, flex: 1 }}>
-            <InputLabel id="teacher-filter-label">تصفية حسب المعلم</InputLabel>
-            <Select
-              labelId="teacher-filter-label"
-              value={selectedTeacherId}
-              label="تصفية حسب المعلم"
-              onChange={(e) => setSelectedTeacherId(e.target.value)}
-              sx={{
-                borderRadius: "12px",
-                bgcolor: "stone.50",
-                "& .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "transparent",
-                },
-                "&:hover .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "primary.light",
-                },
-                "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "primary.main",
-                },
-              } as any}
-              startAdornment={
-                <InputAdornment position="start">
-                  <PersonIcon sx={{ color: "stone.400", fontSize: 20 }} />
-                </InputAdornment>
-              }
-            >
-              <MenuItem value="all">كل المعلمين</MenuItem>
-              {teachers?.map((teacher) => (
-                <MenuItem key={teacher.teacher_id} value={teacher.teacher_id}>
-                  {teacher.full_name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+          {!isTeacher && (
+            <FormControl sx={{ minWidth: 200, flex: 1 }}>
+              <InputLabel id="teacher-filter-label">تصفية حسب المعلم</InputLabel>
+              <Select
+                labelId="teacher-filter-label"
+                value={selectedTeacherId}
+                label="تصفية حسب المعلم"
+                onChange={(e) => setSelectedTeacherId(e.target.value)}
+                sx={{
+                  borderRadius: "12px",
+                  bgcolor: "stone.50",
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "transparent",
+                  },
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "primary.light",
+                  },
+                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "primary.main",
+                  },
+                } as any}
+                startAdornment={
+                  <InputAdornment position="start">
+                    <PersonIcon sx={{ color: "stone.400", fontSize: 20 }} />
+                  </InputAdornment>
+                }
+              >
+                <MenuItem value="all">كل المعلمين</MenuItem>
+                {teachers?.map((teacher) => (
+                  <MenuItem key={teacher.teacher_id} value={teacher.teacher_id}>
+                    {teacher.full_name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          )}
         </Box>
 
         {/* Content Grid */}

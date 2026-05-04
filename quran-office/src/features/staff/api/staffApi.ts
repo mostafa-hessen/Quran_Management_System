@@ -15,7 +15,7 @@ export const getStaffMembers = async (): Promise<StaffMember[]> => {
     const { data, error } = await supabase
       .from('profiles')
       .select(`
-        id, full_name, phone, role, status, teacher_id, hire_date, notes, created_at, updated_at,
+        id, email, full_name, phone, role, status, teacher_id, hire_date, notes, created_at, updated_at,
         teachers:teacher_id (
           first_name, father_name, grandfather_name, family_name,
           phones:teacher_phones (phone, label)
@@ -27,7 +27,7 @@ export const getStaffMembers = async (): Promise<StaffMember[]> => {
 
     return (data || []).map((p: any) => ({
       id: p.id,
-      email: '', 
+      email: p.email || '', 
       full_name: p.full_name || '',
       first_name: p.teachers?.first_name,
       father_name: p.teachers?.father_name,
@@ -106,6 +106,22 @@ export const deactivateStaffMember = async (id: string): Promise<void> => {
     const { error } = await supabase.rpc('admin_delete_user', {
       p_user_id: id
     });
+
+    if (error) throw error;
+  } catch (error) {
+    throw new Error(getErrorMessage(error));
+  }
+};
+
+/**
+ * Activate a staff member.
+ */
+export const activateStaffMember = async (id: string): Promise<void> => {
+  try {
+    const { error } = await supabase
+      .from('profiles')
+      .update({ status: 'active' })
+      .eq('id', id);
 
     if (error) throw error;
   } catch (error) {

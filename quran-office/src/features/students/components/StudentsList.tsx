@@ -13,21 +13,20 @@ import {
   Tooltip,
   Skeleton,
   Stack,
-  Chip,
 } from "@mui/material";
 import {
   Edit,
   Person,
   DeleteOutline,
+  LocationOn,
 } from "@mui/icons-material";
+import { useAuthStore } from "@/features/auth/store";
 import { useStudents, useFilteredStudents } from "../hooks/useStudents";
 import { StudentStatus } from "../types";
 import type { FullStudentData, StudentFilterState, ExtendedStudent } from "../types";
 import { useStudentUIStore } from "../store/useStudentUIStore";
 import { fetchStudentDetails } from "../api/studentsApi";
-// import StatusChip from "@/shared/components/ui/StatusChip";
-import {StatusChip} from "@/shared/components/ui/StatusChip";
-// 
+import { StatusChip } from "@/shared/components/ui/StatusChip";
 import AgeDisplay from "./AgeDisplay";
 import DeleteConfirmDialog from "./DeleteConfirmDialog";
 
@@ -36,6 +35,9 @@ interface StudentsListProps {
 }
 
 const StudentsList: React.FC<StudentsListProps> = ({ filters }) => {
+  const profile = useAuthStore(state => state.profile);
+  const isTeacher = profile?.role === 'teacher';
+  
   const { data: students, isLoading, error } = useFilteredStudents(filters);
   const { openEdit, openProfile } = useStudentUIStore();
   
@@ -142,27 +144,45 @@ const StudentsList: React.FC<StudentsListProps> = ({ filters }) => {
                           >
                             {`${student.first_name} ${student.father_name || ""} ${student.family_name}`}
                           </Typography>
-                          <Typography variant="caption" color="text.secondary">
-                            {student.address || "بدون عنوان"}
-                          </Typography>
+                          <Stack direction="row" spacing={0.5} alignItems="center">
+                            <LocationOn sx={{ fontSize: "0.875rem", color: "stone.400" }} />
+                            <Typography variant="caption" sx={{ color: student.address ? "text.secondary" : "stone.400", fontStyle: student.address ? "normal" : "italic" }}>
+                              {student.address || "بدون عنوان"}
+                            </Typography>
+                          </Stack>
                         </Box>
                       </Stack>
                     </TableCell>
                     <TableCell>
-                      {student.halaqa_name ? (
-                        <Chip 
-                          label={student.halaqa_name} 
-                          size="small" 
-                          sx={{ 
-                            bgcolor: "emerald.50", 
-                            color: "emerald.700", 
-                            fontWeight: "bold",
-                            border: '1px solid',
-                            borderColor: 'emerald.100'
-                          }} 
-                        />
+                      {student.enrolled_halaqat && student.enrolled_halaqat.length > 0 ? (
+                        <Stack direction="row" spacing={0.5} flexWrap="wrap" sx={{ gap: 0.5, maxWidth: 220 }}>
+                          {student.enrolled_halaqat.map((h: any) => (
+                            <StatusChip 
+                              key={h.halaqa_id}
+                              label={h.name} 
+                              color="indigo"
+                              showDot={false}
+                              sx={{ 
+                                height: 22,
+                                fontSize: "0.65rem",
+                                borderRadius: "6px",
+                              }} 
+                            />
+                          ))}
+                        </Stack>
                       ) : (
-                        <Typography variant="caption" color="text.disabled">غير ملتحق</Typography>
+                        <StatusChip 
+                          label="غير ملتحق" 
+                          color="stone"
+                          variant="outlined"
+                          showDot={false}
+                          sx={{ 
+                            height: 22,
+                            fontSize: "0.65rem",
+                            borderStyle: "dashed",
+                            bgcolor: "transparent"
+                          }}
+                        />
                       )}
                     </TableCell>
                     <TableCell>
@@ -184,27 +204,31 @@ const StudentsList: React.FC<StudentsListProps> = ({ filters }) => {
                     </TableCell>
                     <TableCell align="center">
                       <Box sx={{ display: "flex", gap: 1, justifyContent: "center" }}>
-                        <Tooltip title="تعديل">
-                          <IconButton 
-                            size="small" 
-                            onClick={() => handleEditClick(student.student_id)}
-                            sx={{ bgcolor: "sky.50", color: "sky.700", borderRadius: "8px", "&:hover": { bgcolor: "sky.100" } }}
-                          >
-                            <Edit sx={{ fontSize: "1rem" }} />
-                          </IconButton>
-                        </Tooltip>
-                        <Tooltip title="حذف">
-                          <IconButton 
-                            size="small" 
-                            onClick={async () => {
-                              const fullData = await fetchStudentDetails(student.student_id);
-                              setDeleteTarget(fullData as FullStudentData);
-                            }}
-                            sx={{ bgcolor: "rose.50", color: "rose.700", borderRadius: "8px", "&:hover": { bgcolor: "rose.100" } }}
-                          >
-                            <DeleteOutline sx={{ fontSize: "1.1rem" }} />
-                          </IconButton>
-                        </Tooltip>
+                        {!isTeacher && (
+                          <>
+                            <Tooltip title="تعديل">
+                              <IconButton 
+                                size="small" 
+                                onClick={() => handleEditClick(student.student_id)}
+                                sx={{ bgcolor: "sky.50", color: "sky.700", borderRadius: "8px", "&:hover": { bgcolor: "sky.100" } }}
+                              >
+                                <Edit sx={{ fontSize: "1rem" }} />
+                              </IconButton>
+                            </Tooltip>
+                            <Tooltip title="حذف">
+                              <IconButton 
+                                size="small" 
+                                onClick={async () => {
+                                  const fullData = await fetchStudentDetails(student.student_id);
+                                  setDeleteTarget(fullData as FullStudentData);
+                                }}
+                                sx={{ bgcolor: "rose.50", color: "rose.700", borderRadius: "8px", "&:hover": { bgcolor: "rose.100" } }}
+                              >
+                                <DeleteOutline sx={{ fontSize: "1.1rem" }} />
+                              </IconButton>
+                            </Tooltip>
+                          </>
+                        )}
                         <Tooltip title="الملف الشخصي">
                           <IconButton 
                             size="small" 

@@ -26,7 +26,7 @@ export default function AdminRoute({ children }: AdminRouteProps) {
     );
   }
 
-  if (role !== 'admin') {
+  if (role !== 'admin' && role !== 'supervisor') {
     return (
       <Box
         sx={{

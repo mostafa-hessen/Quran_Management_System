@@ -38,12 +38,14 @@ export const menuItems: MenuItem[] = [
     path: '/halaqat',
     roles: ['admin', 'supervisor', 'teacher'],
   },
+/*
   {
     text: MenuItemText.ENROLLMENTS,
     icon: <NotificationsRounded />,
     path: '/enrollments',
     roles: ['admin', 'supervisor'],
   },
+*/
   {
     text: MenuItemText.SESSIONS,
     icon: <NotificationsRounded />,
@@ -62,12 +64,14 @@ export const menuItems: MenuItem[] = [
     path: '/payments',
     roles: ['admin', 'supervisor'],
   },
+/*
   {
     text: MenuItemText.REPORTS,
     icon: <BarChartRounded />,
     path: '/reports',
     roles: ['admin', 'supervisor'],
   },
+*/
   // ─── Admin-only ──────────────────────────────
   {
     text: MenuItemText.STAFF,

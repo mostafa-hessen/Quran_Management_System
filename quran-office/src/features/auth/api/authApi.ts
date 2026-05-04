@@ -8,6 +8,19 @@ export const signInWithEmail = async (email: string, password: string) => {
   });
   
   if (error) throw error;
+
+  // التحقق من حالة الحساب
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('status')
+    .eq('id', data.user.id)
+    .single();
+
+  if (profile?.status === 'inactive') {
+    await supabase.auth.signOut();
+    throw new Error('حسابك موقوف حالياً. يرجى مراجعة الإدارة.');
+  }
+
   return data;
 };
 

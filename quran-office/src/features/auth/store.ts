@@ -33,14 +33,19 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         const { data: { session } } = await supabase.auth.getSession();
 
         if (session?.user) {
-          set({ user: session.user });
-
           const { data: profile } = await supabase
             .from("profiles")
             .select("*")
             .eq("id", session.user.id)
             .single();
 
+          if (profile?.status === 'inactive') {
+            await supabase.auth.signOut();
+            set({ user: null, profile: null, loading: false, initialized: true });
+            return;
+          }
+
+          set({ user: session.user });
           if (profile) {
             set({ profile: profile as UserProfile });
           }
@@ -62,14 +67,18 @@ supabase.auth.onAuthStateChange(async (event, session) => {
 
   if (event === "SIGNED_IN" && session?.user) {
     if (store.user?.id !== session.user.id) {
-      store.setUser(session.user);
-
       const { data: profile } = await supabase
         .from("profiles")
         .select("*")
         .eq("id", session.user.id)
         .single();
 
+      if (profile?.status === 'inactive') {
+        await supabase.auth.signOut();
+        return;
+      }
+
+      store.setUser(session.user);
       if (profile) store.setProfile(profile as UserProfile);
     }
   } else if (event === "SIGNED_OUT") {

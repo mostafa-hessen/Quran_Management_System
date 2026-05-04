@@ -11,12 +11,18 @@ declare module '@mui/material/styles' {
     sky: Palette['primary'];
     emerald: Palette['primary'];
     amber: Palette['primary'];
+    rose: Palette['primary'];
+    indigo: Palette['primary'];
+    violet: Palette['primary'];
   }
   interface PaletteOptions {
     stone?: PaletteOptions['primary'];
     sky?: PaletteOptions['primary'];
     emerald?: PaletteOptions['primary'];
     amber?: PaletteOptions['primary'];
+    rose?: PaletteOptions['primary'];
+    indigo?: PaletteOptions['primary'];
+    violet?: PaletteOptions['primary'];
   }
 }
 
@@ -71,8 +77,24 @@ const theme = createTheme({
       light: "#F0F9FF",
       dark: "#075985",
     },
+    rose: {
+      main: "#F43F5E",
+      light: "#FFF1F2",
+      dark: "#9F1239",
+    },
+    indigo: {
+      main: "#6366F1",
+      light: "#EEF2FF",
+      dark: "#3730A3",
+    },
+    violet: {
+      main: "#8B5CF6",
+      light: "#F5F3FF",
+      dark: "#5B21B6",
+    },
     stone: {
       main: "#78716C",
+
       light: "#F5F5F4",
       dark: "#44403C",
       "50": "#FAFAF9",

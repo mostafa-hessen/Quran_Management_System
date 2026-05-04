@@ -11,6 +11,7 @@ import {
   alpha,
   useTheme,
   Button,
+  Grid,
 } from "@mui/material";
 import {
   SearchRounded,
@@ -21,10 +22,15 @@ import {
   EditRounded,
   PhoneRounded,
   CalendarMonthRounded,
+  PaymentRounded,
+  AssignmentTurnedInRounded,
+  PriorityHighRounded,
+  AccountBalanceWalletRounded,
 } from "@mui/icons-material";
 import { useSubscriptions } from "../hooks/usePayments";
 import { usePaymentStore } from "../store/usePaymentStore";
-import { DataTable, StatusChip, LoadingSkeleton } from "@/shared/components/ui";
+import { DataTable, StatusChip, LoadingSkeleton, StatsCard } from "@/shared/components/ui";
+import { useMemo } from "react";
 import type { Subscription } from "../types";
 import { printSubscriptionInvoice } from "../utils/printUtils";
 import { useAuthStore } from "@/features/auth/store";
@@ -217,15 +223,55 @@ const SubscriptionsTab: React.FC = () => {
     },
   ];
 
+  const stats = useMemo(() => {
+    if (!subscriptions) return { total: 0, paid: 0, arrears: 0 };
+    const total = subscriptions.reduce((sum, s) => sum + Number(s.total_amount), 0);
+    const paid = subscriptions.reduce((sum, s) => sum + Number(s.paid_amount || 0), 0);
+    return {
+      total,
+      paid,
+      arrears: total - paid
+    };
+  }, [subscriptions]);
+
   if (isLoading) return <LoadingSkeleton type="table" />;
 
   return (
     <Box>
+      {/* Summary Cards */}
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        <Grid size={{ xs: 12, sm: 4 }}>
+          <StatsCard 
+            title="إجمالي الاشتراكات"
+            value={`${stats.total} ج.م`}
+            icon={<AccountBalanceWalletRounded />}
+            color={theme.palette.primary.main}
+          />
+        </Grid>
+        <Grid size={{ xs: 12, sm: 4 }}>
+          <StatsCard 
+            title="الإجمالي المُسدد"
+            value={`${stats.paid} ج.م`}
+            icon={<AssignmentTurnedInRounded />}
+            color={theme.palette.emerald.main}
+          />
+        </Grid>
+        <Grid size={{ xs: 12, sm: 4 }}>
+          <StatsCard 
+            title="الإجمالي المتأخر"
+            value={`${stats.arrears} ج.م`}
+            icon={<PriorityHighRounded />}
+            color={theme.palette.error.main}
+          />
+        </Grid>
+      </Grid>
+
       {/* Filter Bar */}
       <Stack spacing={2} sx={{ mb: 3 }}>
         <Stack
           direction={{ xs: "column", md: "row" }}
           spacing={2}
+          alignItems="center"
           sx={{
             p: 2,
             bgcolor: "surface.paper",
@@ -276,7 +322,23 @@ const SubscriptionsTab: React.FC = () => {
             <MenuItem value="unpaid">لم يتم السداد</MenuItem>
             <MenuItem value="exempt">معفي</MenuItem>
           </TextField>
+          
+          <Button
+            variant="contained"
+            startIcon={<PaymentRounded />}
+            onClick={() => setAddPaymentModal(true)}
+            sx={{ 
+              borderRadius: '12px', 
+              px: 3, 
+              height: 40,
+              bgcolor: 'emerald.600',
+              '&:hover': { bgcolor: 'emerald.700' }
+            }}
+          >
+            تسجيل دفعة
+          </Button>
         </Stack>
+
 
         {/* Date Range Filters */}
         <Stack

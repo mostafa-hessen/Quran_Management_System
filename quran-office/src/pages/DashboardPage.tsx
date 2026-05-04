@@ -10,6 +10,7 @@ import {
 } from "@mui/icons-material";
 
 import { useDashboardStats } from "@/features/payments/api/queries";
+import { useAuthStore } from "@/features/auth/store";
 
 const StatCard = ({ title, value, icon, color, loading }: any) => (
   <Card
@@ -36,7 +37,9 @@ const StatCard = ({ title, value, icon, color, loading }: any) => (
 );
 
 const DashboardPage: React.FC = () => {
-  const { data: stats, isLoading } = useDashboardStats();
+  const profile = useAuthStore(state => state.profile);
+  const isTeacher = profile?.role === 'teacher';
+  const { data: stats, isLoading } = useDashboardStats(isTeacher ? profile.teacher_id : undefined);
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
@@ -55,13 +58,15 @@ const DashboardPage: React.FC = () => {
           color="#047857"
           loading={isLoading}
         />
-        <StatCard
-          title="المعلمون"
-          value={stats?.total_teachers || 0}
-          icon={<MenuBookRounded fontSize="large" />}
-          color="#1d4ed8"
-          loading={isLoading}
-        />
+        {!isTeacher && (
+          <StatCard
+            title="المعلمون"
+            value={stats?.total_teachers || 0}
+            icon={<MenuBookRounded fontSize="large" />}
+            color="#1d4ed8"
+            loading={isLoading}
+          />
+        )}
         <StatCard
           title="الحلقات"
           value={stats?.total_halaqat || 0}
@@ -69,16 +74,18 @@ const DashboardPage: React.FC = () => {
           color="#b45309"
           loading={isLoading}
         />
-        <StatCard
-          title="متأخرات مالية"
-          value={stats?.overdue_count || 0}
-          icon={<WarningRounded fontSize="large" />}
-          color="#b91c1c"
-          loading={isLoading}
-        />
+        {!isTeacher && (
+          <StatCard
+            title="متأخرات مالية"
+            value={stats?.overdue_count || 0}
+            icon={<WarningRounded fontSize="large" />}
+            color="#b91c1c"
+            loading={isLoading}
+          />
+        )}
       </Box>
 
-      {/* Main Details */}
+          {/* Main Details */}
       <Box
         sx={{
           display: "grid",
@@ -97,11 +104,11 @@ const DashboardPage: React.FC = () => {
             نسبة الحضور الكلية
           </Typography>
           <Typography variant="h3" fontWeight="900" color="#047857" mb={2}>
-            88%
+            {isLoading ? "..." : `${stats?.attendance_rate || 0}%`}
           </Typography>
           <LinearProgress
             variant="determinate"
-            value={88}
+            value={stats?.attendance_rate || 0}
             sx={{
               height: 8,
               borderRadius: 4,
@@ -114,7 +121,7 @@ const DashboardPage: React.FC = () => {
             color="text.secondary"
             sx={{ display: "block", mt: 2 }}
           >
-            150 حاضر من 170
+            {isLoading ? "..." : `${stats?.present_count || 0} حاضر من ${stats?.total_attendance_records || 0}`}
           </Typography>
         </Card>
 
@@ -129,7 +136,7 @@ const DashboardPage: React.FC = () => {
             جلسات مجدولة
           </Typography>
           <Typography variant="h3" fontWeight="900" color="#1d4ed8" mb={2}>
-            5
+            {isLoading ? "..." : (stats?.scheduled_sessions || 0)}
           </Typography>
           <Box mt={2}>
             <Chip
@@ -155,7 +162,7 @@ const DashboardPage: React.FC = () => {
             واجبات تنتظر تصحيح
           </Typography>
           <Typography variant="h3" fontWeight="900" color="#b45309" mb={2}>
-            23
+            {isLoading ? "..." : (stats?.pending_homework || 0)}
           </Typography>
           <Box mt={2}>
             <Chip
@@ -182,7 +189,7 @@ const DashboardPage: React.FC = () => {
           تنبيهات
         </Typography>
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-          {stats?.overdue_count > 0 && (
+          {!isTeacher && stats?.overdue_count > 0 && (
             <Box
               sx={{
                 display: "flex",
@@ -213,38 +220,42 @@ const DashboardPage: React.FC = () => {
                 }}
                 clickable
                 component="a"
-                href="/payments"
+                href="/payments?tab=overdue"
+
               />
+
             </Box>
           )}
 
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              p: 2,
-              bgcolor: "#fffbeb",
-              border: "1px solid #fef3c7",
-              borderRadius: 3,
-              gap: 2,
-            }}
-          >
-            <NotificationsActiveRounded sx={{ color: "#d97706" }} />
-            <Typography
-              variant="body2"
-              sx={{ color: "#b45309" }}
-              fontWeight="bold"
-              flexGrow={1}
+          {stats?.pending_homework > 0 && (
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                p: 2,
+                bgcolor: "#fffbeb",
+                border: "1px solid #fef3c7",
+                borderRadius: 3,
+                gap: 2,
+              }}
             >
-              23 واجب لم يُصحَّح بعد
-            </Typography>
-            <Chip
-              label="تصحيح"
-              size="small"
-              sx={{ bgcolor: "#fef3c7", color: "#b45309", fontWeight: "bold" }}
-              clickable
-            />
-          </Box>
+              <NotificationsActiveRounded sx={{ color: "#d97706" }} />
+              <Typography
+                variant="body2"
+                sx={{ color: "#b45309" }}
+                fontWeight="bold"
+                flexGrow={1}
+              >
+                {stats.pending_homework} واجب لم يُصحَّح بعد
+              </Typography>
+              <Chip
+                label="تصحيح"
+                size="small"
+                sx={{ bgcolor: "#fef3c7", color: "#b45309", fontWeight: "bold" }}
+                clickable
+              />
+            </Box>
+          )}
 
           <Box
             sx={{
@@ -269,6 +280,7 @@ const DashboardPage: React.FC = () => {
           </Box>
         </Box>
       </Card>
+
     </Box>
   );
 };

@@ -65,38 +65,40 @@ const Sidebar: React.FC<SidebarProps> = ({
       <Box sx={{ p: 3, pt: 4, display: "flex", alignItems: "center", gap: 2 }}>
         <Box
           sx={{
-            width: 40,
-            height: 40,
-            borderRadius: "12px",
-            background: `linear-gradient(135deg, ${theme.palette.emerald[600]} 0%, ${theme.palette.emerald[400]} 100%)`,
+            width: 48,
+            height: 48,
+            borderRadius: "50%",
+            bgcolor: "white",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            color: "white",
-            boxShadow: `0 8px 16px ${alpha(theme.palette.emerald.main, 0.2)}`,
+            boxShadow: `0 4px 12px rgba(0,0,0,0.08)`,
+            overflow: "hidden",
+            border: `1px solid ${theme.palette.stone[100]}`
           }}
         >
-          <AutoStoriesRounded fontSize="small" />
+          <Box component="img" src="/logo.png" sx={{ width: "80%", height: "80%", objectFit: "contain" }} />
         </Box>
         <Box>
           <Typography
             variant="h6"
             sx={{
               fontWeight: 800,
-              fontSize: "1.15rem",
+              fontSize: "1.1rem",
               color: 'stone.900',
-              lineHeight: 1.2,
-              letterSpacing: '-0.02em'
+              lineHeight: 1.1,
+              letterSpacing: '-0.02em',
+              fontFamily: "Amiri Quran, serif",
             }}
           >
-            علمه البيان
+            مكتب علمه البيان
           </Typography>
           <Typography
             variant="caption"
             sx={{
               color: 'stone.500',
               fontWeight: 600,
-              fontSize: '0.7rem'
+              fontSize: '0.65rem'
             }}
           >
             نظام الإدارة الشامل

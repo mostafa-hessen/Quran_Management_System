@@ -7,6 +7,7 @@ import {
   DeleteOutline as DeleteIcon,
   Visibility as ViewIcon
 } from "@mui/icons-material";
+import { useAuthStore } from "@/features/auth/store";
 
 interface ActionButtonsGroupProps {
   onTasks: () => void;
@@ -24,6 +25,8 @@ export const ActionButtonsGroup: React.FC<ActionButtonsGroupProps> = ({
   onViewDetails,
 }) => {
   const theme = useTheme();
+  const profile = useAuthStore(state => state.profile);
+  const isTeacher = profile?.role === 'teacher';
 
   const buttonStyle = {
     minWidth: 0,
@@ -50,7 +53,7 @@ export const ActionButtonsGroup: React.FC<ActionButtonsGroupProps> = ({
         </Button>
       </Tooltip>
 
-      <Tooltip title="واجب جديد">
+      {/* <Tooltip title="واجب جديد">
         <Button
           variant="outlined"
           onClick={onTasks}
@@ -67,7 +70,7 @@ export const ActionButtonsGroup: React.FC<ActionButtonsGroupProps> = ({
           <TaskIcon sx={{ fontSize: 20 }} />
           واجب
         </Button>
-      </Tooltip>
+      </Tooltip> */}
 
       <Tooltip title="الطلاب">
         <Button
@@ -102,23 +105,25 @@ export const ActionButtonsGroup: React.FC<ActionButtonsGroupProps> = ({
         </Button>
       </Tooltip>
 
-      <Tooltip title="حذف">
-        <Button
-          variant="outlined"
-          onClick={onDelete}
-          sx={{
-            ...buttonStyle,
-            borderColor: alpha(theme.palette.error.main, 0.1),
-            color: theme.palette.error.main,
-            "&:hover": { 
-              bgcolor: alpha(theme.palette.error.main, 0.05),
-              borderColor: alpha(theme.palette.error.main, 0.3)
-            }
-          }}
-        >
-          <DeleteIcon sx={{ fontSize: 20 }} />
-        </Button>
-      </Tooltip>
+      {!isTeacher && (
+        <Tooltip title="حذف">
+          <Button
+            variant="outlined"
+            onClick={onDelete}
+            sx={{
+              ...buttonStyle,
+              borderColor: alpha(theme.palette.error.main, 0.1),
+              color: theme.palette.error.main,
+              "&:hover": { 
+                bgcolor: alpha(theme.palette.error.main, 0.05),
+                borderColor: alpha(theme.palette.error.main, 0.3)
+              }
+            }}
+          >
+            <DeleteIcon sx={{ fontSize: 20 }} />
+          </Button>
+        </Tooltip>
+      )}
     </Box>
   );
 };

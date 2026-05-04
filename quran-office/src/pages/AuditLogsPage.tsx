@@ -203,20 +203,28 @@ const AuditLogsPage: React.FC = () => {
     if (action.includes("DELETE")) {
       return (
         <Box sx={{ p: 2, bgcolor: '#fff1f2', borderRadius: 3, border: '1px solid', borderColor: '#ffe4e6' }}>
-          <Typography variant="subtitle2" color="#e11d48" fontWeight="800" gutterBottom sx={{ lineHeight: 1.6 }}>
+          <Typography 
+            variant="subtitle2" 
+            color="#e11d48" 
+            fontWeight="800" 
+            gutterBottom 
+            sx={{ lineHeight: 1.6, whiteSpace: 'pre-wrap' }}
+          >
             {summary || "تم حذف السجل"}
           </Typography>
-          <Box sx={{ mt: 1.5, pt: 1.5, borderTop: '1px dashed', borderColor: '#fecdd3' }}>
-            {Object.entries(oldData || {}).map(([key, value]) => {
-              if (key.includes('_id') || ['id', 'created_at', 'updated_at'].includes(key)) return null;
-              if (value === null || value === undefined) return null;
-              return (
-                <Typography key={key} variant="caption" sx={{ display: 'block', color: '#4c0519', mb: 0.5, fontWeight: 500 }}>
-                  • <strong>{translateKey(key)}:</strong> {formatValue(key, value)}
-                </Typography>
-              );
-            })}
-          </Box>
+          {(!summary || !summary.includes("الطالب:")) && (
+            <Box sx={{ mt: 1.5, pt: 1.5, borderTop: '1px dashed', borderColor: '#fecdd3' }}>
+              {Object.entries(oldData || {}).map(([key, value]) => {
+                if (key.includes('_id') || ['id', 'created_at', 'updated_at'].includes(key)) return null;
+                if (value === null || value === undefined) return null;
+                return (
+                  <Typography key={key} variant="caption" sx={{ display: 'block', color: '#4c0519', mb: 0.5, fontWeight: 500 }}>
+                    • <strong>{translateKey(key)}:</strong> {formatValue(key, value)}
+                  </Typography>
+                );
+              })}
+            </Box>
+          )}
         </Box>
       );
     }
@@ -224,20 +232,28 @@ const AuditLogsPage: React.FC = () => {
     if (action.includes("INSERT") || action.includes("CREATE")) {
       return (
         <Box sx={{ p: 2.5, bgcolor: '#ecfdf5', borderRadius: 3, border: '1px solid', borderColor: '#d1fae5' }}>
-          <Typography variant="subtitle2" color="#059669" fontWeight="800" gutterBottom sx={{ lineHeight: 1.6 }}>
+          <Typography 
+            variant="subtitle2" 
+            color="#059669" 
+            fontWeight="800" 
+            gutterBottom 
+            sx={{ lineHeight: 1.6, whiteSpace: 'pre-wrap' }}
+          >
             {summary || "إضافة سجل جديد:"}
           </Typography>
-          <Box sx={{ mt: 2, pt: 2, borderTop: '1px dashed', borderColor: '#a7f3d0' }}>
-            {Object.entries(newData || {}).map(([key, value]) => {
-              if (key.includes('_id') || ['id', 'created_at', 'updated_at'].includes(key)) return null;
-              if (value === null || value === undefined) return null;
-              return (
-                <Typography key={key} variant="body2" sx={{ color: 'stone.700', mb: 0.8 }}>
-                  <strong>{translateKey(key)}:</strong> {formatValue(key, value)}
-                </Typography>
-              );
-            })}
-          </Box>
+          {(!summary || !summary.includes("الطالب:")) && (
+            <Box sx={{ mt: 2, pt: 2, borderTop: '1px dashed', borderColor: '#a7f3d0' }}>
+              {Object.entries(newData || {}).map(([key, value]) => {
+                if (key.includes('_id') || ['id', 'created_at', 'updated_at'].includes(key)) return null;
+                if (value === null || value === undefined) return null;
+                return (
+                  <Typography key={key} variant="body2" sx={{ color: 'stone.700', mb: 0.8 }}>
+                    <strong>{translateKey(key)}:</strong> {formatValue(key, value)}
+                  </Typography>
+                );
+              })}
+            </Box>
+          )}
         </Box>
       );
     }
@@ -257,7 +273,12 @@ const AuditLogsPage: React.FC = () => {
     return (
       <Stack spacing={2}>
         <Box sx={{ p: 2.5, bgcolor: '#eff6ff', borderRadius: 3, border: '1px solid', borderColor: '#dbeafe' }}>
-          <Typography variant="subtitle1" color="#1e40af" fontWeight={800} sx={{ textAlign: 'center', lineHeight: 1.6 }}>
+          <Typography 
+            variant="subtitle1" 
+            color="#1e40af" 
+            fontWeight={800} 
+            sx={{ textAlign: 'right', lineHeight: 1.6, whiteSpace: 'pre-wrap' }}
+          >
             {summary || "تم تعديل البيانات"}
           </Typography>
         </Box>
@@ -378,8 +399,19 @@ const AuditLogsPage: React.FC = () => {
                               }
                             }}
                           />
-                          <Typography variant="body2" fontWeight={600} color="stone.700" sx={{ letterSpacing: '-0.01em' }}>
-                            {log.summary || "تعديل غير محدد"}
+                          <Typography 
+                            variant="body2" 
+                            fontWeight={600} 
+                            color="stone.700" 
+                            sx={{ 
+                              letterSpacing: '-0.01em', 
+                              whiteSpace: 'nowrap',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              maxWidth: '400px'
+                            }}
+                          >
+                            {log.summary?.split('\n')[3] || log.summary?.split('\n')[2] || log.summary || "تعديل غير محدد"}
                           </Typography>
                         </Stack>
                       </TableCell>

@@ -23,6 +23,7 @@ import { useHalaqat, useDeleteHalaqa } from "../hooks/useHalaqat";
 import type { Halaqa } from "../types";
 import HalaqaSchedulesModal from "./HalaqaSchedulesModal";
 import { useHalaqatStore } from "../store";
+import { useAuthStore } from "../../auth/store";
 
 interface HalaqatListProps {
   searchTerm: string;
@@ -34,9 +35,15 @@ const HalaqatList: React.FC<HalaqatListProps> = ({ searchTerm }) => {
   const [isSchedulesModalOpen, setIsSchedulesModalOpen] = useState(false);
   const { openEditForm, openDeleteConfirm } = useHalaqatStore();
 
-  const filteredHalaqat = halaqat?.filter((halaqa) =>
-    halaqa.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const profile = useAuthStore((state) => state.profile);
+
+  const filteredHalaqat = halaqat?.filter((halaqa) => {
+    const matchesSearch = halaqa.name.toLowerCase().includes(searchTerm.toLowerCase());
+    if (profile?.role === 'teacher') {
+      return matchesSearch && halaqa.teacher_id === profile.teacher_id;
+    }
+    return matchesSearch;
+  });
 
   const handleDelete = (halaqaId: string) => {
     const halaqa = halaqat?.find(h => h.halaqa_id === halaqaId);
@@ -99,7 +106,9 @@ const HalaqatList: React.FC<HalaqatListProps> = ({ searchTerm }) => {
                     {halaqa.name}
                   </Typography>
                 </TableCell>
-                <TableCell>{halaqa.teacher_id || "غير معين"}</TableCell>
+                <TableCell>
+                  {halaqa.teacher?.full_name || (halaqa.teacher_id ? "جاري التحميل..." : "غير معين")}
+                </TableCell>
                 <TableCell>{halaqa.level || "—"}</TableCell>
                 <TableCell>{halaqa.capacity}</TableCell>
                 <TableCell>{halaqa.location || "—"}</TableCell>

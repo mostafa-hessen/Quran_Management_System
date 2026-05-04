@@ -14,11 +14,26 @@ import { useStudentUIStore } from "../features/students/store/useStudentUIStore"
 import StudentFiltersComponent from "../features/students/components/StudentFilters";
 import { useStudentFilters } from "../features/students/hooks/useStudentFilters";
 import { useHalaqat } from "../features/halaqat/hooks/useHalaqat";
+import { useAuthStore } from "../features/auth/store";
 
 const StudentsPage: React.FC = () => {
+  const profile = useAuthStore(state => state.profile);
+  const isTeacher = profile?.role === 'teacher';
+  
   const openAdd = useStudentUIStore(state => state.openAdd);
   const { filters, updateFilter, resetFilters } = useStudentFilters();
-  const { data: halaqat } = useHalaqat();
+  const { data: allHalaqat } = useHalaqat();
+
+  // If teacher, force teacherId filter and restrict halaqat list
+  React.useEffect(() => {
+    if (isTeacher && profile?.teacher_id) {
+      updateFilter('teacherId', profile.teacher_id);
+    }
+  }, [isTeacher, profile?.teacher_id]);
+
+  const displayedHalaqat = isTeacher 
+    ? allHalaqat?.filter(h => h.teacher_id === profile?.teacher_id)
+    : allHalaqat;
 
   return (
     <Box sx={{ p: { xs: 2, md: 4 }, maxWidth: "1600px", mx: "auto" }}>
@@ -32,34 +47,41 @@ const StudentsPage: React.FC = () => {
         <Typography variant="h5" fontWeight="bold" color="#1c1917">
           سجل الطلاب
         </Typography>
-        <Button
-          variant="contained"
-          startIcon={<Add />}
-          onClick={openAdd}
-          sx={{
-            bgcolor: "#059669",
-            borderRadius: "12px",
-            px: 3,
-            py: 1,
-            fontWeight: "bold",
-            fontSize: "0.9rem",
-            boxShadow: "none",
-            "&:hover": { 
-              bgcolor: "#047857",
+        {!isTeacher && (
+          <Button
+            variant="contained"
+            startIcon={<Add />}
+            onClick={openAdd}
+            sx={{
+              bgcolor: "#059669",
+              borderRadius: "12px",
+              px: 3,
+              py: 1,
+              fontWeight: "bold",
+              fontSize: "0.9rem",
               boxShadow: "none",
-            },
-            textTransform: "none"
-          }}
-        >
-          إضافة طالب جديد
-        </Button>
+              "&:hover": { 
+                bgcolor: "#047857",
+                boxShadow: "none",
+              },
+              textTransform: "none"
+            }}
+          >
+            إضافة طالب جديد
+          </Button>
+        )}
       </Stack>
 
       <StudentFiltersComponent 
         filters={filters}
         onFilterChange={updateFilter}
-        onReset={resetFilters}
-        halaqat={halaqat?.map(h => ({ id: h.halaqa_id, name: h.name }))}
+        onReset={() => {
+          resetFilters();
+          if (isTeacher && profile?.teacher_id) {
+            updateFilter('teacherId', profile.teacher_id);
+          }
+        }}
+        halaqat={displayedHalaqat?.map(h => ({ id: h.halaqa_id, name: h.name }))}
       />
 
       <Box>

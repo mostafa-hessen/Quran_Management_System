@@ -11,6 +11,7 @@ export interface UserProfile {
   id: string;
   role: Role;
   status: 'active' | 'inactive';
+  teacher_id?: string;
   created_at: string;
   updated_at: string;
 }

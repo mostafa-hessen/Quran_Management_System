@@ -143,23 +143,107 @@ export const getOverdueStudents = async (): Promise<OverdueStudent[]> => {
 
 // ─── Dashboard Stats ──────────────────────────────────────────────────────────
 
-export const getPaymentStats = async () => {
-  const [studentsRes, teachersRes, halaqatRes, subsRes] = await Promise.all([
-    supabase.from('students').select('student_id, status'),
-    supabase.from('teachers').select('teacher_id, status'),
-    supabase.from('halaqat').select('halaqa_id, status'),
-    supabase.from('subscriptions').select('subscription_id, status, end_date'),
+export const getDashboardStats = async (teacherId?: string) => {
+  const today = new Date().toISOString().split('T')[0];
+
+  // Queries base
+  let studentsQuery = supabase.from('students').select('student_id, status');
+  let teachersQuery = supabase.from('teachers').select('teacher_id, status');
+  let halaqatQuery = supabase.from('halaqat').select('halaqa_id, status, teacher_id');
+  let sessionsQuery = supabase.from('sessions').select('session_id, status');
+  let attendanceQuery = supabase.from('student_attendance').select('status');
+  let homeworkQuery = supabase.from('homework_submissions').select('submission_id, grade, halaqat!inner(teacher_id)');
+
+  if (teacherId) {
+    // Filter halaqat by teacher
+    halaqatQuery = halaqatQuery.eq('teacher_id', teacherId);
+    
+    // Get halaqat IDs for this teacher to filter other things
+    const { data: teacherHalaqat } = await supabase
+      .from('halaqat')
+      .select('halaqa_id')
+      .eq('teacher_id', teacherId);
+    
+    const hIds = (teacherHalaqat || []).map(h => h.halaqa_id);
+
+    if (hIds.length > 0) {
+      // Filter sessions
+      sessionsQuery = sessionsQuery.in('halaqa_id', hIds);
+      
+      // Filter attendance (via halaqat)
+      attendanceQuery = attendanceQuery.in('halaqa_id', hIds);
+
+      // Filter students (those enrolled in these halaqat)
+      const { data: enrolledStudents } = await supabase
+        .from('enrollments')
+        .select('student_id')
+        .in('halaqa_id', hIds);
+      
+      const sIds = (enrolledStudents || []).map(s => s.student_id);
+      studentsQuery = studentsQuery.in('student_id', sIds);
+      
+      // Filter homework
+      homeworkQuery = homeworkQuery.in('halaqa_id', hIds);
+    } else {
+      // No halaqat = zero stats
+      return {
+        total_students: 0,
+        total_teachers: 0,
+        total_halaqat: 0,
+        overdue_count: 0,
+        attendance_rate: 0,
+        present_count: 0,
+        total_attendance_records: 0,
+        scheduled_sessions: 0,
+        pending_homework: 0,
+      };
+    }
+  }
+
+  const [
+    studentsRes, 
+    teachersRes, 
+    halaqatRes, 
+    subsRes,
+    attendanceRes,
+    sessionsRes,
+    homeworkRes
+  ] = await Promise.all([
+    studentsQuery,
+    teacherId ? supabase.from('teachers').select('teacher_id').eq('teacher_id', teacherId) : teachersQuery,
+    halaqatQuery,
+    teacherId 
+      ? Promise.resolve({ data: [] } as any) // Teachers don't see financial info
+      : supabase.from('subscriptions').select('subscription_id, status, end_date, total_amount, payments(amount, status)'),
+    attendanceQuery,
+    sessionsQuery.eq('status', 'scheduled'),
+    homeworkQuery.is('grade', null)
   ]);
 
-  const today = new Date().toISOString().split('T')[0];
-  const overdueCount = (subsRes.data || []).filter(
-    (s: any) => s.status !== 'cancelled' && s.end_date < today
-  ).length;
+  const overdueCount = teacherId ? 0 : (subsRes.data || []).filter((s: any) => {
+    if (s.status === 'cancelled' || s.end_date >= today) return false;
+    const paid = (s.payments || [])
+      .filter((p: any) => p.status === 'completed')
+      .reduce((sum: number, p: any) => sum + Number(p.amount), 0);
+    return (Number(s.total_amount) - paid) > 0;
+  }).length;
+
+  const attendance = attendanceRes.data || [];
+  const totalAttendance = attendance.length;
+  const presentCount = attendance.filter((a: any) => a.status === 'حاضر').length;
+  const attendanceRate = totalAttendance > 0 ? Math.round((presentCount / totalAttendance) * 100) : 0;
 
   return {
     total_students: (studentsRes.data || []).filter((s: any) => s.status === 'active').length,
-    total_teachers: (teachersRes.data || []).filter((t: any) => t.status === 'active').length,
+    total_teachers: teacherId ? 1 : (teachersRes.data || []).filter((t: any) => t.status === 'active').length,
     total_halaqat: (halaqatRes.data || []).filter((h: any) => h.status === 'active').length,
     overdue_count: overdueCount,
+    attendance_rate: attendanceRate,
+    present_count: presentCount,
+    total_attendance_records: totalAttendance,
+    scheduled_sessions: (sessionsRes.data || []).length,
+    pending_homework: (homeworkRes.data || []).length,
   };
 };
+
+

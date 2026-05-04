@@ -11,6 +11,7 @@ export const fetchStudents = async (): Promise<ExtendedStudent[]> => {
       enrollments (
         subscription_status,
         halaqat (
+          halaqa_id,
           name,
           teacher:teachers (
             profiles:profiles!teachers_profile_id_fkey (
@@ -43,20 +44,43 @@ export const fetchStudents = async (): Promise<ExtendedStudent[]> => {
   }) as ExtendedStudent[];
 };
 
-export const fetchStudentDetails = async (studentId: string) => {
+export const fetchStudentDetails = async (studentId: string): Promise<ExtendedStudent> => {
   const { data, error } = await supabase
     .from("students")
-    .select("*, student_guardian_phones(*)")
+    .select(`
+      *,
+      enrollments (
+        subscription_status,
+        halaqat (
+          halaqa_id,
+          name,
+          teacher:teachers (
+            profiles:profiles!teachers_profile_id_fkey (
+              full_name
+            )
+          )
+        )
+      ),
+      student_guardian_phones (*)
+    `)
     .eq("student_id", studentId)
     .single();
 
   if (error) throw error;
   
-  // Map student_guardian_phones to phones for UI consistency
+  const enrolled_halaqat = (data as any).enrollments?.map((e: any) => ({
+    halaqa_id: e.halaqat?.halaqa_id,
+    name: e.halaqat?.name,
+    teacher_name: e.halaqat?.teacher?.profiles?.full_name
+  })).filter((h: any) => h.halaqa_id);
+
   return {
     ...data,
-    phones: data.student_guardian_phones
-  };
+    phones: (data as any).student_guardian_phones,
+    enrolled_halaqat,
+    halaqa_name: enrolled_halaqat?.[0]?.name,
+    teacher_name: enrolled_halaqat?.[0]?.teacher_name
+  } as ExtendedStudent;
 };
 
 export const updateStudent = async (
@@ -225,6 +249,7 @@ export const fetchStudentsWithFilters = async (filters: StudentFilterState): Pro
     const enrolled_halaqat = student.enrollments?.map((e: any) => ({
       halaqa_id: e.halaqat?.halaqa_id,
       name: e.halaqat?.name,
+      teacher_id: e.halaqat?.teacher_id,
       teacher_name: e.halaqat?.teacher?.profiles?.full_name
     })).filter((h: any) => h.halaqa_id);
 

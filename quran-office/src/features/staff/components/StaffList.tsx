@@ -9,10 +9,10 @@ import {
 import {
   AddRounded, EditRounded, BlockRounded, LockResetRounded,
   AdminPanelSettingsRounded, SchoolRounded, SupportAgentRounded,
+  CheckCircleRounded
 } from '@mui/icons-material';
-import { useStaffMembers, useCreateStaff, useUpdateStaff, useDeactivateStaff } from '../api/queries';
+import { useStaffMembers, useCreateStaff, useUpdateStaff, useDeactivateStaff, useActivateStaff } from '../api/queries';
 import { resetStaffPassword } from '../api/staffApi';
-// ... rest of imports
 import maskEmail from '../../../shared/utils/maskEmail';
 import StaffForm, { type StaffFormData } from './StaffForm';
 import type { StaffMember } from '../types';
@@ -62,6 +62,7 @@ const StaffList: React.FC = () => {
   const createMutation = useCreateStaff();
   const updateMutation = useUpdateStaff();
   const deactivateMutation = useDeactivateStaff();
+  const activateMutation = useActivateStaff();
 
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedStaff, setSelectedStaff] = useState<StaffMember | null>(null);
@@ -143,6 +144,17 @@ const StaffList: React.FC = () => {
         toast.success(`تم إيقاف الحساب بنجاح`, { style: { fontFamily: 'Tajawal, sans-serif' } });
       } catch (err: any) {
         toast.error('فشل إيقاف الحساب: ' + err.message, { style: { fontFamily: 'Tajawal, sans-serif' } });
+      }
+    }
+  };
+
+  const handleActivate = async (id: string, name: string) => {
+    if (window.confirm(`هل أنت متأكد من تفعيل حساب "${name}"؟`)) {
+      try {
+        await activateMutation.mutateAsync(id);
+        toast.success(`تم تفعيل الحساب بنجاح`, { style: { fontFamily: 'Tajawal, sans-serif' } });
+      } catch (err: any) {
+        toast.error('فشل تفعيل الحساب: ' + err.message, { style: { fontFamily: 'Tajawal, sans-serif' } });
       }
     }
   };
@@ -289,7 +301,7 @@ const StaffList: React.FC = () => {
                         </Typography>
                       {/* إخفاء البريد الإلكتروني لأسباب أمان */}
                       <Typography variant="caption" color="text.secondary" sx={{ direction: 'ltr' }}>
-                        {maskEmail(member.email)}
+                        {member.email}
                       </Typography>
                       </Box>
                     </Box>
@@ -351,7 +363,7 @@ const StaffList: React.FC = () => {
                           <EditRounded fontSize="small" />
                         </IconButton>
                       </Tooltip>
-                      {member.status === 'active' && (
+                      {member.status === 'active' ? (
                         <Tooltip title="إيقاف الحساب">
                           <IconButton
                             size="small"
@@ -360,6 +372,17 @@ const StaffList: React.FC = () => {
                             sx={{ bgcolor: 'error.lighter' }}
                           >
                             <BlockRounded fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                      ) : (
+                        <Tooltip title="تفعيل الحساب">
+                          <IconButton
+                            size="small"
+                            color="success"
+                            onClick={() => handleActivate(member.id, member.full_name)}
+                            sx={{ bgcolor: 'success.lighter' }}
+                          >
+                            <CheckCircleRounded fontSize="small" />
                           </IconButton>
                         </Tooltip>
                       )}
